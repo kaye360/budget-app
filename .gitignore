@@ -1,6 +1,4 @@
 
-config.ts
-
 # build output
 dist/
 # generated types
