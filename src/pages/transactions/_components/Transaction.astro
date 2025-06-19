@@ -143,15 +143,19 @@ class TransactionItem extends HTMLElement {
         const handlers: Record<string, () => void> = {
             date : () => {
                 Qry.one('transaction-date', this).textContent = toDateWithYear(newValue)
+                Qry.one<HTMLInputElement>('input[name=date]', this).value = newValue.slice(0,10)
             },
             description : () => {
                 Qry.one('transaction-description', this).textContent = newValue
+                Qry.one<HTMLInputElement>('input[name=description]', this).value = newValue
             },
             budget : () => {
                 Qry.one('transaction-budget', this).textContent = newValue
+                Qry.one<HTMLInputElement>('select[name=budget]', this).value = newValue
             },
             amount : () => {
                 Qry.one('transaction-amount', this).textContent = toCurrency(newValue)
+                Qry.one<HTMLInputElement>('input[name=amount]', this).value = toCurrency(newValue).replace('$', '')
             },
             accountname : () => {
                 Qry.one('transaction-account-name', this).textContent = newValue
@@ -171,9 +175,11 @@ class TransactionItem extends HTMLElement {
 
 customElements.define('transaction-item', TransactionItem)
 
-document.addEventListener('astro:page-load', () => {
-    const dialog = document.querySelector('dialog')
-    dialog?.showModal()
-})
+if( import.meta.env.DEV ) {
+    document.addEventListener('astro:page-load', () => {
+        const dialog = document.querySelector('dialog')
+        dialog?.showModal()
+    })
+}
 </script>
 

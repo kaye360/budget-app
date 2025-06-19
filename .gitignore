@@ -1,4 +1,5 @@
 .env
+config.ts 
 
 # build output
 dist/
