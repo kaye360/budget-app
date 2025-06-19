@@ -3,15 +3,28 @@
 interface Props {
     href : string,
     title : string,
-    Icon : any
+    Icon : any,
+    isActive : boolean
 }
-const { href, title, Icon } = Astro.props
+const { href, title, Icon, isActive } = Astro.props
 
 ---
 
-<a href={href} class="flex flex-col items-center p-4">
+<a 
+    href={href} 
+    class:list={[
+        "relative flex flex-col items-center p-4 hover:text-red active:scale-95",
+        isActive && 'text-blue'
+    ]}
+>
     <Icon stroke-width={1} width="30" height="30" />
-    <span class="hidden sm:block">
+    <span class="hidden sm:block font-semibold tracking-wide">
         {title}
     </span>
+    { isActive &&
+        <span 
+            class="absolute bottom-0 left-0 right-0 bg-blue h-1 rounded-full"
+            transition:name="navlink-active" 
+        />
+    }
 </a>

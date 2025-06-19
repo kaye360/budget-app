@@ -4,22 +4,22 @@ import { toCurrency } from "../../../utils/money";
 import Qry from "../../../utils/Qry";
 
 
-export function renderTransactions(transactions: Transaction[]) {
+export function renderTransactions(transactions: Transaction[], transactionList: HTMLElement) {
+
+    
     transactions.map( t => {
-        const transactionList = Qry.one<HTMLDivElement>('transaction-list')
-        const transactionTemplate = Qry.one<HTMLTemplateElement>('#transaction-item')
-    
-        const transaction = transactionTemplate.content.cloneNode(true) as DocumentFragment
-        const date = Qry.one<HTMLDivElement>('transaction-date', transaction)
-        const description = Qry.one<HTMLDivElement>('transaction-description', transaction)
-        const amount = Qry.one<HTMLDivElement>('transaction-amount', transaction)
-        const budget = Qry.one<HTMLDivElement>('transaction-budget', transaction)
-    
-        date.textContent = toDateWithYear(t.date)
-        description.textContent = t.description + ` (${t.id})`
-        amount.textContent = toCurrency(t.amount)
-        budget.textContent = t.budget
-    
+        const transactionTemplate = Qry.one<HTMLTemplateElement>('#transaction-template')
+        
+        const transactionFragment = transactionTemplate.content.cloneNode(true) as DocumentFragment
+        const transaction = Qry.one('transaction-item', transactionFragment) as HTMLElement
+        transaction.setAttribute('date', t.date )
+        transaction.setAttribute('description', t.description )
+        transaction.setAttribute('amount', t.amount.toString() )
+        transaction.setAttribute('budget', t.budget || '' )
+        transaction.setAttribute('accountname', t.accountName || '' )
+        transaction.setAttribute('accountnumber', t.accountNumber || '' )
+        transaction.setAttribute('accounttype', t.accountType || '' )
+
         transactionList.appendChild(transaction)
     })
 }
