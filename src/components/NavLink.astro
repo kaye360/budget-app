@@ -1,0 +1,17 @@
+---
+
+interface Props {
+    href : string,
+    title : string,
+    Icon : any
+}
+const { href, title, Icon } = Astro.props
+
+---
+
+<a href={href} class="flex flex-col items-center p-4">
+    <Icon stroke-width={1} width="30" height="30" />
+    <span class="hidden sm:block">
+        {title}
+    </span>
+</a>

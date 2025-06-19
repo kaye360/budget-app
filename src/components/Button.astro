@@ -1,0 +1,27 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'button'> {
+    Icon? : any,
+    variant : 'outline' | 'fill' | 'ghost' | 'destruct'
+}
+
+const { 
+    Icon,
+    variant
+} = Astro.props
+
+---
+
+<button class:list={[
+    "relative py-2 border text-center font-semibold rounded-md cursor-pointer active:scale-95 transition-all duration-100 hover:scale-[102%]",
+    variant === 'outline' && "border-blue text-blue hover:border-red hover:text-red",
+    variant === 'fill' && "bg-blue border-blue text-black hover:bg-red hover:border-red",
+    variant === 'ghost' && "border-transparent text-base-text",
+    variant === 'destruct' && 'bg-red border-red text-white hover:bg-blue hover:border-blue hover:text-black'
+]}>
+    { Icon && 
+        <Icon class="absolute left-2 top-1/2 -translate-y-1/2" />
+    }
+    <slot />
+</button>

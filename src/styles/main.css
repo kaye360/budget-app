@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+/*     
+    --color-beige : hsl(32, 81%, 96%);
+    --color-green : hsl(155, 52%, 90%);
+    --color-blue : hsl(184, 75%, 92%);
+    --color-orange : hsl(22, 68%, 88%);
+    --color-red : hsl(355, 53%, 92%);
+    --color-purple : hsl(277, 68%, 94%);
+    --color-bg : hsl(225, 29%, 97%);
+     */
+    --color-green : hsl(163, 97%, 56%);
+    --color-blue : hsl(205, 90%, 70%);
+    --color-orange : hsl(14, 81%, 59%);
+    --color-red : hsl(336, 81%, 59%);
+    --color-purple : hsl(272, 94%, 62%);
+    --color-bg-1 : hsl(223, 45%, 8%);
+    --color-bg-2 : hsl(189, 52%, 12%);
+    --color-base-text : hsl(223, 30%, 95%);
+    --color-accent-text : hsl(223, 30%, 75%);
+
+    --font-base : 'Helvetica', 'sans-serif';
+    --font-theme : 'Lato', 'Helvetica', 'sans-serif';
+}
+
+@layer base {
+
+    input, select {
+        @apply border border-red/60 rounded-md px-2 py-1;
+    }
+}
+
+
+@layer components {
+    .position-center{
+        @apply left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+    }
+
+}

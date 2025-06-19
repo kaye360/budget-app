@@ -1,0 +1,180 @@
+---
+import { BanIcon, EllipsisVerticalIcon, SaveIcon } from "@lucide/astro"
+import type { Transaction } from "../../../types/Transaction"
+import { PencilIcon, Trash2Icon } from '@lucide/astro'
+import Dialog from "../../../components/Dialog.astro"
+import Button from "../../../components/Button.astro"
+
+interface Props {
+    transaction? : Transaction,
+    mode? : 'simple' | 'detailed'
+}
+
+const { 
+    transaction,
+    mode = 'detailed'
+}= Astro.props
+---
+
+<transaction-item 
+    data-isdeleted={transaction?.isDeleted}
+    class="relative flex items-center pb-6 border-b border-red/20  data-[isdeleted=true]:opacity-30"
+    {...transaction}
+>
+
+    <transaction-info>
+
+        <transaction-date  
+            class="block text-sm text-accent-text mb-1 border border-transparent rounded" 
+        />
+
+        <transaction-description 
+            class="block font-semibold text-lg mb-2 border border-transparent data-[iseditable=true]:hover:border-slate-300 rounded" 
+        />
+
+        <transaction-budget      class="bg-blue text-black inline-block px-3 py-1 text-sm font-semibold rounded-xl tracking-wide first-letter:uppercase" />
+
+        { mode === 'detailed' &&
+            <span class="block sm:inline-block mt-3 sm:mt-auto sm:ml-2 text-sm text-accent-text tracking-wide capitalize">
+                <transaction-account-name />
+                &#9679;
+                <transaction-account-type />
+                <transaction-account-number />
+            </span>
+        }
+
+    </transaction-info>
+
+    <transaction-amount  
+        class="ml-auto text-2xl font-semibold font-theme border border-transparent data-[iseditable=true]:hover:border-slate-300 rounded" 
+    />
+
+    { mode === 'detailed' && 
+        <transaction-edit>
+            <button class="p-2 border border-transparent group hover:border-slate-500 rounded-lg cursor-pointer transition-colors active:scale-95">
+                <EllipsisVerticalIcon class="stroke-slate-400 group-hover:stroke-slate-500 transition-colors" />
+            </button>
+        </transaction-edit>
+    <Dialog title="Transaction Options">
+
+        <form method="post" class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12">
+
+            <h3 class="sm:col-span-2 text-lg font-semibold tracking-wide">
+                Edit Transaction
+            </h3>
+
+            <label>
+                Date: <br />
+                <input type="date" name="date" />
+            </label>
+
+            <label>
+                Description: <br />
+                <input type="text" name="description" />
+            </label>
+
+            <label>
+                Amount: <br />
+                <input type="number" name="amount" />
+            </label>
+
+            <label>
+                Budget: <br />
+                <select name="budget" class="w-full">
+                    <option>option 1</option>
+                    <option>option 2</option>
+                </select>
+            </label>
+
+            <label>
+                Account: <br />
+                <select name="acount-name" class="w-full">
+                    <option>option 1</option>
+                    <option>option 2</option>
+                </select>
+            </label>
+
+            <div class="sm:col-span-2 grid grid-cols-2 gap-4">
+                <Button variant="outline" Icon={BanIcon}>
+                    Cancel
+                </Button>
+                <Button variant="fill" Icon={SaveIcon} type="submit">
+                    Save
+                </Button>
+            </div>
+
+        </form>
+
+        <div class="grid gap-4 justify-start border-l border-blue pl-4">
+            <h3 class="text-lg font-semibold tracking-wide">Delete this transaction?</h3>
+            <p>
+                <strong>Note:</strong> This action can be undone.
+            </p>
+            <Button variant="destruct" Icon={Trash2Icon} class="w-1/2">
+                Delete Transaction
+            </Button>
+        </div>
+
+    </Dialog>
+    }
+</transaction-item>
+
+
+<script>
+import { toDateWithYear } from "../../../utils/date"
+import { toCurrency } from "../../../utils/money"
+import Qry from "../../../utils/Qry"
+
+class TransactionItem extends HTMLElement {
+
+    constructor() {
+        super()
+    }
+
+    connectedCallback() {
+        const editButton = Qry.one<HTMLButtonElement>('transaction-edit button', this)
+        const dialog = Qry.one<HTMLDialogElement>('dialog', this)
+        
+        editButton.addEventListener('click', () => dialog.showModal() )
+    }
+
+    static observedAttributes = ['date', 'description', 'budget', 'amount', 'accountname', 'accounttype', 'accountnumber']
+
+    attributeChangedCallback(name: string, _: any, newValue:string) {
+        const handlers: Record<string, () => void> = {
+            date : () => {
+                Qry.one('transaction-date', this).textContent = toDateWithYear(newValue)
+            },
+            description : () => {
+                Qry.one('transaction-description', this).textContent = newValue
+            },
+            budget : () => {
+                Qry.one('transaction-budget', this).textContent = newValue
+            },
+            amount : () => {
+                Qry.one('transaction-amount', this).textContent = toCurrency(newValue)
+            },
+            accountname : () => {
+                Qry.one('transaction-account-name', this).textContent = newValue
+            },
+            accounttype : () => {
+                Qry.one('transaction-account-type', this).textContent = newValue
+            },
+            accountnumber : () => {
+                Qry.one('transaction-account-number', this).textContent = newValue
+            },
+        }
+        if( handlers[name] ) {
+            handlers[name]()
+        }
+    }
+}
+
+customElements.define('transaction-item', TransactionItem)
+
+document.addEventListener('astro:page-load', () => {
+    const dialog = document.querySelector('dialog')
+    dialog?.showModal()
+})
+</script>
+

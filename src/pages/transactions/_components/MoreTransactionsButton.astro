@@ -1,0 +1,43 @@
+---
+---
+<button 
+    id="more-transactions-button" 
+    class="bg-white p-6 mt-6 rounded-xl mb-36 w-full cursor-pointer text-lg hover:bg-orange"
+>
+    More Transactions
+</button>
+
+
+<script>
+import Qry from "../../../utils/Qry"
+import { getTransactions } from "../_services/get-transactions"
+import { renderTransactions } from "../_services/render-transactions"
+
+document.addEventListener('astro:page-load', () => {
+
+    let page = 1
+
+	const moreTransactionsButton = Qry.one<HTMLButtonElement>('#more-transactions-button')
+	moreTransactionsButton.addEventListener('click', () => loadNextTransactionPage() )
+
+    async function loadNextTransactionPage() {
+
+		const transactions = await getTransactions(1, {
+            by : 'recent',
+            page : page,
+            perPage : 50
+        })
+        
+        if( !transactions.data ) {
+            return
+        }
+        
+        renderTransactions(transactions.data)
+        page += 1
+
+        if( page === transactions.totalPages) {
+            moreTransactionsButton.remove()
+        }
+    }
+})
+</script>

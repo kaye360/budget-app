@@ -1,0 +1,42 @@
+---
+import ClientRouter from "astro/components/ClientRouter.astro"
+import NavLink from "../components/NavLink.astro"
+import "../styles/main.css"
+import '@fontsource/lato'
+import { SkullIcon, LayoutDashboardIcon, ArrowLeftRight, Calendar, ChartColumnDecreasing, ChartColumnIncreasing, CircleUserRoundIcon } from "@lucide/astro"
+const auth = await Astro.session?.get('auth')
+---
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Budget-App</title>
+        <ClientRouter />
+	</head>
+	<body class="min-h-screen bg-gradient-to-br from-bg-1 to-bg-2 bg-fixed text-base-text font-base">
+        <header class="flex items-center justify-between gap-4 p-4 text-blue">
+            <a href="/" class="flex items-center gap-1 font-theme">
+                <SkullIcon size={30} />
+                <span class="text-xl font-semibold tracking-wide">SKLbudget</span>
+            </a>
+            { auth && 
+                <a href="/profile">
+                    <CircleUserRoundIcon width="30" height="30" />
+                </a>
+            }
+        </header>
+        <div class="fixed bottom-4 w-full z-[9999]">
+            <nav class="flex w-[80vw] md:w-fit justify-between mx-auto bg-bg-1/90 backdrop-blur-lg rounded-md text-sm">
+                <NavLink href="/" title="Dashboard" Icon={LayoutDashboardIcon} />
+                <NavLink href="/transactions" title="Transactions" Icon={ArrowLeftRight} />
+                <NavLink href="/budgets" title="Budgets" Icon={Calendar} />
+                <NavLink href="/debt" title="Debt Tracker" Icon={ChartColumnDecreasing} />
+                <NavLink href="/income" title="Income Tracker" Icon={ChartColumnIncreasing} />
+            </nav>
+        </div>
+        <main class="p-4">
+            <slot />
+        </main>
+	</body>
+</html>

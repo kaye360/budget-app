@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<'dialog'> {
+    title : string
+}
+
+const {
+    title,
+} = Astro.props
+
+---
+
+<dialog class="backdrop:bg-bg-1 md:backdrop:bg-bg-1/95 " closedby="any" >
+    <div class="fixed position-center p-8 rounded-xl shadow-blue/10 shadow-lg w-[90vw] sm:w-auto sm:min-w-[600px] text-base-text">
+        <h3 class="font-semibold text-2xl text-base-text mb-8">
+            {title}
+        </h3>
+        <slot />
+    </div>
+</dialog>

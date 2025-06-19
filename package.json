@@ -9,6 +9,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.9.3"
+    "@astrojs/netlify": "^6.3.4",
+    "@fontsource/lato": "^5.2.6",
+    "@lucide/astro": "^0.515.0",
+    "@supabase/supabase-js": "^2.50.0",
+    "@tailwindcss/vite": "^4.1.10",
+    "astro": "^5.9.3",
+    "tailwindcss": "^4.1.10"
   }
 }
