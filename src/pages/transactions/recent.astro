@@ -1,6 +1,6 @@
 ---
+
 import Layout from "../../layouts/Layout.astro";
-import type { Transaction as TransactionType } from "../../types/Transaction";
 import MoreTransactionsButton from "./_components/MoreTransactionsButton.astro";
 import Transaction from "./_components/Transaction.astro";
 
@@ -10,8 +10,6 @@ if( !auth ) {
 	return Astro.redirect('/')
 }
 
-const res = await fetch(new URL(`/transactions/api/get?id=${auth.userId}&perPage=1`, Astro.url))
-const transactions = await res.json()
 ---
 
 <Layout>
@@ -51,6 +49,7 @@ const transactions = await res.json()
 </Layout>
 
 <script>
+import { removeLoader } from "../../utils/loader"
 import Qry from "../../utils/Qry"
 import { getTransactions } from "./_services/get-transactions"
 import { renderTransactions } from "./_services/render-transactions"
@@ -67,6 +66,7 @@ document.addEventListener('astro:page-load', () => {
 			transactions.data, 
 			Qry.one('transaction-list')
 		)
+		removeLoader()
 	})()
 })
 </script>

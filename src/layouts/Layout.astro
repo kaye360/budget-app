@@ -1,18 +1,14 @@
 ---
 import ClientRouter from "astro/components/ClientRouter.astro"
-import NavLink from "../components/NavLink.astro"
 import "../styles/main.css"
 import '@fontsource/lato'
-import { SkullIcon, LayoutDashboardIcon, ArrowLeftRight, CalendarIcon, ChartColumnDecreasing, ChartColumnIncreasing, CircleUserRoundIcon } from "@lucide/astro"
-const auth = await Astro.session?.get('auth')
+import { SkullIcon } from "@lucide/astro"
+import Loader from "../components/Loader.astro"
+import UserAvatar from "../components/UserAvatar.astro"
+import Nav from "../components/Nav.astro"
 
-const navLinks = [
-    { href : '/dashboard', title : 'Dashboard',      Icon : LayoutDashboardIcon},
-    { href : '/transactions/recent', title : 'Transactions',   Icon : ArrowLeftRight},
-    { href : '/budgets', title : 'Budgets',        Icon : CalendarIcon},
-    { href : '/debt', title : 'Debt Tracker',   Icon : ChartColumnDecreasing},
-    { href : '/income', title : 'Income Tracker', Icon : ChartColumnIncreasing},
-]
+
+
 ---
 <html lang="en">
 	<head>
@@ -28,19 +24,10 @@ const navLinks = [
                 <SkullIcon size={30} />
                 <span class="text-xl font-semibold tracking-wide">SKLbudget</span>
             </a>
-            { auth && 
-                <a href="/profile">
-                    <CircleUserRoundIcon width="30" height="30" />
-                </a>
-            }
+            <UserAvatar />
         </header>
-        <div class="fixed bottom-4 w-full z-[9999]">
-            <nav class="flex w-[80vw] md:w-fit justify-between mx-auto bg-bg-1/90 backdrop-blur-lg rounded-md text-sm">
-                { navLinks.map( link => 
-                    <NavLink {...link}  isActive={Astro.url.pathname.startsWith(link.href)} />
-                )}
-            </nav>
-        </div>
+        <Nav />
+        <!-- <Loader /> -->
         <main class="p-4">
             <slot />
         </main>

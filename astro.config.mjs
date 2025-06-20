@@ -16,13 +16,7 @@ export default defineConfig({
   devToolbar : { 
     enabled : false
   },
-
-  redirects : {
-    '/' : '/dashboard'
-  },
-
-  prefetch : true,
-
+  
   server : {
     host : true
   }

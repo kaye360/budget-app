@@ -16,7 +16,10 @@ export async function getTransactions(
     count : number
 }> {
     const params = options ? '&' + new URLSearchParams( objectValuesToString(options) ) : ''
-    const res = await fetch(`/transactions/api/get?id=${userId}${params}`)
+    const url = typeof window === 'undefined'
+        ? import.meta.env.SITE || 'http://localhost:4321' + `/transactions/api/get?id=${userId}${params}`
+        : `/transactions/api/get?id=${userId}${params}`
+    const res = await fetch(url)
     const json = await res.json()
     return json
 }

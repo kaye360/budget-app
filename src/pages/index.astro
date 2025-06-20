@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro"
+
+const auth = await Astro.session?.get('auth')
+if( auth ) {
+    Astro.redirect('/dashboard')
+}
+---
+
+<Layout>
+
+    <form method="post" action="/auth/login">
+        <input type="text" name="password" class="border" />
+        <input type="submit" class="border px-1" />
+    </form>
+
+</Layout>

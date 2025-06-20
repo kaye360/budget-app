@@ -55,6 +55,30 @@
             transform : translateY(0px);
         }
     }
+
+    --animate-loader : loader 6s linear infinite;
+
+    @keyframes loader {
+        0% {
+            transform : none;
+        }
+        25%{
+            color: var(--color-blue);
+            transform : rotate(360deg);
+        }
+        50%{
+            color: var(--color-purple);
+            transform : rotate(720deg);
+        }
+        75%{
+            color: var(--color-red);
+            transform : rotate(1080deg);
+        }
+        100% {
+            color: var(--color-green);
+            transform : rotate(1440deg);
+        }
+    }
 }
 
 @layer components {
