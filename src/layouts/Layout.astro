@@ -3,11 +3,17 @@ import ClientRouter from "astro/components/ClientRouter.astro"
 import "../styles/main.css"
 import '@fontsource/lato'
 import { SkullIcon } from "@lucide/astro"
-import Loader from "../components/Loader.astro"
+import Loader from "../components/Loader/Loader.astro"
 import UserAvatar from "../components/UserAvatar.astro"
 import Nav from "../components/Nav.astro"
 
+interface Props {
+    loader? : boolean
+}
 
+const { 
+    loader = false
+} = Astro.props
 
 ---
 <html lang="en">
@@ -22,12 +28,12 @@ import Nav from "../components/Nav.astro"
         <header class="flex items-center justify-between gap-4 p-4 mb-4 text-blue">
             <a href="/" class="flex items-center gap-1 font-theme">
                 <SkullIcon size={30} />
-                <span class="text-xl font-semibold tracking-wide">SKLbudget</span>
+                <span class="text-xl font-semibold tracking-wide">BudgetApp</span>
             </a>
             <UserAvatar />
         </header>
         <Nav />
-        <!-- <Loader /> -->
+        { loader && <Loader /> }
         <main class="p-4">
             <slot />
         </main>

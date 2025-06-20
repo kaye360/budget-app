@@ -12,7 +12,7 @@ if( !auth ) {
 
 ---
 
-<Layout>
+<Layout loader>
 	
 	<filter-options class="flex items-center gap-4 rounded mb-8 text-sm">
 		<a 
@@ -49,7 +49,8 @@ if( !auth ) {
 </Layout>
 
 <script>
-import { removeLoader } from "../../utils/loader"
+
+import { Loader } from "../../components/Loader/loader"
 import Qry from "../../utils/Qry"
 import { getTransactions } from "./_services/get-transactions"
 import { renderTransactions } from "./_services/render-transactions"
@@ -66,7 +67,8 @@ document.addEventListener('astro:page-load', () => {
 			transactions.data, 
 			Qry.one('transaction-list')
 		)
-		removeLoader()
+		Loader.remove()
 	})()
+
 })
 </script>
