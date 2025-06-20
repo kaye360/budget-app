@@ -1,0 +1,69 @@
+---
+import { BanIcon, SaveIcon, Trash2Icon } from "@lucide/astro";
+import Button from "../../../components/Button.astro";
+import Modal from "../../../components/Modal.astro";
+---
+
+<Modal title="Transaction Options">
+
+    <form method="post" class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12">
+
+        <h3 class="sm:col-span-2 text-lg font-semibold tracking-wide">
+            Edit Transaction
+        </h3>
+
+        <label>
+            Date: <br />
+            <input type="date" name="date" />
+        </label>
+
+        <label>
+            Description: <br />
+            <input type="text" name="description" />
+        </label>
+
+        <label>
+            Amount: <br />
+            <input type="text" name="amount" />
+        </label>
+
+        <label>
+            Budget: <br />
+            <select name="budget" class="w-full">
+                <option>option 1</option>
+                <option>option 2</option>
+            </select>
+        </label>
+
+        <label>
+            Account: <br />
+            <select name="acount-name" class="w-full">
+                <option>option 1</option>
+                <option>option 2</option>
+            </select>
+        </label>
+
+        <div class="sm:col-span-2 grid grid-cols-2 gap-4">
+            <close-modal-button>
+                <Button variant="outline" Icon={BanIcon} class="w-full block">
+                    Cancel
+                </Button>
+            </close-modal-button>
+            <Button variant="fill" Icon={SaveIcon} type="submit">
+                Save
+            </Button>
+        </div>
+
+    </form>
+
+    <div class="grid gap-4 justify-start border-l border-blue pl-4">
+        <h3 class="text-lg font-semibold tracking-wide">Delete this transaction?</h3>
+        <p>
+            <strong>Note:</strong> This action can be undone.
+        </p>
+        <Button variant="destruct" Icon={Trash2Icon} class="w-1/2">
+            Delete Transaction
+        </Button>
+    </div>
+
+</Modal>

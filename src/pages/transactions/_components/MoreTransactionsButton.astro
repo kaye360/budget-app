@@ -32,7 +32,10 @@ document.addEventListener('astro:page-load', () => {
             return
         }
         
-        renderTransactions(transactions.data)
+		renderTransactions(
+			transactions.data, 
+			Qry.one('transaction-list')
+		)
         page += 1
 
         if( page === transactions.totalPages) {
