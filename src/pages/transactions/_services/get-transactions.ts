@@ -16,8 +16,9 @@ export async function getTransactions(
     count : number
 }> {
     const params = options ? '&' + new URLSearchParams( objectValuesToString(options) ) : ''
+    const base = import.meta.env.DEV ? 'http://localhost:4321' : import.meta.env.SITE
     const url = typeof window === 'undefined'
-        ? import.meta.env.SITE || 'http://localhost:4321' + `/transactions/api/get?id=${userId}${params}`
+        ? `${base}/transactions/api/get?id=${userId}${params}`
         : `/transactions/api/get?id=${userId}${params}`
     const res = await fetch(url)
     const json = await res.json()
