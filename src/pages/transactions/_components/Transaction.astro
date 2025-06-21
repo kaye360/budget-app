@@ -69,7 +69,9 @@ class TransactionItem extends HTMLElement {
         const editButton = Qry.one<HTMLButtonElement>('transaction-edit button', this)
         const dialog = Qry.one<HTMLDialogElement>('dialog', this)
         
-        editButton.addEventListener('click', () => dialog.showModal() )
+        if( editButton && dialog ) {
+            editButton.addEventListener('click', () => dialog.showModal() )
+        }
     }
 
     static observedAttributes = ['date', 'description', 'budget', 'amount', 'accountname', 'accounttype', 'accountnumber']
@@ -77,29 +79,29 @@ class TransactionItem extends HTMLElement {
     attributeChangedCallback(name: string, _: any, newValue:string) {
         const handlers: Record<string, () => void> = {
             date : () => {
-                Qry.one('transaction-date', this).textContent = toDateWithYear(newValue)
-                Qry.one<HTMLInputElement>('input[name=date]', this).value = newValue.slice(0,10)
+                Qry.setTextContent( toDateWithYear(newValue), 'transaction-date', this )
+                Qry.setValue( newValue.slice(0,10), 'input[name=date]', this )
             },
             description : () => {
-                Qry.one('transaction-description', this).textContent = newValue
-                Qry.one<HTMLInputElement>('input[name=description]', this).value = newValue
+                Qry.setTextContent( newValue, 'transaction-description', this )
+                Qry.setValue( newValue, 'input[name=description]', this ) 
             },
             budget : () => {
-                Qry.one('transaction-budget', this).textContent = newValue
-                Qry.one<HTMLInputElement>('select[name=budget]', this).value = newValue
+                Qry.setTextContent( newValue, 'transaction-budget', this )
+                Qry.setValue( newValue, 'select[name=budget]', this )
             },
             amount : () => {
-                Qry.one('transaction-amount', this).textContent = toCurrency(newValue)
-                Qry.one<HTMLInputElement>('input[name=amount]', this).value = toCurrency(newValue).replace('$', '')
+                Qry.setTextContent( toCurrency(newValue), 'transaction-amount', this )
+                Qry.setValue( toCurrency(newValue).replace('$', ''), 'input[name=amount]', this )
             },
             accountname : () => {
-                Qry.one('transaction-account-name', this).textContent = newValue
+                Qry.setTextContent( newValue, 'transaction-account-name', this )
             },
             accounttype : () => {
-                Qry.one('transaction-account-type', this).textContent = newValue
+                Qry.setTextContent( newValue, 'transaction-account-type', this )
             },
             accountnumber : () => {
-                Qry.one('transaction-account-number', this).textContent = newValue
+                Qry.setTextContent( newValue, 'transaction-account-number', this )
             },
         }
         if( handlers[name] ) {
@@ -109,11 +111,11 @@ class TransactionItem extends HTMLElement {
 }
 customElements.define('transaction-item', TransactionItem)
 
-if( import.meta.env.DEV ) {
+// if( import.meta.env.DEV ) {
     // document.addEventListener('astro:page-load', () => {
     //     const dialog = document.querySelector('dialog')
     //     dialog?.showModal()
     // })
-}
+// }
 </script>
 

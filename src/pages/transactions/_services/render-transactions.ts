@@ -6,6 +6,10 @@ export function renderTransactions(transactions: Transaction[], transactionList:
     transactions.map( t => {
         const transactionTemplate = Qry.one<HTMLTemplateElement>('#transaction-template')
         
+        if( !transactionTemplate ) {
+            return
+        }
+
         const transactionFragment = transactionTemplate.content.cloneNode(true) as DocumentFragment
         const transactionItem = Qry.one('transaction-item', transactionFragment) as HTMLElement
 

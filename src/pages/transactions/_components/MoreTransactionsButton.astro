@@ -18,7 +18,9 @@ document.addEventListener('astro:page-load', () => {
     let page = 1
 
 	const moreTransactionsButton = Qry.one<HTMLButtonElement>('#more-transactions-button')
-	moreTransactionsButton.addEventListener('click', () => loadNextTransactionPage() )
+    if( moreTransactionsButton ) {
+        moreTransactionsButton.addEventListener('click', () => loadNextTransactionPage() )
+    }
 
     async function loadNextTransactionPage() {
 

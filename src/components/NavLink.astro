@@ -13,7 +13,7 @@ const { href, title, Icon, isActive } = Astro.props
 <a 
     href={href} 
     class:list={[
-        "relative flex flex-col items-center p-4 hover:text-red active:scale-95",
+        "relative flex flex-col items-center p-4 hover:text-red active:scale-95 active:text-red",
         isActive && 'text-blue'
     ]}
 >
@@ -23,8 +23,26 @@ const { href, title, Icon, isActive } = Astro.props
     </span>
     { isActive &&
         <span 
-            class="absolute bottom-0 left-0 right-0 bg-blue h-1 rounded-full"
+            class="absolute bottom-0 left-0 right-0 bg-red h-1 rounded-full"
             transition:name="navlink-active" 
         />
     }
 </a>
+
+
+<script>
+import Qry from "../utils/Qry"
+
+document.addEventListener('astro:page-load', () => {
+    const navLinks = Qry.all<HTMLAnchorElement>('nav a')
+    const main = Qry.one('main')
+    navLinks.forEach( link => {
+        link.addEventListener('click', () => {
+            setTimeout( () => {
+                main.classList.add('opacity-0')
+            }, 500)
+        })
+    })
+})
+
+</script>

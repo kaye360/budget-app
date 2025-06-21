@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/netlify": "^6.3.4",
+    "@fontsource-variable/sora": "^5.2.6",
     "@fontsource/lato": "^5.2.6",
     "@lucide/astro": "^0.515.0",
     "@supabase/supabase-js": "^2.50.0",

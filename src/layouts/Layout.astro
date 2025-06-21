@@ -2,6 +2,7 @@
 import ClientRouter from "astro/components/ClientRouter.astro"
 import "../styles/main.css"
 import '@fontsource/lato'
+import '@fontsource-variable/sora'
 import { SkullIcon } from "@lucide/astro"
 import Loader from "../components/Loader/Loader.astro"
 import UserAvatar from "../components/UserAvatar.astro"
@@ -35,7 +36,7 @@ const {
         </header>
         <Nav />
         { loader && <Loader /> }
-        <main class="p-4">
+        <main class="p-4 transition-opacity">
             <slot />
         </main>
 	</body>
