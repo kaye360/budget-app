@@ -49,7 +49,7 @@ const {
 
     { mode === 'detailed' && 
         <transaction-edit>
-            <button class="p-2 border border-transparent group hover:border-slate-500 rounded-lg cursor-pointer transition-colors active:scale-95">
+            <button class="p-2 ml-2 border border-red/30 group hover:border-slate-500 rounded-lg cursor-pointer transition-colors active:scale-95">
                 <EllipsisVerticalIcon class="stroke-slate-400 group-hover:stroke-slate-500 transition-colors" />
             </button>
         </transaction-edit>
@@ -59,7 +59,6 @@ const {
 
 
 <script>
-import { toDateWithYear } from "../../../utils/date"
 import { toCurrency } from "../../../utils/money"
 import Qry from "../../../utils/Qry"
 
@@ -74,7 +73,7 @@ class TransactionItem extends HTMLElement {
         }
     }
 
-    static observedAttributes = ['date', 'description', 'budget', 'amount', 'accountname', 'accounttype', 'accountnumber']
+    static observedAttributes = ['date', 'description', 'budget', 'amount', 'accountname', 'accounttype', 'accountnumber', 'isdeleted']
 
     attributeChangedCallback(name: string, _: any, newValue:string) {
         const handlers: Record<string, () => void> = {
@@ -103,6 +102,9 @@ class TransactionItem extends HTMLElement {
             accountnumber : () => {
                 Qry.setTextContent( newValue, 'transaction-account-number', this )
             },
+            isdeleted : () => {
+                this.setAttribute('data-isdeleted', this.getAttribute('isdeleted') || 'false' )
+            }
         }
         if( handlers[name] ) {
             handlers[name]()
@@ -111,13 +113,13 @@ class TransactionItem extends HTMLElement {
 }
 customElements.define('transaction-item', TransactionItem)
 
-if( import.meta.env.DEV ) {
-    document.addEventListener('astro:page-load', () => {
-        setTimeout( () => {
-            const dialog = document.querySelectorAll('dialog')
-            dialog[1]?.showModal()
-        }, 1000)
-    })
-}
+// if( import.meta.env.DEV ) {
+//     document.addEventListener('astro:page-load', () => {
+//         setTimeout( () => {
+//             const dialog = document.querySelectorAll('dialog')
+//             dialog[1]?.showModal()
+//         }, 1000)
+//     })
+// }
 </script>
 

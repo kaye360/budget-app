@@ -136,10 +136,25 @@ class TransactionDelete extends HTMLElement {
         Qry.one<HTMLFormElement>('button', this)?.addEventListener('click', this.handleClick)
     }
 
-    handleClick = () => {
-        // get transaction-item id
-        // send to delete route
-        console.log('clicked')
+    handleClick = async () => {
+        const transaction = this.closest('transaction-item')
+        const transactionId = transaction?.id
+
+        const res = await fetch('/transactions/api/delete', {
+            method : 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({transactionId})
+        })
+        const json = await res.json()
+
+        if( json.error ) {
+            console.warn('failed to delete transaction')
+            return 
+        }
+
+        transaction?.setAttribute('isdeleted', "true")
     }
 
 }
