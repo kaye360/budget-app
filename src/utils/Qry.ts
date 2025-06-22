@@ -4,7 +4,7 @@ export default class Qry {
     public static one<T extends Element = Element>(
         selector: string, 
         context: Document | DocumentFragment | HTMLElement = document
-    ): T {
+    ): T | null {
         return context.querySelector(selector) as T
     }
 
