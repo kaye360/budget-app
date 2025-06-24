@@ -1,7 +1,8 @@
 ---
 import { BanIcon, SaveIcon, Trash2Icon } from "@lucide/astro";
-import Button from "../../../components/Button.astro";
+import Button from "../../../components/Button/Button.astro";
 import Modal from "../../../components/Modal.astro";
+import LoadingButton from "../../../components/Button/LoadingButton.astro";
 ---
 
 <Modal title="Transaction Options">
@@ -51,9 +52,14 @@ import Modal from "../../../components/Modal.astro";
                         Cancel
                     </Button>
                 </close-modal-button>
-                <Button variant="fill" Icon={SaveIcon} type="submit">
-                    Save
-                </Button>
+                <LoadingButton 
+                    state={{ default : 'Save', loading : 'Saving...', error : 'Failed.', success : 'Saved!' }}
+                    variant="fill" 
+                    Icon={SaveIcon} 
+                    type="submit"
+                    class="w-full"
+                >
+                </LoadingButton>
             </div>
     
         </form>
@@ -61,7 +67,7 @@ import Modal from "../../../components/Modal.astro";
 
     <transaction-delete>
         <div class="grid gap-4 justify-start border-l border-blue pl-4">
-            <h3 class="text-lg font-semibold tracking-wide">Delete this editaction?</h3>
+            <h3 class="text-lg font-semibold tracking-wide">Delete this action?</h3>
             <p>
                 <strong>Note:</strong> This action can be undone.
             </p>
@@ -74,6 +80,7 @@ import Modal from "../../../components/Modal.astro";
 </Modal>
 
 <script>
+import { startButtonLoadingAnimation, endButtonLoadingAnimation } from "../../../utils/animation"
 import Qry from "../../../utils/Qry"
 
 class TransactionEdit extends HTMLElement {
@@ -85,10 +92,13 @@ class TransactionEdit extends HTMLElement {
     handleSubmit = async (e: Event) => {
         e.preventDefault()
         const form = e.target
+        const submitLoadingButton = Qry.one<HTMLButtonElement>('loading-button', this)
 
         if( !(form instanceof HTMLFormElement)) {
             return 
         }
+
+        submitLoadingButton?.setAttribute('state', 'loading')
 
         const formData = new FormData(form)
 
@@ -104,15 +114,18 @@ class TransactionEdit extends HTMLElement {
         const result = await this.updateTransaction(updatedTransaction)
 
         if( result.error ) {
+            submitLoadingButton?.setAttribute('state', 'error')
             console.warn('Error updating transaction', result.error)
             return 
         }
-
+        
         const transaction = form.closest('transaction-item')
-
+        
         transaction?.setAttribute('amount', String(formData.get('amount')) )
         transaction?.setAttribute('date', String(formData.get('date')) )
         transaction?.setAttribute('description', String(formData.get('description')) )
+
+        submitLoadingButton?.setAttribute('state', 'success')
     }
 
     updateTransaction = async (updatedTransaction: object) => {

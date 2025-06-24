@@ -8,7 +8,7 @@ export async function getTransactions(
 	    by? : string,
 	    page? : number,
 	    perPage? : number,
-	    month? : number
+	    month? : number,
     }
 ) : Promise<{
     data : Transaction[],

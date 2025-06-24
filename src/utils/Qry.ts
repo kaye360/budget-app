@@ -3,8 +3,12 @@ export default class Qry {
 
     public static one<T extends Element = Element>(
         selector: string, 
-        context: Document | DocumentFragment | HTMLElement = document
+        context: Document | DocumentFragment | HTMLElement | null = document
     ): T | null {
+        if( !context ) {
+            console.warn('Invalid context')
+            return null
+        }
         return context.querySelector(selector) as T
     }
 

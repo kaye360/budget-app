@@ -1,0 +1,137 @@
+---
+import Button from "./Button.astro";
+import type { ButtonProps } from "./type";
+
+interface Props extends ButtonProps {
+    state : {
+        [key in 'default' | 'loading' | 'error' | 'success'] : string
+    }
+}
+
+const { 
+    state,
+    Icon,
+    variant,
+    class : className = '',
+    ...props
+} = Astro.props
+
+---
+
+
+<loading-button
+    state={'default'}
+>
+    <Button {variant} {Icon} class={className} {...props} >
+        <default-state class="inline-block">{state.default}</default-state>
+        <loading-state class="inline-block">{state.loading}</loading-state>
+        <error-state class="inline-block">{state.error}</error-state>
+        <success-state class="inline-block">{state.success}</success-state>       
+    </Button>
+</loading-button>
+
+<script>
+import Qry from "../../utils/Qry"
+
+type ValidState = 'default' | 'loading' | 'error' | 'success'
+
+class LoadingButton extends HTMLElement {
+
+    connectedCallback() {
+        const loadingEl = Qry.one('loading-state', this)
+        if( loadingEl ) {
+            loadingEl.innerHTML = this.createWavyText(loadingEl.textContent)
+        }
+    }
+
+    private validStates = ['default', 'loading', 'error', 'success']
+
+    static observedAttributes = ['state']
+
+    attributeChangedCallback(name: string, prevState: ValidState, newState : ValidState) {
+
+        // WHen state changes:
+        if( name === 'state' ) {
+
+            // get newState of state = default | loading | error | success
+            if( !this.validStates.includes(newState) ) {
+                console.warn('invalid state', newState)
+                return
+            }
+
+            // Show current state
+            const buttonText = {
+                default : Qry.one('default-state', this),
+                loading : Qry.one('loading-state', this),
+                error : Qry.one('error-state', this),
+                success : Qry.one('success-state', this),
+            }
+
+            // If no previous state then initialize
+            if( !prevState) {
+                buttonText.loading?.classList.add('!hidden')
+                buttonText.error?.classList.add('!hidden')
+                buttonText.success?.classList.add('!hidden')
+            }
+
+            if( !(prevState in buttonText) ) {
+                return
+            }
+
+            const isSuccessOrError = newState === 'error' || newState === 'success'
+
+            // If is success or error, delay everything
+            // This allows the loading state to be visible and not flash by
+            setTimeout( () => {
+
+                // Slide existing text away
+                buttonText[prevState]?.classList.add('animate-clip-swipe-away')
+                
+
+                // Hide existing text and slide new text in
+                setTimeout( () => {
+                    buttonText[prevState]?.classList.remove('animate-clip-swipe-away')
+                    buttonText[prevState]?.classList.add('!hidden')
+                    
+                    buttonText[newState]?.classList.remove('!hidden')
+                    buttonText[newState]?.classList.add('animate-clip-swipe-in')
+                }, 300)
+                
+                // Remove remaining animation classes
+                setTimeout( () => {
+                    buttonText[newState]?.classList.remove('animate-clip-swipe-in')
+                }, 600)
+
+                // Success or error, reset to initial text
+                if( newState === 'success' || newState === 'error' ) {
+                    setTimeout( () => {
+                        this.setAttribute('state', 'default')
+                    }, 5600)
+                }
+            }, isSuccessOrError ? 1000 : 0 )
+        }
+    }
+
+
+    createWavyText( text: string | null ) : string {
+        if( !text ) {
+            return ''
+        }
+
+        return text.split('').
+            map( (letter, i) => `
+                <span 
+                    class="inline-block -mr-1 animate-wave"
+                    style="animation-delay : ${i * 0.1}s"
+                >
+                    ${letter}
+                </span>
+            `)
+            .join('')
+            .replaceAll(',', '')
+    }
+}
+
+customElements.define('loading-button', LoadingButton)
+
+</script>

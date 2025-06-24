@@ -45,8 +45,13 @@ async function getRecentByUserId(
         .select('*', { count: 'exact'})
         .order('date', { ascending : false })
         .eq('userId', userId)
+		.eq('isDeleted', false)
         .range(start, end)
     return { data, count}
+}
+
+async function getDeletedByUserId() {
+
 }
 
 function invalidIdErrorResponse() {

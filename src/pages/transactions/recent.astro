@@ -14,7 +14,7 @@ if( !auth ) {
 
 <Layout loader>
 	
-	<filter-options class="flex items-center gap-2 rounded mb-8 text-sm w-full overflow-x-scrolld">
+	<filter-options class="flex items-center gap-2 rounded mb-8 text-xs w-full overflow-x-auto sm:overflow-x-visible">
 		<a 
 			class="px-3 py-1 rounded-full border border-accent-text bg-accent-text text-black font-semibold"
 			href="/transactions/recent"
@@ -25,13 +25,13 @@ if( !auth ) {
 			class="px-3 py-1 rounded-full border border-accent-text font-semibold"
 			href="/transactions/monthly"
 		>
-			Monthly
+			Month
 		</a>
 		<a 
 			class="px-3 py-1 rounded-full border border-accent-text font-semibold"
 			href="/transactions/monthly"
 		>
-			Budgets
+			Budget
 		</a>
 		<a 
 			class="px-3 py-1 rounded-full border border-accent-text font-semibold"
@@ -39,12 +39,12 @@ if( !auth ) {
 		>
 			Search
 		</a>
-		<!-- <a 
+		<a 
 			class="px-3 py-1 rounded-full border border-accent-text font-semibold"
 			href="/transactions/deleted"
 		>
 			Deleted
-		</a> -->
+		</a>
 	</filter-options>
 
 	<transaction-list class="grid gap-6">
