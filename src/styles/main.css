@@ -97,9 +97,11 @@
     @keyframes clip-swipe-away {
           0% {
             transform: translateY(0);
+            opacity : 1;
         }
         100% {
             transform: translateY(-2em); /* slight upward motion */
+            opacity : 0;
         }
     }
 
@@ -108,9 +110,11 @@
     @keyframes clip-swipe-in {
         0% {
             transform: translateY(1em); /* slight upward motion */
+            opacity : 0;
         }
         100% {
             transform: translateY(0);
+            opacity : 1;
         }
     }
 }

@@ -1,0 +1,135 @@
+---
+import { BanIcon, SaveIcon } from "@lucide/astro";
+import Button from "../../../components/Button/Button.astro";
+import LoadingButton from "../../../components/Button/LoadingButton.astro";
+---
+
+<transaction-edit>
+
+    <form class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12">
+
+        <h3 class="sm:col-span-2 text-lg font-semibold tracking-wide">
+            Edit Transaction
+        </h3>
+
+        <label>
+            Date: <br />
+            <input type="date" name="date" />
+        </label>
+
+        <label>
+            Description: <br />
+            <input type="text" name="description" />
+        </label>
+
+        <label>
+            Amount: <br />
+            <input type="text" name="amount" />
+        </label>
+
+        <label>
+            Budget: <br />
+            <select name="budget" class="w-full">
+                <option selected value="budget-1">budget 1</option>
+                <option value="budget-2">budget 2</option>
+            </select>
+        </label>
+
+        <label>
+            Account: <br />
+            <select name="account-name" class="w-full">
+                <option value="account-1">account 1</option>
+                <option selected value="account-2">account 2</option>
+            </select>
+        </label>
+
+        <div class="sm:col-span-2 grid grid-cols-2 gap-4">
+            <close-modal-button>
+                <Button variant="outline" Icon={BanIcon} type="button" class="w-full block">
+                    Cancel
+                </Button>
+            </close-modal-button>
+            <LoadingButton 
+                state={{ initial : 'Save', loading : 'Saving...', error : ' Failed', success : 'Saved!' }}
+                variant="fill" 
+                Icon={SaveIcon} 
+                type="submit"
+                class="w-full"
+            >
+            </LoadingButton>
+        </div>
+
+    </form>
+</transaction-edit>
+
+
+<script>
+import Qry from "../../../utils/Qry"
+
+class TransactionEdit extends HTMLElement {
+    
+    connectedCallback() {
+        Qry.one<HTMLFormElement>('form', this)?.addEventListener('submit', this.handleSubmit)
+    }
+
+    handleSubmit = async (e: Event) => {
+        e.preventDefault()
+        const form = e.target
+        const submitLoadingButton = Qry.one<HTMLButtonElement>('loading-button', this)
+
+        if( !(form instanceof HTMLFormElement)) {
+            return 
+        }
+
+        submitLoadingButton?.setAttribute('state', 'loading')
+
+        const formData = new FormData(form)
+
+        const updatedTransaction = {
+            id : form.closest('transaction-item')?.id,
+            date : formData.get('date'),
+            description : formData.get('description'),
+            amount : formData.get('amount'),
+            budget : formData.get('budget'),
+            accountName : formData.get('account-name'),
+        }
+
+        const result = await this.updateTransaction(updatedTransaction)
+
+        if( result.error ) {
+            submitLoadingButton?.setAttribute('state', 'error')
+            console.warn('Error updating transaction', result.error)
+            return 
+        }
+        
+        const transaction = form.closest('transaction-item')
+        
+        transaction?.setAttribute('amount', String(formData.get('amount')) )
+        transaction?.setAttribute('date', String(formData.get('date')) )
+        transaction?.setAttribute('description', String(formData.get('description')) )
+        transaction?.setAttribute('budget', String(formData.get('budget')) )
+
+        submitLoadingButton?.setAttribute('state', 'success')
+    }
+
+    updateTransaction = async (updatedTransaction: object) => {
+
+        try{
+            const res = await fetch('/transactions/api/update', {
+                method : 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedTransaction)
+            })
+            const json = await res.json()
+            return json
+        } catch (e) {
+            return { error : e}
+        }
+    }
+
+}
+
+customElements.define('transaction-edit', TransactionEdit)
+</script>

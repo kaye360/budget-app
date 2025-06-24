@@ -16,7 +16,7 @@ const {
 
 <transaction-item 
     data-isdeleted={transaction?.isDeleted}
-    class="relative flex items-center pb-6 border-b border-red/20  data-[isdeleted=true]:opacity-30"
+    class="relative flex items-center pb-6 border-b border-red/20  data-[isdeleted=true]:hidden transition-all max-h-[500px]"
     {...transaction}
 >
 
@@ -59,8 +59,8 @@ const {
 
 
 <script>
-import { toCurrency } from "../../../utils/money"
 import Qry from "../../../utils/Qry"
+import { toCurrency, toDateWithYear } from "../../../utils/utils"
 
 class TransactionItem extends HTMLElement {
     
@@ -78,7 +78,7 @@ class TransactionItem extends HTMLElement {
     attributeChangedCallback(name: string, _: any, newValue:string) {
         const handlers: Record<string, () => void> = {
             date : () => {
-                Qry.setTextContent( newValue, 'transaction-date', this )
+                Qry.setTextContent( toDateWithYear(newValue), 'transaction-date', this )
                 Qry.setValue( newValue , 'input[name=date]', this )
             },
             description : () => {
@@ -110,13 +110,13 @@ class TransactionItem extends HTMLElement {
 }
 customElements.define('transaction-item', TransactionItem)
 
-if( import.meta.env.DEV ) {
-    document.addEventListener('astro:page-load', () => {
-        setTimeout( () => {
-            const dialog = document.querySelectorAll('dialog')
-            dialog[1]?.showModal()
-        }, 1000)
-    })
-}
+// if( import.meta.env.DEV ) {
+//     document.addEventListener('astro:page-load', () => {
+//         setTimeout( () => {
+//             const dialog = document.querySelectorAll('dialog')
+//             dialog[1]?.showModal()
+//         }, 1000)
+//     })
+// }
 </script>
 
