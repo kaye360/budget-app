@@ -44,7 +44,7 @@ class CloseModalButton extends HTMLElement {
     
     connectedCallback() {
         const closeButton = Qry.one<HTMLButtonElement>('close-modal-button button', this)
-        closeButton.addEventListener('click', () => closeButton.closest('dialog')?.close() )
+        closeButton?.addEventListener('click', () => closeButton.closest('dialog')?.close() )
     }
 }
 

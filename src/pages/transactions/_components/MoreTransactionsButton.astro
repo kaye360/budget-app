@@ -18,9 +18,7 @@ document.addEventListener('astro:page-load', () => {
     let page = 1
 
 	const moreTransactionsButton = Qry.one<HTMLButtonElement>('#more-transactions-button')
-    if( moreTransactionsButton ) {
-        moreTransactionsButton.addEventListener('click', () => loadNextTransactionPage() )
-    }
+    moreTransactionsButton?.addEventListener('click', () => loadNextTransactionPage() )
 
     async function loadNextTransactionPage() {
 
@@ -41,7 +39,7 @@ document.addEventListener('astro:page-load', () => {
         page += 1
 
         if( page === transactions.totalPages) {
-            moreTransactionsButton.remove()
+            moreTransactionsButton?.remove()
         }
     }
 })
