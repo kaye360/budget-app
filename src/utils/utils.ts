@@ -19,6 +19,20 @@ export function sleep (ms: number) {
 /**
  * 
  * 
+ * Number functions
+ * 
+ */
+
+/**
+ * 
+ */
+export function range(start: number, end: number) : number[] {
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+/**
+ * 
+ * 
  * Date functions
  * 
  */

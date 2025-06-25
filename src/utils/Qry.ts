@@ -14,7 +14,7 @@ export default class Qry {
 
     public static all<T extends Element = Element>(
         selector: string, 
-        context: Document | DocumentFragment | HTMLElement = document
+        context: Document | DocumentFragment | HTMLElement | Element = document
     ): T[] {
         return Array.from( context.querySelectorAll(selector) ) as T[]
     }

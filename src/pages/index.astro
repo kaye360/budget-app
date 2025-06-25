@@ -18,7 +18,7 @@ if( auth ) {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{APP_NAME}</title>
+		<title>{APP_NAME} - {import.meta.env.MODE}</title>
         <ClientRouter />
 	</head>
 	<body class="min-h-screen bg-gradient-to-br from-bg-1 to-bg-2 bg-fixed text-base-text font-base">

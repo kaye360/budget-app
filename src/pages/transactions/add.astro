@@ -1,0 +1,138 @@
+---
+import { BanknoteArrowUpIcon, ImportIcon } from "@lucide/astro";
+import LoadingButton from "../../components/Button/LoadingButton.astro";
+import Layout from "../../layouts/Layout.astro";
+import TransactionCreate from "./_components/TransactionCreate.astro";
+---
+
+<Layout>
+
+    <div class="flex items-center justify-between mb-6">
+        <h3 class="sm:col-span-2 text-lg font-semibold tracking-wide mb-4">
+            Add Transactions
+        </h3>
+        <div class="flex items-stretch gap-2">
+            <select id="transaction-num-select" class="!w-fit bg-bg-2">
+                <option value="1">Adding 1 Transaction</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+            <button class="flex items-center gap-1 border border-red/60 rounded-md px-2 py-1 cursor-pointer">
+                Import
+                <ImportIcon />
+            </button>
+        </div>
+    </div>
+
+    <form>
+
+        <transaction-create-list class="grid gap-4">
+            <TransactionCreate />
+        </transaction-create-list>
+
+        <template id="transaction-create">
+            <TransactionCreate />
+        </template>
+
+        <div class="sm:col-span-2 grid grid-cols-2 gap-4">
+            <LoadingButton 
+                state={{ initial : 'Save', loading : 'Saving...', error : ' Failed', success : 'Saved!' }}
+                variant="fill" 
+                Icon={BanknoteArrowUpIcon} 
+                type="submit"
+                class="w-full"
+            >
+            </LoadingButton>
+        </div>
+    </form>
+
+</Layout>
+
+<script>
+import Qry from "../../utils/Qry"
+
+document.addEventListener('astro:page-load', () => {
+
+    const transactionCountSelect = Qry.one<HTMLSelectElement>('#transaction-num-select')
+
+    transactionCountSelect?.addEventListener('change', handleChange)
+
+    function handleChange(e: Event) {
+
+        const select = e.target
+
+        if( !(select instanceof HTMLSelectElement) ) {
+            console.warn('invalid select element')
+            return
+        }
+
+        const newTransactionCount = Number( select.value )
+        const prevTransactionCount = Qry.all('transaction-create').length
+        const difference = Math.abs( prevTransactionCount - newTransactionCount )
+
+        updateSelectTitle(select, newTransactionCount)
+
+        if ( newTransactionCount > prevTransactionCount ) {
+            addTransactions(difference)
+        }
+
+        if( newTransactionCount < prevTransactionCount ) {
+            removeTransactions(newTransactionCount)
+        }
+    }
+
+    function updateSelectTitle( select: HTMLSelectElement, currentCount: number) {
+        Array.from( select.children ).forEach( (opt, i) => {
+            i += 1
+            const plural = i !== 1 ? 's' : ''
+            opt.textContent = i === currentCount 
+                ? String(`Adding ${i} transaction${plural}`) 
+                : String(i)
+        })
+    }
+
+    function addTransactions( difference: number ) {
+
+        const createTransactionList = Qry.one('transaction-create-list')
+        const createTransactionTemplate = Qry.one<HTMLTemplateElement>('#transaction-create')
+    
+        if( !createTransactionTemplate || !createTransactionList ) {
+            console.warn('Invalid transactinTemplate or transactionList')
+            return
+        }
+
+        for( let i = 1; i <= difference; i++ ) {
+            const createTransactionFragment = createTransactionTemplate.content.cloneNode(true) as DocumentFragment
+            const createTransaction = Qry.one('transaction-create', createTransactionFragment)
+
+            if( !createTransaction) {
+                console.warn('invalid transaction-create')
+                return
+            }
+
+            const inputs = Qry.all<HTMLInputElement>('input, select', createTransaction)
+            inputs.forEach( input => {
+                const name = input.dataset.name
+                input.setAttribute( 'name', `${name}-${i}` )
+            })
+            createTransactionList.append(createTransaction)
+        }
+    }
+
+    function removeTransactions( newCount : number ) {
+        Qry.all('transaction-create').forEach( (transaction, i) => {
+            if( i+1 > newCount ) {
+                transaction.remove()
+            }
+        })
+    }
+})
+
+</script>

@@ -1,20 +1,30 @@
 ---
-import { LayoutDashboardIcon, ArrowLeftRight, CalendarIcon, ChartColumnDecreasing, ChartColumnIncreasing } from "@lucide/astro"
 import NavLink from "./NavLink.astro"
+import { LayoutDashboardIcon, ArrowLeftRight, ChartColumnIncreasingIcon, BanknoteArrowUpIcon, CircleUserRoundIcon } from "@lucide/astro"
 
 const auth = await Astro.session?.get('auth')
 
 const navLinks = [
     { href : '/dashboard', title : 'Dashboard',      Icon : LayoutDashboardIcon},
     { href : '/transactions/recent', title : 'Transactions',   Icon : ArrowLeftRight},
-    { href : '/budgets', title : 'Budgets',        Icon : CalendarIcon},
-    { href : '/debt', title : 'Debt Tracker',   Icon : ChartColumnDecreasing},
-    { href : '/income', title : 'Income Tracker', Icon : ChartColumnIncreasing},
+    { href : '/transactions/add', title : 'Add Transactions',   Icon : BanknoteArrowUpIcon},
+    { href : '/trends', title : 'Trends',   Icon : ChartColumnIncreasingIcon},
+    { href : '/profile', title : 'Profile',        Icon : CircleUserRoundIcon},
 ]
 ---
 { auth && 
-    <div class="fixed bottom-4 w-full z-[9999]">
-        <nav class="flex w-[80vw] md:w-fit justify-between mx-auto bg-bg-1/65 backdrop-blur-lg rounded-md text-sm shadow-lg shadow-blue/20">
+    <div class:list={[
+        "fixed bottom-4 w-full z-[9999] flex items-center md:items-start justify-center",
+        "md:relative  md:bottom-auto"
+    ]}>
+        <nav 
+            transition:name="nav"
+            class:list={[
+                "bg-bg-1/65 backdrop-blur-lg rounded-md shadow-lg shadow-blue/20",
+                "flex w-[80vw] md:w-full mx-auto ",
+                "md:grid md:gap-2 md:sticky md:top-16",
+            ]}
+        >
             { navLinks.map( link => 
                 <NavLink {...link}  isActive={Astro.url.pathname.startsWith(link.href)} />
             )}

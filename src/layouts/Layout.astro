@@ -23,7 +23,7 @@ const {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{APP_NAME}</title>
+		<title>{APP_NAME} - {import.meta.env.MODE}</title>
         <ClientRouter />
 	</head>
 	<body class="min-h-screen bg-gradient-to-br from-bg-1 to-bg-2 bg-fixed text-base-text font-base">
@@ -34,12 +34,16 @@ const {
             </a>
             <UserAvatar />
         </header>
-        <Nav />
-        { loader && <Loader /> }
-        <main 
-            class="p-4 transition-opacity"
-        >
-            <slot />
-        </main>
+        <div class:list={[
+            "md:grid md:grid-cols-[250px_1fr] md:gap-8"
+        ]}>
+            <Nav />
+            { loader && <Loader /> }
+            <main 
+                class="p-4 transition-opacity"
+            >
+                <slot />
+            </main>
+        </div>
 	</body>
 </html>

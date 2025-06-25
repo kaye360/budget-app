@@ -2,7 +2,7 @@ import { e as createAstro, f as createComponent, h as addAttribute, k as renderC
 import 'kleur/colors';
 import { c as createLucideIcon, A as APP_NAME, $ as $$ClientRouter, S as Skull } from '../chunks/config_C_tZx02p.mjs';
 /* empty css                                 */
-import { $ as $$Button } from '../chunks/Button_Qb-THzOg.mjs';
+import { $ as $$Button } from '../chunks/Button_C8tZvlGl.mjs';
 export { renderers } from '../renderers.mjs';
 
 const LogIn = createLucideIcon("log-in", [["path", { "d": "m10 17 5-5-5-5" }], ["path", { "d": "M15 12H3" }], ["path", { "d": "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" }]]);
@@ -15,7 +15,7 @@ const $$Index = createComponent(async ($$result, $$props, $$slots) => {
   if (auth) {
     Astro2.redirect("/dashboard");
   }
-  return renderTemplate`<html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="generator"${addAttribute(Astro2.generator, "content")}><title>${APP_NAME}</title>${renderComponent($$result, "ClientRouter", $$ClientRouter, {})}${renderHead()}</head> <body class="min-h-screen bg-gradient-to-br from-bg-1 to-bg-2 bg-fixed text-base-text font-base"> <main class="flex flex-col h-screen max-w-[500px] w-full mx-auto"> <div class="flex-1 font-theme self-stretch grid place-items-center w-full"> <div class="text-center"> ${renderComponent($$result, "SkullIcon", Skull, { "id": "logo", "width": "96", "height": "96", "class": "mx-auto mb-2", "data-astro-transition-scope": renderTransition($$result, "5bsqwlbb", "", "top-logo") })} <span class="block text-2xl font-semibold tracking-wide">BudgetApp</span> <span class="block font-semibold tracking-wide">Dead simple budgeting</span> </div> </div> <form method="post" action="/auth/login" class="shrink-0 grid gap-4 px-4 mb-24 mx-auto w-full"> <span id="error-message" class="text-red"></span> <label>
+  return renderTemplate`<html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="generator"${addAttribute(Astro2.generator, "content")}><title>${APP_NAME}</title>${renderComponent($$result, "ClientRouter", $$ClientRouter, {})}${renderHead()}</head> <body class="min-h-screen bg-gradient-to-br from-bg-1 to-bg-2 bg-fixed text-base-text font-base"> <main class="flex flex-col h-screen max-w-[500px] w-full mx-auto"> <div class="flex-1 font-theme self-stretch grid place-items-center w-full"> <div class="text-center"> ${renderComponent($$result, "SkullIcon", Skull, { "id": "logo", "width": "96", "height": "96", "class": "mx-auto mb-2", "data-astro-transition-scope": renderTransition($$result, "5bsqwlbb", "", "top-logo") })} <span class="block text-2xl font-semibold tracking-wide">BudgetApp</span> <span class="block font-semibold tracking-wide">Dead simple budgeting</span> </div> </div> <form method="post" action="/auth/login" class="shrink-0 grid gap-4 px-4 mb-24 mx-auto w-full"> <span id="error-message" class="text-red"></span> ${auth && renderTemplate`<a href="/dashboard" class="underline">Continue to dashboard</a>`} <label>
 Username
 <input type="text" name="username" class="w-full p-2 !border-blue"> </label> <label>
 Password

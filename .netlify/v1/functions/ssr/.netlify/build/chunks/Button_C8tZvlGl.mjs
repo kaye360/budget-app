@@ -11,7 +11,7 @@ const $$Button = createComponent(($$result, $$props, $$slots) => {
     ...props
   } = Astro2.props;
   return renderTemplate`${maybeRenderHead()}<button${spreadAttributes(props)}${addAttribute([
-    "relative py-2 border text-center font-semibold rounded-md cursor-pointer active:scale-95 transition-all duration-100 hover:scale-[102%] min-w-fit disabled:opacity-80 disabled:cursor-not-allowed",
+    "relative py-2 border text-center font-semibold rounded-md cursor-pointer active:scale-95 transition-all duration-100 hover:scale-[102%] min-w-fit disabled:opacity-80 disabled:cursor-not-allowed select-none",
     variant === "outline" && "border-blue text-blue hover:border-red hover:text-red",
     variant === "fill" && "bg-blue border-blue text-black hover:bg-red hover:border-red",
     variant === "ghost" && "border-transparent text-base-text",
