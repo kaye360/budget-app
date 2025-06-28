@@ -47,34 +47,28 @@ import CreateTransactionCount from "./_components/CreateTransactionCount.astro";
 
 
 <script>
-import { el } from "../../utils/El"
-import { fetchData } from "../../utils/Fetch"
+import { el } from "../../lib/el"
+import { fetchData } from "../../lib/fetch"
+
 
 document.addEventListener('astro:page-load', () => {
 
-    const form = el<HTMLFormElement>('form')
-    form?.addEventListener('submit', handleSubmit)
-
-
-    async function handleSubmit( e: SubmitEvent ) {
-        e.preventDefault()
+    el<HTMLFormElement>('form', document, form => {
+        form.addEventListener('submit', async ( e: SubmitEvent ) => {
         
-        const form = el<HTMLFormElement>('form')
+            e.preventDefault()
+            
+            const transactions = Object.fromEntries( 
+                new FormData(form).entries() 
+            )
 
-        if( !form ) {
-            console.warn('invalid form element')
-            return
-        }
-
-        const formData = new FormData(form)
-
-        const transactions = Object.fromEntries( formData.entries() )
-
-        const created = await fetchData('/api/transactions', {
-            method : 'POST',
-            body : transactions
+            const created = await fetchData('/api/transactions', {
+                method : 'POST',
+                body : transactions
+            })
         })
-    }
+    })
+
 
 })
 

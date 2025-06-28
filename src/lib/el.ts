@@ -5,13 +5,18 @@
  * 
  */
 
-type Context = Document | Element | DocumentFragment
+type Context = Document | Element | DocumentFragment | Node
 
 export function el<T extends Element>(
     selector: string,
     context: Context = document,
     callback?: (el: T) => void
 ): T | null {
+
+    if( !('querySelector' in context) ) {
+        console.warn('Invalid context')
+        return null
+    }
 
     const el = context.querySelector<T>(selector)
 
@@ -28,6 +33,11 @@ export function els<T extends Element>(
     context: Context = document,
     callback?: (el: T) => void
 ): Array<T> {
+
+    if( !('querySelector' in context) ) {
+        console.warn('Invalid context')
+        return []
+    }
 
     const els = Array.from(context.querySelectorAll<T>(selector))
 

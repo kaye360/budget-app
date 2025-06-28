@@ -1,4 +1,4 @@
-import { el } from "../../utils/El";
+import { el } from "../../lib/el";
 
 export class Loader {
 

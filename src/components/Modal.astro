@@ -38,13 +38,15 @@ const {
 
 
 <script>
-import { el } from "../utils/El"
+import { el } from "../lib/el"
+
 
 class CloseModalButton extends HTMLElement {
     
     connectedCallback() {
-        const closeButton = el<HTMLButtonElement>('close-modal-button button', this)
-        closeButton?.addEventListener('click', () => closeButton.closest('dialog')?.close() )
+        el<HTMLButtonElement>('close-modal-button button', this, button => {
+            button?.addEventListener('click', () => button.closest('dialog')?.close() )
+        })
     }
 }
 

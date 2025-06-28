@@ -1,25 +1,42 @@
 import type { Transaction } from "../../../types/Transaction";
-import { el } from "../../../utils/El";
+import { el } from "../../../lib/el";
 
-export function renderTransactions(transactions: Transaction[], transactionList: HTMLElement | null) {
+/**
+ * 
+ * Render a list of transactions onto the page
+ * 
+ */
+export function renderTransactions(
+    transactions: Transaction[], 
+    transactionList: HTMLElement | null
+) {
 
-    transactions.map( t => {
-        const transactionTemplate = el<HTMLTemplateElement>('#transaction-template')
-        
-        if( !transactionTemplate || !transactionList ) {
-            console.warn('Invalid transactinTemplate or transactionList')
-            return
-        }
+    const template = el<HTMLTemplateElement>('#transaction-template')
 
-        const transactionFragment = transactionTemplate.content.cloneNode(true) as DocumentFragment
-        const transactionItem = el('transaction-item', transactionFragment)
+    if( !transactionList || !template ) {
+        console.warn('Invalid transactionList or template')
+        return
+    }
 
-        Object.entries(t).forEach(([key, value]) => {
-            transactionItem?.setAttribute(key.toLowerCase(), String(value))
-        })
-
-        if( transactionItem ) { 
-            transactionList.appendChild(transactionItem)
-        }
+    transactions.forEach( transaction => {
+        const newTransaction = createTransactionFromTemplate(template, transaction)
+        if( newTransaction ) transactionList.appendChild(newTransaction)
     })
+}
+
+
+function createTransactionFromTemplate( 
+    template: HTMLTemplateElement,
+    transaction : Transaction
+) : Element | null {
+
+    const fragment = template.content.cloneNode(true)
+
+    const newTransaction = el('transaction-item', fragment, el => {
+        Object.entries(transaction).forEach(([key, value]) => {
+            el.setAttribute(key.toLowerCase(), String(value))
+        })
+    })
+
+    return newTransaction
 }

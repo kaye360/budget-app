@@ -59,11 +59,17 @@ const {
 
 
 <script>
-import { el } from "../../../utils/El"
-import { toCurrency, toDateWithYear } from "../../../utils/utils"
+import { el } from "../../../lib/el"
+import { toDateWithYear, toCurrency } from "../../../lib/utils"
+
 
 class TransactionItem extends HTMLElement {
     
+    /**
+     * 
+     * Add showModal event listener to edit Button
+     * 
+     */
     connectedCallback() {
         const editButton = el<HTMLButtonElement>('transaction-edit button', this)
         const dialog = el<HTMLDialogElement>('dialog', this)
@@ -73,9 +79,24 @@ class TransactionItem extends HTMLElement {
         }
     }
 
-    static observedAttributes = ['date', 'description', 'budget', 'amount', 'accountname', 'accounttype', 'accountnumber', 'isdeleted']
+    /**
+     * 
+     * Transaction attribute state and handlers
+     * 
+     */
+    static observedAttributes = [
+        'date', 
+        'description', 
+        'budget', 
+        'amount', 
+        'accountname', 
+        'accounttype', 
+        'accountnumber', 
+        'isdeleted',
+    ]
 
     attributeChangedCallback(name: string, _: any, newValue:string) {
+
         const handlers: Record<string, () => void> = {
             date : () => {
                 el('transaction-date', this, el => el.textContent = toDateWithYear(newValue) )
@@ -91,7 +112,9 @@ class TransactionItem extends HTMLElement {
             },
             amount : () => {
                 el( 'transaction-amount', this, el => el.textContent = toCurrency(newValue) )
-                el( 'input[name=amount]', this, el => el.textContent = toCurrency(newValue).replace('$', '') )
+                el<HTMLInputElement>( 'input[name=amount]', this, el => 
+                    el.value = toCurrency(newValue).replace('$', '') 
+                )
             },
             accountname : () => {
                 el('transaction-account-name', this, el => el.textContent = newValue )
@@ -108,6 +131,7 @@ class TransactionItem extends HTMLElement {
         }
     }
 }
+
 customElements.define('transaction-item', TransactionItem)
 
 // if( import.meta.env.DEV ) {

@@ -64,57 +64,66 @@ import LoadingButton from "../../../components/Button/LoadingButton.astro";
 
 
 <script>
-import { el } from "../../../utils/El"
-import { fetchData } from "../../../utils/Fetch"
+import { el } from "../../../lib/el"
+import { fetchData } from "../../../lib/fetch"
+
 
 class TransactionEdit extends HTMLElement {
     
+    /**
+     * 
+     * Edits a transaction and updates DOM
+     * 
+     */
     connectedCallback() {
-        el<HTMLFormElement>('form', this)?.addEventListener('submit', this.handleSubmit)
+        el<HTMLFormElement>('form', this, form => {
+            form.addEventListener('submit', async (e: Event) => {
+        
+                e.preventDefault()
+
+                const button = el<HTMLButtonElement>('loading-button', this)
+                const transaction = form.closest('transaction-item')
+                
+                if( !(form instanceof HTMLFormElement) || !transaction ) return 
+
+                button?.setAttribute('state', 'loading')
+
+                const formData = new FormData(form)
+                const updatedTransaction = this.getUpdatedTransaction(formData)
+
+                const result = await fetchData(`/api/transactions/${transaction.id}`, {
+                    method : 'PUT',
+                    body: updatedTransaction
+                })
+
+                if( result.error ) {
+                    button?.setAttribute('state', 'error')
+                    return 
+                }
+                
+                this.updateTransaction( transaction, formData ) 
+                button?.setAttribute('state', 'success')
+            })
+        })
     }
 
-    handleSubmit = async (e: Event) => {
-        e.preventDefault()
-        const form = e.target
-        const submitLoadingButton = el<HTMLButtonElement>('loading-button', this)
 
-        if( !(form instanceof HTMLFormElement)) {
-            return 
-        }
-
-        submitLoadingButton?.setAttribute('state', 'loading')
-
-        const formData = new FormData(form)
-        const id = form.closest('transaction-item')?.id
-
-        const updatedTransaction = {
+    getUpdatedTransaction( formData: FormData ) {
+        return {
             date : formData.get('date'),
             description : formData.get('description'),
             amount : Number(formData.get('amount')),
             budget : formData.get('budget'),
             accountName : formData.get('account-name'),
         }
+    }
 
-        const result = await fetchData(`/api/transactions/${id}`, {
-            method : 'PUT',
-            body: updatedTransaction
-        })
-        
 
-        if( result.error ) {
-            submitLoadingButton?.setAttribute('state', 'error')
-            console.warn('Error updating transaction', result.error)
-            return 
-        }
-        
-        const transaction = form.closest('transaction-item')
-        
+    updateTransaction( transaction : Element | null, formData: FormData) {
         transaction?.setAttribute('amount', String(formData.get('amount')) )
         transaction?.setAttribute('date', String(formData.get('date')) )
         transaction?.setAttribute('description', String(formData.get('description')) )
         transaction?.setAttribute('budget', String(formData.get('budget')) )
-
-        submitLoadingButton?.setAttribute('state', 'success')
     }
 }
 

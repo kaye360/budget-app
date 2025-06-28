@@ -1,5 +1,5 @@
 import type { Transaction } from "../../../types/Transaction"
-import { objectValuesToString } from "../../../utils/utils"
+import { objectValuesToString } from "../../../lib/utils"
 
 
 export async function getTransactions(

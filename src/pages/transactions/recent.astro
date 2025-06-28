@@ -3,6 +3,7 @@
 import Layout from "../../layouts/Layout.astro";
 import MoreTransactionsButton from "./_components/MoreTransactionsButton.astro";
 import Transaction from "./_components/Transaction.astro";
+import { getTransactions } from "./_lib/getTransactions";
 
 const auth = await Astro.session?.get('auth')
 
@@ -10,9 +11,15 @@ if( !auth ) {
 	return Astro.redirect('/')
 }
 
+const transactions = await getTransactions( 1, {
+	by : 'recent',
+	page : 0,
+	perPage : 50
+})
+
 ---
 
-<Layout loader>
+<Layout>
 	
 	<filter-options class="flex items-center gap-2 rounded mb-8 text-xs w-full overflow-x-auto sm:overflow-x-visible">
 		<a 
@@ -48,9 +55,9 @@ if( !auth ) {
 	</filter-options>
 
 	<transaction-list class="grid gap-6">
-		<div class="hidden">
-			<Transaction />
-		</div>
+		{ transactions.data.map( transaction => (
+			<Transaction {transaction} />
+		))}
 		<template id="transaction-template">
 			<Transaction />
 		</template>
@@ -60,27 +67,3 @@ if( !auth ) {
 
 </Layout>
 
-<script>
-
-import { Loader } from "../../components/Loader/loader"
-import { el } from "../../utils/El"
-import { getTransactions } from "./_lib/getTransactions"
-import { renderTransactions } from "./_lib/renderTransactions"
-
-document.addEventListener('astro:page-load', () => {
- 
-	(async () => {
-		const transactions = await getTransactions( 1, {
-			by : 'recent',
-			page : 0,
-			perPage : 50
-		})
-		renderTransactions(
-			transactions.data, 
-			el('transaction-list')
-		)
-		Loader.remove()
-	})()
-
-})
-</script>

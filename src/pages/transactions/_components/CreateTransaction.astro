@@ -47,17 +47,18 @@ import Button from "../../../components/Button/Button.astro";
 
 
 <script>
-import { el } from "../../../utils/El"
+import { el } from "../../../lib/el"
 
 
 class TransactionCreate extends HTMLElement {
     
     connectedCallback() {
-
-        const date = el<HTMLInputElement>('input[type=date]', this)
-        if( date ) {
+        /**
+         * Set date field with current date as default
+         */
+        el<HTMLInputElement>('input[type=date]', this, date => {
             date.value = new Date().toISOString().slice(0, 10)
-        }
+        })
     }
 }
 

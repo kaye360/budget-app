@@ -62,28 +62,39 @@ if( auth ) {
 </html>
 
 <script>
-import { el, els } from "../utils/El"
-
+import { el, els } from "../lib/el"
+import { sleep } from "../lib/utils"
 
 document.addEventListener('astro:page-load', () => {
 
-    const form = el<HTMLFormElement>('form')
-    form?.addEventListener('submit', handleSubmit)
+    /**
+     * 
+     * Login form event handler
+     * Hide elements and show loader when form is submitted
+     * 
+     */
+    const form = el<HTMLFormElement>('form', document, form => {
+        form.addEventListener('submit', handleSubmit)
+    })
     
     function handleSubmit(e: Event) {
         e.preventDefault()
     
-        els('span').forEach( span => span.classList.add('hidden'))
+        els('span', document, span => span.classList.add('hidden') )
         form?.classList.add('hidden')
-    
         el('#logo')?.classList.add('animate-loader')
     
-        setTimeout( () => {
-            form?.removeEventListener('submit', handleSubmit)
-            form?.requestSubmit()
-        }, 1000)
+        sleep(1000)
+        form?.removeEventListener('submit', handleSubmit)
+        form?.requestSubmit()
     }
 
+
+    /**
+     * 
+     * Show login error if ?witherror in url search params
+     * 
+     */
     const params = new URLSearchParams(window.location.search);
 
     if (params.has('witherror')) {

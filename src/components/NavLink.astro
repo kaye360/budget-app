@@ -32,18 +32,20 @@ const { href, title, Icon, isActive } = Astro.props
 
 
 <script>
-import { el, els } from "../utils/El"
+import { el, els } from "../lib/el"
+
 
 document.addEventListener('astro:page-load', () => {
 
-    const navLinks = els<HTMLAnchorElement>('nav a')
     const main = el('main')
-    navLinks.forEach( link => {
+    
+    els<HTMLAnchorElement>('nav a', document, link => {
         link.addEventListener('click', () => {
             setTimeout( () => {
                 main?.classList.add('opacity-0')
             }, 500)
         })
+
     })
 })
 

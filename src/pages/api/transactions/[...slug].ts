@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro"
 import type { Transaction } from "../../../types/Transaction"
 import { db } from "../../../lib/supabase"
-import { errorResponse, getParams, getRecentByUserId, groupTransactionsByIndex } from "./lib"
+import { errorResponse, getParams, getRecentByUserId, groupTransactionsByIndex } from "./_lib"
 
 
 export const GET: APIRoute = async ({ request }) => {

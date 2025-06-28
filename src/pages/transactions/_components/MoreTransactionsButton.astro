@@ -9,38 +9,36 @@
 
 
 <script>
-import { el } from "../../../utils/El"
+import { el } from "../../../lib/el"
 import { getTransactions } from "../_lib/getTransactions"
 import { renderTransactions } from "../_lib/renderTransactions"
 
 document.addEventListener('astro:page-load', () => {
 
+    /**
+     * 
+     * Load more transactions
+     * 
+     */
     let page = 1
 
-	const moreTransactionsButton = el<HTMLButtonElement>('#more-transactions-button')
-    moreTransactionsButton?.addEventListener('click', () => loadNextTransactionPage() )
+	const button = el<HTMLButtonElement>('#more-transactions-button', document, btn => {
+        btn.addEventListener('click', async () => {
 
-    async function loadNextTransactionPage() {
+            const transactions = await getTransactions(1, {
+                    by : 'recent',
+                    page : page,
+                    perPage : 50
+                })
+                
+                if( !transactions.data ) return
+                
+                renderTransactions( transactions.data, el('transaction-list') )
 
-		const transactions = await getTransactions(1, {
-            by : 'recent',
-            page : page,
-            perPage : 50
+                page += 1
+                if( page === transactions.totalPages) button?.remove()
+            })
         })
-        
-        if( !transactions.data ) {
-            return
-        }
-        
-		renderTransactions(
-			transactions.data, 
-			el('transaction-list')
-		)
-        page += 1
 
-        if( page === transactions.totalPages) {
-            moreTransactionsButton?.remove()
-        }
-    }
-})
+    })
 </script>
