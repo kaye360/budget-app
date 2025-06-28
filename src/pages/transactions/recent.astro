@@ -63,9 +63,9 @@ if( !auth ) {
 <script>
 
 import { Loader } from "../../components/Loader/loader"
-import Qry from "../../utils/Qry"
-import { getTransactions } from "./_services/get-transactions"
-import { renderTransactions } from "./_services/render-transactions"
+import { el } from "../../utils/El"
+import { getTransactions } from "./_lib/getTransactions"
+import { renderTransactions } from "./_lib/renderTransactions"
 
 document.addEventListener('astro:page-load', () => {
  
@@ -77,7 +77,7 @@ document.addEventListener('astro:page-load', () => {
 		})
 		renderTransactions(
 			transactions.data, 
-			Qry.one('transaction-list')
+			el('transaction-list')
 		)
 		Loader.remove()
 	})()

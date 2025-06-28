@@ -1,0 +1,65 @@
+---
+import { Trash2Icon } from "@lucide/astro";
+import Button from "../../../components/Button/Button.astro";
+---
+
+<transaction-create class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12">
+
+    <label>
+        Date: <br />
+        <input type="date" name="date-0" data-name="date" />
+    </label>
+
+    <label>
+        Description: <br />
+        <input type="text" name="description-0" data-name="description" required />
+    </label>
+
+    <label>
+        Amount: <br />
+        <input type="text" name="amount-0" data-name="amount" required />
+    </label>
+
+    <label>
+        Budget: <br />
+        <select name="budget-0" data-name="budget" class="w-full">
+            <option selected value="budget-1">budget 1</option>
+            <option value="budget-2">budget 2</option>
+        </select>
+    </label>
+
+    <label>
+        Account: <br />
+        <select name="accountName-0" data-name="accountName" class="w-full">
+            <option value="account-1">account 1</option>
+            <option selected value="account-2">account 2</option>
+        </select>
+    </label>
+
+    <div class="md:text-right">
+        <Button variant="ghost" type="button" class="h-full w-fit flex items-end gap-1 ml-auto text-sm hover:underline">
+            Remove
+            <Trash2Icon width="20" height="20" stroke-width={2} />
+        </Button>
+    </div>
+
+</transaction-create>
+
+
+<script>
+import { el } from "../../../utils/El"
+
+
+class TransactionCreate extends HTMLElement {
+    
+    connectedCallback() {
+
+        const date = el<HTMLInputElement>('input[type=date]', this)
+        if( date ) {
+            date.value = new Date().toISOString().slice(0, 10)
+        }
+    }
+}
+
+customElements.define('transaction-create', TransactionCreate)
+</script>

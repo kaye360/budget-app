@@ -59,14 +59,14 @@ const {
 
 
 <script>
-import Qry from "../../../utils/Qry"
+import { el } from "../../../utils/El"
 import { toCurrency, toDateWithYear } from "../../../utils/utils"
 
 class TransactionItem extends HTMLElement {
     
     connectedCallback() {
-        const editButton = Qry.one<HTMLButtonElement>('transaction-edit button', this)
-        const dialog = Qry.one<HTMLDialogElement>('dialog', this)
+        const editButton = el<HTMLButtonElement>('transaction-edit button', this)
+        const dialog = el<HTMLDialogElement>('dialog', this)
         
         if( editButton && dialog ) {
             editButton.addEventListener('click', () => dialog.showModal() )
@@ -78,29 +78,29 @@ class TransactionItem extends HTMLElement {
     attributeChangedCallback(name: string, _: any, newValue:string) {
         const handlers: Record<string, () => void> = {
             date : () => {
-                Qry.setTextContent( toDateWithYear(newValue), 'transaction-date', this )
-                Qry.setValue( newValue , 'input[name=date]', this )
+                el('transaction-date', this, el => el.textContent = toDateWithYear(newValue) )
+                el<HTMLInputElement>('input[name=date]', this, el => el.value = newValue)
             },
             description : () => {
-                Qry.setTextContent( newValue, 'transaction-description', this )
-                Qry.setValue( newValue, 'input[name=description]', this ) 
+                el('transaction-description', this, el => el.textContent = newValue )
+                el<HTMLInputElement>( 'input[name=description]', this, el => el.value = newValue ) 
             },
             budget : () => {
-                Qry.setTextContent( newValue, 'transaction-budget', this )
-                Qry.setValue( newValue, 'select[name=budget]', this )
+                el('transaction-budget', this, el => el.textContent = newValue )
+                el<HTMLInputElement>('select[name=budget]', this, el => el.value = newValue )
             },
             amount : () => {
-                Qry.setTextContent( toCurrency(newValue), 'transaction-amount', this )
-                Qry.setValue( toCurrency(newValue).replace('$', ''), 'input[name=amount]', this )
+                el( 'transaction-amount', this, el => el.textContent = toCurrency(newValue) )
+                el( 'input[name=amount]', this, el => el.textContent = toCurrency(newValue).replace('$', '') )
             },
             accountname : () => {
-                Qry.setTextContent( newValue, 'transaction-account-name', this )
+                el('transaction-account-name', this, el => el.textContent = newValue )
             },
             accounttype : () => {
-                Qry.setTextContent( newValue, 'transaction-account-type', this )
+                el('transaction-account-type', this, el => el.textContent = newValue )
             },
             accountnumber : () => {
-                Qry.setTextContent( newValue, 'transaction-account-number', this )
+                el('transaction-account-number', this, el => el.textContent = newValue )
             },
         }
         if( handlers[name] ) {

@@ -9,15 +9,15 @@
 
 
 <script>
-import Qry from "../../../utils/Qry"
-import { getTransactions } from "../_services/get-transactions"
-import { renderTransactions } from "../_services/render-transactions"
+import { el } from "../../../utils/El"
+import { getTransactions } from "../_lib/getTransactions"
+import { renderTransactions } from "../_lib/renderTransactions"
 
 document.addEventListener('astro:page-load', () => {
 
     let page = 1
 
-	const moreTransactionsButton = Qry.one<HTMLButtonElement>('#more-transactions-button')
+	const moreTransactionsButton = el<HTMLButtonElement>('#more-transactions-button')
     moreTransactionsButton?.addEventListener('click', () => loadNextTransactionPage() )
 
     async function loadNextTransactionPage() {
@@ -34,7 +34,7 @@ document.addEventListener('astro:page-load', () => {
         
 		renderTransactions(
 			transactions.data, 
-			Qry.one('transaction-list')
+			el('transaction-list')
 		)
         page += 1
 

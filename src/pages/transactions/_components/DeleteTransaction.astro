@@ -1,0 +1,68 @@
+---
+import { Trash2Icon } from "@lucide/astro";
+import LoadingButton from "../../../components/Button/LoadingButton.astro";
+---
+
+<transaction-delete>
+    <div class="grid gap-4 justify-start border-l border-blue pl-4">
+        <h3 class="text-lg font-semibold tracking-wide">Delete this action?</h3>
+        <p>
+            <strong>Note:</strong> This action can be undone.
+        </p>
+        <LoadingButton 
+            state={{ initial : "Delete Transaction", loading : 'Deleting...', error : 'Failed to delete', success : 'Deleted!'}}
+            variant="destruct" 
+            Icon={Trash2Icon} 
+            class="w-full"
+        >
+            Delete Transaction
+        </LoadingButton>
+    </div>
+</transaction-delete>
+
+<script>
+import { el } from "../../../utils/El"
+import { fetchData } from "../../../utils/Fetch"
+import { sleep } from "../../../utils/utils"
+
+class TransactionDelete extends HTMLElement {
+    
+    connectedCallback() {
+        el<HTMLFormElement>('button', this)?.addEventListener('click', this.handleClick)
+    }
+
+    handleClick = async () => {
+        const transaction = this.closest('transaction-item')
+        const transactionId = transaction?.id
+        
+        if( !transactionId ) {
+            return
+        }
+        
+        const deleteButton = el<HTMLButtonElement>('loading-button', this )
+        deleteButton?.setAttribute('state', 'loading')
+
+        const result = await fetchData(`/api/transactions/${transactionId}`, {
+            method : 'DELETE',
+        })
+
+        if( result.error ) {
+            deleteButton?.setAttribute('state', 'error')
+            return 
+        }
+        
+        deleteButton?.setAttribute('state', 'success')
+        transaction?.classList.add('scale-0', '!max-h-0', 'duration-500', 'origin-top', 'opacity-0')
+        this.closest('dialog')?.close()
+
+        await sleep(500)
+        transaction?.setAttribute('isdeleted', "true")
+        transaction?.setAttribute('data-isdeleted', "true")
+
+    }
+
+}
+
+customElements.define('transaction-delete', TransactionDelete)
+
+</script>

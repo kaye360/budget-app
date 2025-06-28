@@ -19,7 +19,7 @@ const { href, title, Icon, isActive } = Astro.props
     ]}
 >
     <Icon stroke-width={1} width="30" height="30" />
-    <span class="hidden sm:block tracking-wide font-theme">
+    <span class="hidden sm:block font-theme">
         {title}
     </span>
     { isActive &&
@@ -32,11 +32,12 @@ const { href, title, Icon, isActive } = Astro.props
 
 
 <script>
-import Qry from "../utils/Qry"
+import { el, els } from "../utils/El"
 
 document.addEventListener('astro:page-load', () => {
-    const navLinks = Qry.all<HTMLAnchorElement>('nav a')
-    const main = Qry.one('main')
+
+    const navLinks = els<HTMLAnchorElement>('nav a')
+    const main = el('main')
     navLinks.forEach( link => {
         link.addEventListener('click', () => {
             setTimeout( () => {

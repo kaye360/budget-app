@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import type { Transaction as TransactionType } from "../types/Transaction";
 import Transaction from "./transactions/_components/Transaction.astro";
 import { ArrowLeftRightIcon } from "@lucide/astro"
-import { getTransactions } from "./transactions/_services/get-transactions";
+import { getTransactions } from "./transactions/_lib/getTransactions";
 
 const auth = await Astro.session?.get('auth')
 

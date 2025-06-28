@@ -38,12 +38,12 @@ const {
 
 
 <script>
-import Qry from "../utils/Qry"
+import { el } from "../utils/El"
 
 class CloseModalButton extends HTMLElement {
     
     connectedCallback() {
-        const closeButton = Qry.one<HTMLButtonElement>('close-modal-button button', this)
+        const closeButton = el<HTMLButtonElement>('close-modal-button button', this)
         closeButton?.addEventListener('click', () => closeButton.closest('dialog')?.close() )
     }
 }

@@ -62,20 +62,21 @@ if( auth ) {
 </html>
 
 <script>
-import Qry from "../utils/Qry";
+import { el, els } from "../utils/El"
+
 
 document.addEventListener('astro:page-load', () => {
 
-    const form = Qry.one<HTMLFormElement>('form')
+    const form = el<HTMLFormElement>('form')
     form?.addEventListener('submit', handleSubmit)
     
     function handleSubmit(e: Event) {
         e.preventDefault()
     
-        Qry.all('span').forEach( span => span.classList.add('hidden'))
+        els('span').forEach( span => span.classList.add('hidden'))
         form?.classList.add('hidden')
     
-        Qry.one('#logo')?.classList.add('animate-loader')
+        el('#logo')?.classList.add('animate-loader')
     
         setTimeout( () => {
             form?.removeEventListener('submit', handleSubmit)
@@ -86,7 +87,7 @@ document.addEventListener('astro:page-load', () => {
     const params = new URLSearchParams(window.location.search);
 
     if (params.has('witherror')) {
-        const errorMessage = Qry.one('#error-message')
+        const errorMessage = el('#error-message')
         if( errorMessage ) {
             errorMessage.textContent = "Invalid username or password."
         }

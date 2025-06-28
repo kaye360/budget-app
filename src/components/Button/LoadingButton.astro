@@ -30,14 +30,14 @@ const {
 </loading-button>
 
 <script>
-import Qry from "../../utils/Qry"
+import { el } from "../../utils/El"
 import { sleep } from "../../utils/utils"
 import type { LoadingButtonValidState } from "./type"
 
 class LoadingButton extends HTMLElement {
 
     connectedCallback() {
-        const loadingEl = Qry.one('loading-state', this)
+        const loadingEl = el('loading-state', this)
         if( loadingEl ) {
             loadingEl.innerHTML = this.createWavyText(loadingEl.textContent)
         }
@@ -68,7 +68,7 @@ class LoadingButton extends HTMLElement {
         }
 
         // Disable button if loading
-        const button = Qry.one<HTMLButtonElement>('button', this)
+        const button = el<HTMLButtonElement>('button', this)
         if( button ) {
             button.disabled = newState === 'loading'
         }
@@ -97,10 +97,10 @@ class LoadingButton extends HTMLElement {
     private validStates : LoadingButtonValidState[] = ['initial', 'loading', 'error', 'success']
 
     buttonText = {
-        initial : Qry.one('initial-state', this),
-        loading : Qry.one('loading-state', this),
-        error : Qry.one('error-state', this),
-        success : Qry.one('success-state', this),
+        initial : el('initial-state', this),
+        loading : el('loading-state', this),
+        error : el('error-state', this),
+        success : el('success-state', this),
     }
 
     createWavyText( text: string | null ) : string {
