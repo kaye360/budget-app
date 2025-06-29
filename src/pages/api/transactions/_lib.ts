@@ -11,14 +11,14 @@ export async function getRecentByUserId(
     const start = options.page * options.perPage
     const end = start + options.perPage - 1
 
-    const { data, count } = await db.from('Transactions')
+    const { data, count } = await db.from('TransactionView')
         .select('*', { count: 'exact'})
         .order('date', { ascending : false })
         .eq('userId', userId)
 		.eq('isDeleted', false)
         .range(start, end)
 
-    return { data, count}
+    return { data, count }
 }
 
 

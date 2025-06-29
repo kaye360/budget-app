@@ -1,6 +1,6 @@
 ---
+
 import Layout from "../../layouts/Layout.astro";
-import { getBudgets } from "../budgets/_lib/getBudgets";
 import FilterTransactions from "./_components/FilterTransactions.astro";
 import MoreTransactionsButton from "./_components/MoreTransactionsButton.astro";
 import Transaction from "./_components/Transaction.astro";
@@ -12,23 +12,25 @@ if( !auth ) {
 	return Astro.redirect('/')
 }
 
-const [transactions, budgets] = await Promise.all([
-	getTransactions(1, { by : 'recent', page : 0, perPage : 50 }),
-	getBudgets(),
-])
+// const transactions = await getTransactions( 1, {
+// 	by : 'recent',
+// 	page : 0,
+// 	perPage : 50
+// })
+const transactions = { data : []}
 
 ---
 
 <Layout>
 	
-	<FilterTransactions current="recent" />
+	<FilterTransactions current="deleted" />
 
 	<transaction-list class="grid gap-6">
 		{ transactions.data.map( transaction => (
-			<Transaction {transaction} budgets={budgets} />
+			<Transaction {transaction} />
 		))}
 		<template id="transaction-template">
-			<Transaction budgets={budgets}/>
+			<Transaction />
 		</template>
 	</transaction-list>
 

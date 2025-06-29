@@ -2,11 +2,19 @@
 import { BanIcon, SaveIcon } from "@lucide/astro";
 import Button from "../../../components/Button/Button.astro";
 import LoadingButton from "../../../components/Button/LoadingButton.astro";
+import type { Budget, Transaction } from "../../../types/types";
+
+interface Props {
+    budgets : Budget[],
+    transaction? : Transaction
+}
+
+const { budgets, transaction } = Astro.props
 ---
 
 <transaction-edit>
 
-    <form class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12">
+    <form class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12" autocomplete="off">
 
         <h3 class="sm:col-span-2 text-lg font-semibold tracking-wide">
             Edit Transaction
@@ -29,15 +37,21 @@ import LoadingButton from "../../../components/Button/LoadingButton.astro";
 
         <label>
             Budget: <br />
-            <select name="budget" class="w-full">
-                <option selected value="budget-1">budget 1</option>
-                <option value="budget-2">budget 2</option>
+            <select name="budget" class="w-full bg-bg-2" data-budgetid={transaction?.budgetId}>
+                <option value="0">Uncategorized</option>
+                { budgets.map( budget => (
+                    <option 
+                        value={budget.id}
+                    >
+                        {budget.name}
+                    </option>
+                ))}
             </select>
         </label>
 
         <label>
             Account: <br />
-            <select name="account-name" class="w-full">
+            <select name="account-name" class="w-full bg-bg-2">
                 <option value="account-1">account 1</option>
                 <option selected value="account-2">account 2</option>
             </select>
@@ -76,6 +90,18 @@ class TransactionEdit extends HTMLElement {
      * 
      */
     connectedCallback() {
+
+        /**
+         * Chang budget select default value to transaction budget
+         */
+        el<HTMLSelectElement>('select[name="budget"', this, select => {
+            const budgetId = select.dataset.budgetid
+            select.setAttribute('value', budgetId || '0')
+        })
+
+        /**
+         * Form submit handler
+         */
         el<HTMLFormElement>('form', this, form => {
             form.addEventListener('submit', async (e: Event) => {
         

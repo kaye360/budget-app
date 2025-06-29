@@ -1,6 +1,12 @@
-import type { Transaction } from "../../../types/Transaction"
 import { objectValuesToString } from "../../../lib/utils"
+import { fetchData } from "../../../lib/fetch"
+import type { Transaction } from "../../../types/types"
 
+interface GetTransactions {
+    data : Transaction[],
+    totalPages : number,
+    count : number
+}
 
 export async function getTransactions(
     userId : number,
@@ -10,17 +16,12 @@ export async function getTransactions(
 	    perPage? : number,
 	    month? : number,
     }
-) : Promise<{
-    data : Transaction[],
-    totalPages : number,
-    count : number
-}> {
+) : Promise<GetTransactions> {
     const params = options ? '&' + new URLSearchParams( objectValuesToString(options) ) : ''
-    const base = import.meta.env.DEV ? 'http://localhost:4321' : import.meta.env.SITE
-    const url = typeof window === 'undefined'
-        ? `${base}/api/transactions/?id=${userId}${params}`
-        : `/api/transactions/?id=${userId}${params}`
-    const res = await fetch(url)
-    const json = await res.json()
-    return json
+
+    const res = await fetchData<GetTransactions>(`/api/transactions?id=${userId}&${params}`)
+
+    if( res.error || !res.response ) return { data : [], totalPages : 0, count : 0 }
+
+    return res.response
 }

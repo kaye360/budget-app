@@ -57,15 +57,26 @@ document.addEventListener('astro:page-load', () => {
         form.addEventListener('submit', async ( e: SubmitEvent ) => {
         
             e.preventDefault()
-            
+
+            const button = el('loading-button')
+
+            button?.setAttribute('state', 'loading')
+
             const transactions = Object.fromEntries( 
                 new FormData(form).entries() 
             )
 
-            const created = await fetchData('/api/transactions', {
+            const result = await fetchData('/api/transactions', {
                 method : 'POST',
                 body : transactions
             })
+
+            if( result.error ) {
+                button?.setAttribute('state', 'error')
+                return
+            }
+
+            button?.setAttribute('state', 'success')
         })
     })
 

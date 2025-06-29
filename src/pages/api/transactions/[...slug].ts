@@ -1,16 +1,14 @@
 import type { APIRoute } from "astro"
-import type { Transaction } from "../../../types/Transaction"
 import { db } from "../../../lib/supabase"
 import { errorResponse, getParams, getRecentByUserId, groupTransactionsByIndex } from "./_lib"
+import type { Transaction } from "../../../types/types"
 
 
 export const GET: APIRoute = async ({ request }) => {
 
 	const { id, by, page, perPage } = getParams(request.url)
 
-	if( !id ) {
-		return errorResponse({ error : 'Invalid user id'})
-	}
+	if( !id ) return errorResponse({ error : 'Invalid user id'})
 
 	let data : Transaction[] | null = []
 	let count = 0

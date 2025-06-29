@@ -1,15 +1,20 @@
 ---
 import { EllipsisVerticalIcon } from "@lucide/astro"
-import type { Transaction } from "../../../types/Transaction"
-import TransactionModal from "./TransactionModal.astro"
+import type { Transaction } from "../../../types/types"
+import Modal from "../../../components/Modal.astro"
+import DeleteTransaction from "./DeleteTransaction.astro"
+import EditTransaction from "./EditTransaction.astro"
+import type { Budget } from "../../../types/types"
 
 interface Props {
     transaction? : Transaction,
+    budgets : Budget[],
     mode? : 'simple' | 'detailed'
 }
 
 const { 
     transaction,
+    budgets,
     mode = 'detailed'
 }= Astro.props
 ---
@@ -53,7 +58,10 @@ const {
                 <EllipsisVerticalIcon class="stroke-slate-400 group-hover:stroke-slate-500 transition-colors" />
             </button>
         </transaction-edit>
-        <TransactionModal />
+        <Modal title="Transaction Options">
+            <EditTransaction transaction={transaction} budgets={budgets} />
+            <DeleteTransaction />
+        </Modal>
     }
 </transaction-item>
 
@@ -88,6 +96,7 @@ class TransactionItem extends HTMLElement {
         'date', 
         'description', 
         'budget', 
+        'budgetid',
         'amount', 
         'accountname', 
         'accounttype', 
@@ -108,6 +117,10 @@ class TransactionItem extends HTMLElement {
             },
             budget : () => {
                 el('transaction-budget', this, el => el.textContent = newValue )
+                // el<HTMLInputElement>('select[name=budget]', this, el => el.value = newValue )
+            },
+            budgetid : () => {
+                this.setAttribute('budgetid', newValue)
                 el<HTMLInputElement>('select[name=budget]', this, el => el.value = newValue )
             },
             amount : () => {

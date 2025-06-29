@@ -6,7 +6,7 @@ type FetchOptions = {
 };
 
 type FetchResult<T> = {
-	data: T | null;
+	response: T | null;
 	error: any;
 };
 
@@ -17,7 +17,9 @@ export async function fetchData<T = unknown>(
 ): Promise<FetchResult<T>> {
 	try {
 
-		const response = await fetch(url, {
+		const baseUrl = import.meta.env.DEV ? 'http://localhost:4321' : import.meta.env.SITE
+
+		const response = await fetch(`${baseUrl}${url}`, {
 			method: options.method || 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -29,14 +31,14 @@ export async function fetchData<T = unknown>(
 		const data = await response.json()
 
 		if (!response.ok) {
-			return { data: null, error: data }
+			return { response: null, error: data }
 		}
 
-		return { data, error: null }
+		return { response: data, error: null }
 
 	} catch (error) {
 
-		return { data: null, error }
+		return { response: null, error }
 
 	}
 }

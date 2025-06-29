@@ -34,13 +34,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      Budgets: {
+        Row: {
+          amount: number
+          id: number
+          name: string
+          userId: number
+        }
+        Insert: {
+          amount: number
+          id?: number
+          name: string
+          userId: number
+        }
+        Update: {
+          amount?: number
+          id?: number
+          name?: string
+          userId?: number
+        }
+        Relationships: []
+      }
       Transactions: {
         Row: {
-          accountName: string | null
-          accountNumber: string
-          accountType: string
+          accountId: number
           amount: number
-          budget: string | null
+          budgetId: number | null
           date: string
           description: string
           id: number
@@ -49,11 +68,9 @@ export type Database = {
           userId: number
         }
         Insert: {
-          accountName?: string | null
-          accountNumber: string
-          accountType: string
+          accountId: number
           amount: number
-          budget?: string | null
+          budgetId?: number | null
           date: string
           description: string
           id?: number
@@ -62,11 +79,9 @@ export type Database = {
           userId: number
         }
         Update: {
-          accountName?: string | null
-          accountNumber?: string
-          accountType?: string
+          accountId?: number
           amount?: number
-          budget?: string | null
+          budgetId?: number | null
           date?: string
           description?: string
           id?: number
@@ -74,11 +89,41 @@ export type Database = {
           source?: string
           userId?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_budget"
+            columns: ["budgetId"]
+            isOneToOne: false
+            referencedRelation: "Budgets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
-      [_ in never]: never
+      TransactionView: {
+        Row: {
+          accountId: number | null
+          amount: number | null
+          budget: string | null
+          budgetId: number | null
+          date: string | null
+          description: string | null
+          id: number | null
+          isDeleted: boolean | null
+          source: string | null
+          userId: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_budget"
+            columns: ["budgetId"]
+            isOneToOne: false
+            referencedRelation: "Budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never

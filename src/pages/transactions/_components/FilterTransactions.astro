@@ -1,0 +1,58 @@
+---
+
+interface Props {
+    current : 'recent' | 'month' | 'budget' | 'deleted' | 'search'
+}
+
+const { current } = Astro.props
+
+---
+
+<filter-transactions class="flex items-center gap-2 rounded mb-8 text-xs w-full overflow-x-auto sm:overflow-x-visible">
+    <a 
+        class:list={[
+            "px-3 py-1 rounded-full border border-accent-text",
+            current === 'recent' && 'bg-accent-text text-black font-semibold'
+        ]}
+        href="/transactions/recent"
+    >
+        Recent
+    </a>
+    <a 
+        class:list={[
+            "px-3 py-1 rounded-full border border-accent-text font-semibold",
+            current === 'month' && 'bg-accent-text text-black font-semibold'
+        ]}
+        href="/transactions/month"
+    >
+        Month
+    </a>
+    <a 
+        class:list={[
+            "px-3 py-1 rounded-full border border-accent-text font-semibold",
+            current === 'budget' && 'bg-accent-text text-black font-semibold'
+        ]}
+        href="/transactions/budget"
+    >
+        Budget
+    </a>
+    <a 
+        class:list={[
+            "px-3 py-1 rounded-full border border-accent-text font-semibold",
+            current === 'deleted' && 'bg-accent-text text-black font-semibold'
+        ]}
+        href="/transactions/deleted"
+    >
+        Deleted
+    </a>
+    <a 
+        class:list={[
+            "px-3 py-1 rounded-full border border-accent-text font-semibold",
+            current === 'search' && 'bg-accent-text text-black font-semibold'
+        ]}
+        href="/transactions/search"
+    >
+        Search
+    </a>
+
+</filter-transactions>
