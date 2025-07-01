@@ -20,6 +20,10 @@
     input, select {
         @apply border border-red/60 rounded-md px-2 py-1 w-full;
     }
+
+    select {
+        @apply bg-bg-2
+    }
 }
 
 

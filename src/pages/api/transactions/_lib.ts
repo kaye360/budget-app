@@ -1,5 +1,5 @@
 import { db } from "../../../lib/supabase"
-import type { Transaction } from "../../../types/Transaction"
+import type { NewTransaction, Transaction } from "../../../types/types"
 
 /**
  * Get recent posts by user ID
@@ -76,12 +76,10 @@ export function groupTransactionsByIndex(data: Record<string, string>) {
         transactions[index][col] = col === 'amount' ? Number(value) : value
         transactions[index].isDeleted = false
         transactions[index].userId = 1
-        transactions[index].accountType = 'Checking'
-        transactions[index].accountNumber = "1234"
         transactions[index].source = "manual"
     }
 
-    return Object.values(transactions) as Transaction[]
+    return Object.values(transactions) as NewTransaction[]
 }
 
 

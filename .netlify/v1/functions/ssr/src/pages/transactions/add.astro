@@ -4,9 +4,6 @@ import LoadingButton from "../../components/Button/LoadingButton.astro";
 import Layout from "../../layouts/Layout.astro";
 import CreateTransaction from "./_components/CreateTransaction.astro";
 import CreateTransactionCount from "./_components/CreateTransactionCount.astro";
-import { getBudgets } from "../budgets/_lib/getBudgets";
-
-const budgets = await getBudgets()
 ---
 
 <Layout>
@@ -27,11 +24,11 @@ const budgets = await getBudgets()
     <form>
 
         <transaction-create-list class="grid gap-4">
-            <CreateTransaction {budgets} />
+            <CreateTransaction />
         </transaction-create-list>
 
         <template id="transaction-create">
-            <CreateTransaction {budgets} />
+            <CreateTransaction />
         </template>
 
         <div class="sm:col-span-2 grid grid-cols-2 gap-4">
@@ -43,12 +40,6 @@ const budgets = await getBudgets()
                 class="w-full"
             >
             </LoadingButton>
-
-            <view-transactions-link class="self-center opacity-0 -translate-x-4 pl-2 transition-all">
-                <a href="/transactions/recent">
-                    View Transactions &rarr;
-                </a>
-            </view-transactions-link>
         </div>
     </form>
 
@@ -58,7 +49,6 @@ const budgets = await getBudgets()
 <script>
 import { el } from "../../lib/el"
 import { fetchData } from "../../lib/fetch"
-import { sleep } from "../../lib/utils"
 
 
 document.addEventListener('astro:page-load', () => {
@@ -76,19 +66,17 @@ document.addEventListener('astro:page-load', () => {
                 new FormData(form).entries() 
             )
 
-            const response = await fetchData('/api/transactions', {
+            const result = await fetchData('/api/transactions', {
                 method : 'POST',
                 body : transactions
             })
 
-            if( response.error ) {
+            if( result.error ) {
                 button?.setAttribute('state', 'error')
                 return
             }
 
             button?.setAttribute('state', 'success')
-            await sleep(1000)
-            el('view-transactions-link', this, el => el.classList.remove('opacity-0', '-translate-x-4'))
         })
     })
 

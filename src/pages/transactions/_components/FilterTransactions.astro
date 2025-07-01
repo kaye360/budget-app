@@ -1,4 +1,6 @@
 ---
+import { CirclePlusIcon } from '@lucide/astro'
+
 
 interface Props {
     current : 'recent' | 'month' | 'budget' | 'deleted' | 'search'
@@ -8,7 +10,7 @@ const { current } = Astro.props
 
 ---
 
-<filter-transactions class="flex items-center gap-2 rounded mb-8 text-xs w-full overflow-x-auto sm:overflow-x-visible">
+<filter-transactions class="flex items-center gap-1 md:gap-3 rounded mb-8 text-xs w-full overflow-x-auto sm:overflow-x-visible">
     <a 
         class:list={[
             "px-3 py-1 rounded-full border border-accent-text",
@@ -53,6 +55,13 @@ const { current } = Astro.props
         href="/transactions/search"
     >
         Search
+    </a>
+
+    <a 
+        class="flex items-center gap-2 text-base ml-auto text-red hover:text-blue"
+        href="/transactions/add"
+    >
+        <CirclePlusIcon width={36} height={36}/>
     </a>
 
 </filter-transactions>

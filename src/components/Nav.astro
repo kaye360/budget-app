@@ -7,7 +7,7 @@ const auth = await Astro.session?.get('auth')
 const navLinks = [
     { href : '/dashboard', title : 'Dashboard',      Icon : LayoutDashboardIcon},
     { href : '/transactions/recent', title : 'Transactions',   Icon : ArrowLeftRight},
-    { href : '/transactions/add', title : 'Add',   Icon : BanknoteArrowUpIcon},
+    // { href : '/transactions/add', title : 'Add',   Icon : BanknoteArrowUpIcon},
     { href : '/budgets', title : 'Budgets',   Icon : ChartPieIcon},
     { href : '/trends', title : 'Trends',   Icon : ChartColumnIncreasingIcon},
     { href : '/profile', title : 'Profile',        Icon : CircleUserRoundIcon},
@@ -22,7 +22,7 @@ const navLinks = [
             transition:name="nav"
             class:list={[
                 "bg-bg-1/65 backdrop-blur-lg rounded-md shadow-lg shadow-blue/20",
-                "flex w-[80vw] md:w-full mx-auto ",
+                "flex w-[95vw] justify-evenly md:w-full mx-auto ",
                 "md:grid md:gap-2 md:sticky md:top-16",
             ]}
         >

@@ -3,7 +3,7 @@ import ClientRouter from "astro/components/ClientRouter.astro"
 import "../styles/main.css"
 import '@fontsource/lato'
 import '@fontsource-variable/sora'
-import { SkullIcon } from "@lucide/astro"
+import { BotIcon, SkullIcon } from "@lucide/astro"
 import Loader from "../components/Loader/Loader.astro"
 import UserAvatar from "../components/UserAvatar.astro"
 import Nav from "../components/Nav.astro"
@@ -29,8 +29,9 @@ const {
 	<body class="min-h-screen bg-gradient-to-br from-bg-1 to-bg-2 bg-fixed text-base-text font-base">
         <header class="flex items-center justify-between gap-4 p-4 mb-4 text-blue">
             <a href="/" class="flex items-center gap-1 font-theme">
-                <SkullIcon size={30} transition:name="top-logo" />
-                <span class="text-xl font-semibold tracking-wide">{APP_NAME}</span>
+                <!-- <SkullIcon size={30} transition:name="top-logo" /> -->
+                <BotIcon size={30} transition:name="top-logo" />
+                <span class="text-xl font-semibold tracking-wide translate-y-[2px]">{APP_NAME}</span>
             </a>
             <UserAvatar />
         </header>

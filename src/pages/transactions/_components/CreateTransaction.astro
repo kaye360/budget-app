@@ -1,6 +1,13 @@
 ---
 import { Trash2Icon } from "@lucide/astro";
 import Button from "../../../components/Button/Button.astro";
+import type { Budget } from "../../../types/types";
+
+interface Props {
+    budgets : Budget[]
+}
+
+const { budgets } = Astro.props
 ---
 
 <transaction-create class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12">
@@ -22,17 +29,18 @@ import Button from "../../../components/Button/Button.astro";
 
     <label>
         Budget: <br />
-        <select name="budget-0" data-name="budget" class="w-full">
-            <option selected value="budget-1">budget 1</option>
-            <option value="budget-2">budget 2</option>
+        <select name="budgetId-0" data-name="budgetId" class="w-full">
+            { budgets.map( budget => (
+                <option value={budget.id}>{budget.name}</option>
+            ))}
         </select>
     </label>
 
     <label>
         Account: <br />
-        <select name="accountName-0" data-name="accountName" class="w-full">
-            <option value="account-1">account 1</option>
-            <option selected value="account-2">account 2</option>
+        <select name="accountId-0" data-name="accountId" class="w-full">
+            <option value="1">account 1</option>
+            <option selected value="2">account 2</option>
         </select>
     </label>
 

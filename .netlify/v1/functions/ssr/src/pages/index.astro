@@ -1,0 +1,107 @@
+---
+import { ClientRouter } from "astro:transitions"
+import { LogInIcon, SkullIcon } from "@lucide/astro"
+import { APP_NAME } from "../../config"
+import "../styles/main.css"
+import Button from "../components/Button/Button.astro"
+import '@fontsource-variable/sora';
+
+const auth = await Astro.session?.get('auth')
+
+if( auth ) {
+    Astro.redirect('/dashboard')
+}
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{APP_NAME} - {import.meta.env.MODE}</title>
+        <ClientRouter />
+	</head>
+	<body class="min-h-screen bg-gradient-to-br from-bg-1 to-bg-2 bg-fixed text-base-text font-base">
+        <main class="flex flex-col h-screen max-w-[500px] w-full mx-auto">
+            <div class="flex-1 font-theme self-stretch grid place-items-center w-full">
+                <div class="text-center">
+                    <SkullIcon 
+                        id="logo"
+                        width="96" 
+                        height="96" 
+                        class="mx-auto mb-2" 
+                        transition:name="top-logo" 
+                    />
+                    <span class="block text-2xl font-semibold tracking-wide">BudgetApp</span>
+                    <span class="block font-semibold tracking-wide">Dead simple budgeting</span>
+                </div>
+            </div>
+            <form 
+                method="post" 
+                action="/auth/login"
+                class="shrink-0 grid gap-4 px-4 mb-24 mx-auto w-full"
+            >
+                <span id="error-message" class="text-red"></span>
+                { auth &&
+                    <a href="/dashboard" class="underline">Continue to dashboard</a>
+                }
+                <label>
+                    Username
+                    <input type="text" name="username" class="w-full p-2 !border-blue" />
+                </label>
+                <label>
+                    Password
+                    <input type="password" name="password" class="w-full p-2 !border-blue" />
+                </label>
+                <Button type="submit" Icon={LogInIcon} variant="fill" class="!p-4">
+                    Log In
+                </Button>
+            </form>
+        </main>
+	</body>
+</html>
+
+<script>
+import { el, els } from "../lib/el"
+import { sleep } from "../lib/utils"
+
+document.addEventListener('astro:page-load', () => {
+
+    /**
+     * 
+     * Login form event handler
+     * Hide elements and show loader when form is submitted
+     * 
+     */
+    const form = el<HTMLFormElement>('form', document, form => {
+        form.addEventListener('submit', handleSubmit)
+    })
+    
+    async function handleSubmit(e: Event) {
+        e.preventDefault()
+    
+        els('span', document, span => span.classList.add('hidden') )
+        form?.classList.add('hidden')
+        el('#logo')?.classList.add('animate-loader')
+    
+        await sleep(1000)
+        form?.submit()
+    }
+
+
+    /**
+     * 
+     * Show login error if ?witherror in url search params
+     * 
+     */
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has('witherror')) {
+        const errorMessage = el('#error-message')
+        if( errorMessage ) {
+            errorMessage.textContent = "Invalid username or password."
+        }
+    }
+})
+
+</script>
