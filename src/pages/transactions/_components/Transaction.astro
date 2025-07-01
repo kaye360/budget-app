@@ -117,11 +117,9 @@ class TransactionItem extends HTMLElement {
             },
             budget : () => {
                 el('transaction-budget', this, el => el.textContent = newValue )
-                // el<HTMLInputElement>('select[name=budget]', this, el => el.value = newValue )
             },
             budgetid : () => {
-                this.setAttribute('budgetid', newValue)
-                el<HTMLInputElement>('select[name=budget]', this, el => el.value = newValue )
+                el<HTMLInputElement>('select[name="budget-id"]', this, el => el.value = newValue )
             },
             amount : () => {
                 el( 'transaction-amount', this, el => el.textContent = toCurrency(newValue) )

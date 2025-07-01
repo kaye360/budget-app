@@ -38,7 +38,7 @@ if( auth ) {
             </div>
             <form 
                 method="post" 
-                action="/auth/login" 
+                action="/auth/login"
                 class="shrink-0 grid gap-4 px-4 mb-24 mx-auto w-full"
             >
                 <span id="error-message" class="text-red"></span>
@@ -77,16 +77,15 @@ document.addEventListener('astro:page-load', () => {
         form.addEventListener('submit', handleSubmit)
     })
     
-    function handleSubmit(e: Event) {
+    async function handleSubmit(e: Event) {
         e.preventDefault()
     
         els('span', document, span => span.classList.add('hidden') )
         form?.classList.add('hidden')
         el('#logo')?.classList.add('animate-loader')
     
-        sleep(1000)
-        form?.removeEventListener('submit', handleSubmit)
-        form?.requestSubmit()
+        await sleep(1000)
+        form?.submit()
     }
 
 

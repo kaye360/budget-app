@@ -53,7 +53,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
 	const id = Number( params.slug )
 	const body = await request.json()
 
-	const { error } = await db
+	const { error, data } = await db
 		.from('Transactions')
 		.update(body)
 		.eq('id', id)

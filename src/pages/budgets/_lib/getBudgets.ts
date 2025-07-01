@@ -1,5 +1,5 @@
 import { fetchData } from "../../../lib/fetch";
-import type { Budget } from "../../../types/Budget";
+import type { Budget } from "../../../types/types";
 
 
 export async function getBudgets() : Promise<Budget[]> {

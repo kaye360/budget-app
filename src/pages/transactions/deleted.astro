@@ -25,15 +25,6 @@ const transactions = { data : []}
 	
 	<FilterTransactions current="deleted" />
 
-	<transaction-list class="grid gap-6">
-		{ transactions.data.map( transaction => (
-			<Transaction {transaction} />
-		))}
-		<template id="transaction-template">
-			<Transaction />
-		</template>
-	</transaction-list>
-
 	<MoreTransactionsButton />
 
 </Layout>

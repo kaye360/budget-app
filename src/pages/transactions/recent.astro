@@ -25,10 +25,10 @@ const [transactions, budgets] = await Promise.all([
 
 	<transaction-list class="grid gap-6">
 		{ transactions.data.map( transaction => (
-			<Transaction {transaction} budgets={budgets} />
+			<Transaction {transaction} {budgets} />
 		))}
 		<template id="transaction-template">
-			<Transaction budgets={budgets}/>
+			<Transaction {budgets}/>
 		</template>
 	</transaction-list>
 

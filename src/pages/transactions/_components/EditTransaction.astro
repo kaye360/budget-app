@@ -37,7 +37,7 @@ const { budgets, transaction } = Astro.props
 
         <label>
             Budget: <br />
-            <select name="budget" class="w-full bg-bg-2" data-budgetid={transaction?.budgetId}>
+            <select name="budget-id" class="w-full bg-bg-2" data-budgetid={transaction?.budgetId}>
                 <option value="0">Uncategorized</option>
                 { budgets.map( budget => (
                     <option 
@@ -51,7 +51,7 @@ const { budgets, transaction } = Astro.props
 
         <label>
             Account: <br />
-            <select name="account-name" class="w-full bg-bg-2">
+            <select name="account-id" class="w-full bg-bg-2">
                 <option value="account-1">account 1</option>
                 <option selected value="account-2">account 2</option>
             </select>
@@ -90,14 +90,6 @@ class TransactionEdit extends HTMLElement {
      * 
      */
     connectedCallback() {
-
-        /**
-         * Chang budget select default value to transaction budget
-         */
-        el<HTMLSelectElement>('select[name="budget"', this, select => {
-            const budgetId = select.dataset.budgetid
-            select.setAttribute('value', budgetId || '0')
-        })
 
         /**
          * Form submit handler
@@ -139,17 +131,22 @@ class TransactionEdit extends HTMLElement {
             date : formData.get('date'),
             description : formData.get('description'),
             amount : Number(formData.get('amount')),
-            budget : formData.get('budget'),
-            accountName : formData.get('account-name'),
+            budgetId : Number(formData.get('budget-id')),
+            accountId : 1,
         }
     }
 
 
     updateTransaction( transaction : Element | null, formData: FormData) {
+
+        const select = el<HTMLSelectElement>('select[name="budget-id"', this)
+        const budget = String( select?.options[select.selectedIndex].text )
+
         transaction?.setAttribute('amount', String(formData.get('amount')) )
         transaction?.setAttribute('date', String(formData.get('date')) )
         transaction?.setAttribute('description', String(formData.get('description')) )
-        transaction?.setAttribute('budget', String(formData.get('budget')) )
+        transaction?.setAttribute('budget', budget )
+        transaction?.setAttribute('budget-id', String(formData.get('budget')) )
     }
 }
 

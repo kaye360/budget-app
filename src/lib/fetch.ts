@@ -1,3 +1,4 @@
+import { BASE_URL } from "../../config";
 
 type FetchOptions = {
 	method?: 'GET' | 'PUT' | 'POST' | 'DELETE';
@@ -11,15 +12,22 @@ type FetchResult<T> = {
 };
 
 
+/**
+ * 
+ * Safe fetch function with try/catch and returns { data, error }
+ * Automatically appends full site url if called from server
+ * 
+ */
 export async function fetchData<T = unknown>(
 	url: string,
 	options: FetchOptions = {}
 ): Promise<FetchResult<T>> {
 	try {
 
-		const baseUrl = import.meta.env.DEV ? 'http://localhost:4321' : import.meta.env.SITE
+		const isServer = typeof window === 'undefined'
+		const fullUrl = isServer ? `${BASE_URL}${url}` : url
 
-		const response = await fetch(`${baseUrl}${url}`, {
+		const response = await fetch(fullUrl, {
 			method: options.method || 'GET',
 			headers: {
 				'Content-Type': 'application/json',
