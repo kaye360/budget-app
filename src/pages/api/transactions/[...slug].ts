@@ -1,12 +1,12 @@
 import type { APIRoute } from "astro"
 import { db } from "../../../lib/supabase"
-import { errorResponse, getParams, getRecentByUserId, groupTransactionsByIndex } from "./_lib"
+import { errorResponse, getByMonth, getParams, getRecentByUserId, groupTransactionsByIndex } from "./_lib"
 import type { Transaction } from "../../../types/types"
 
 
 export const GET: APIRoute = async ({ request }) => {
 
-	const { id, by, page, perPage } = getParams(request.url)
+	const { id, by, page, perPage, month } = getParams(request.url)
 
 	if( !id ) return errorResponse({ error : 'Invalid user id'})
 
@@ -17,12 +17,27 @@ export const GET: APIRoute = async ({ request }) => {
 		const res = await getRecentByUserId(id, { page, perPage })
 		data = res.data
 		count = res.count || 0
+
+		return new Response(
+			JSON.stringify({ data, count, totalPages : Math.ceil(count/perPage) }),
+			{ status: 200, headers: { 'Content-Type': 'application/json' } }
+		)
+	}
+
+	if( by === 'month' ) {
+		const res = await getByMonth(id, month)
+		const data = res.data
+		return new Response(
+			JSON.stringify({ data }),
+			{ status: 200, headers: { 'Content-Type': 'application/json' } }
+		)
 	}
 
 	return new Response(
-		JSON.stringify({ data, count, totalPages : Math.ceil(count/perPage) }),
-		{ status: 200, headers: { 'Content-Type': 'application/json' } }
+		JSON.stringify({ error : 'Invalid "by" argument '}),
+		{ status: 404, headers: { 'Content-Type': 'application/json' } }
 	)
+
 }
 
 

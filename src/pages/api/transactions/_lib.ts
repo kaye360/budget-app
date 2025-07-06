@@ -1,8 +1,8 @@
 import { db } from "../../../lib/supabase"
-import type { NewTransaction, Transaction } from "../../../types/types"
+import type { NewTransaction } from "../../../types/types"
 
 /**
- * Get recent posts by user ID
+ * Get recent transactions by user ID
  */
 export async function getRecentByUserId(
     userId : number,
@@ -19,6 +19,30 @@ export async function getRecentByUserId(
         .range(start, end)
 
     return { data, count }
+}
+
+/**
+ * Get recent transactions by user ID
+ */
+export async function getByMonth(
+    userId : number,
+    date : string
+) {
+
+    
+    const year = Number( "20" + date.slice(0,2) )
+    const month = Number( date.slice(-2) )
+    
+    const startDate = `${year}-${month}-01`
+    const endDate = (new Date(year, month, 0)).toDateString().split('T')[0]
+    
+    const { data } = await db.from('TransactionView')
+        .select('budgetId, amount')
+        .eq('userId', userId)
+        .gte('date', startDate)
+        .lte('date', endDate)
+
+    return { data }
 }
 
 

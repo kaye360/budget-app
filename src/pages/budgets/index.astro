@@ -1,7 +1,61 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { getTransactions } from "../transactions/_lib/getTransactions";
+import { groupTransactionsByBudget } from "../transactions/_lib/groupTransactionsByBudget";
+import { getBudgets } from "./_lib/getBudgets";
+
+const budgets = await getBudgets()
+const transactions = await getTransactions(1, {
+	by : 'month',
+	month : 2506
+})
+
+const transactionsByBudget = groupTransactionsByBudget(transactions)
+
+const budgetsWithTotals = budgets.map( budget => {
+
+	const match = transactionsByBudget.find( t => t.budgetId === budget.id )
+	const totalSpent = match ? match.total : 0
+  	let percentSpent = Math.min( Math.round( totalSpent / budget.amount * 100 ), 100)
+
+	return { ...budget, totalSpent, percentSpent }
+})
 
 ---
 <Layout>
-	Budgets
+	<div class="grid gap-6 text-lg">
+		{ budgetsWithTotals.map( (budget, i ) => (
+			<div 
+				class:list={[
+					"relative rounded-2xl flex items-center justify-between px-4 py-2 font-semibold",
+					i % 5 === 0 && 'bg-blue/10',
+					i % 5 === 1 && 'bg-green/10',
+					i % 5 === 2 && 'bg-purple/10',
+					i % 5 === 3 && 'bg-red/10',
+					i % 5 === 4 && 'bg-orange/10',
+				]}
+			>
+				<span>
+					{budget.name} 
+				</span>
+
+				<span class="text-2xl">
+					{budget.totalSpent} / {budget.amount}
+				</span>
+
+				<span 
+					class:list={[
+						"absolute left-0 top-0 bottom-0 -z-10 rounded-2xl",
+						i % 5 === 0 && 'bg-blue/30',
+						i % 5 === 1 && 'bg-green/30',
+						i % 5 === 2 && 'bg-purple/30',
+						i % 5 === 3 && 'bg-red/30',
+						i % 5 === 4 && 'bg-orange/30',
+					]}
+					style={`width : ${budget.percentSpent}%`}
+				>
+				</span>
+			</div>
+		))}
+	</div>
 </Layout>

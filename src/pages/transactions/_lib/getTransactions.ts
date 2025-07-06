@@ -3,10 +3,10 @@ import { fetchData } from "../../../lib/fetch"
 import type { Transaction } from "../../../types/types"
 import { BASE_URL } from "../../../../config"
 
-interface GetTransactions {
+export interface GetTransactions {
     data : Transaction[],
-    totalPages : number,
-    count : number
+    totalPages? : number,
+    count? : number
 }
 
 export async function getTransactions(
