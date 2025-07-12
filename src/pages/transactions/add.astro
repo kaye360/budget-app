@@ -2,9 +2,9 @@
 import { BanknoteArrowUpIcon, ImportIcon } from "@lucide/astro";
 import LoadingButton from "../../components/Button/LoadingButton.astro";
 import Layout from "../../layouts/Layout.astro";
-import CreateTransaction from "./_components/CreateTransaction.astro";
-import CreateTransactionCount from "./_components/CreateTransactionCount.astro";
-import { getBudgets } from "../budgets/_lib/getBudgets";
+import CreateTransaction from "../../components/_transactions/CreateTransaction.astro";
+import CreateTransactionCount from "../../components/_transactions/CreateTransactionCount.astro";
+import { getBudgets } from "../../utils/budget.utils";
 
 const budgets = await getBudgets()
 ---
@@ -58,7 +58,7 @@ const budgets = await getBudgets()
 <script>
 import { el } from "../../lib/el"
 import { fetchData } from "../../lib/fetch"
-import { sleep } from "../../lib/utils"
+import { sleep } from "../../utils/app.utils"
 
 
 document.addEventListener('astro:page-load', () => {

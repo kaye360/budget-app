@@ -1,6 +1,6 @@
 ---
 import { Trash2Icon } from "@lucide/astro";
-import LoadingButton from "../../../components/Button/LoadingButton.astro";
+import LoadingButton from "../Button/LoadingButton.astro";
 ---
 
 <transaction-delete>
@@ -21,9 +21,9 @@ import LoadingButton from "../../../components/Button/LoadingButton.astro";
 </transaction-delete>
 
 <script>
-import { el } from "../../../lib/el"
-import { fetchData } from "../../../lib/fetch"
-import { sleep } from "../../../lib/utils"
+import { el } from "../../lib/el"
+import { fetchData } from "../../lib/fetch"
+import { sleep } from "../../utils/app.utils"
 
 
 class TransactionDelete extends HTMLElement {

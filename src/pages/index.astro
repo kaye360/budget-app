@@ -1,7 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions"
 import { LogInIcon, SkullIcon } from "@lucide/astro"
-import { APP_NAME } from "../../config"
+import { APP_NAME } from "../../app.config"
 import "../styles/main.css"
 import Button from "../components/Button/Button.astro"
 import '@fontsource-variable/sora';
@@ -63,7 +63,7 @@ if( auth ) {
 
 <script>
 import { el, els } from "../lib/el"
-import { sleep } from "../lib/utils"
+import { sleep } from "../utils/app.utils"
 
 document.addEventListener('astro:page-load', () => {
 

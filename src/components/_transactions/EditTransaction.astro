@@ -1,8 +1,8 @@
 ---
 import { BanIcon, SaveIcon } from "@lucide/astro";
-import Button from "../../../components/Button/Button.astro";
-import LoadingButton from "../../../components/Button/LoadingButton.astro";
-import type { Budget, Transaction } from "../../../types/types";
+import type { Budget, Transaction } from "../../types/types";
+import Button from "../Button/Button.astro";
+import LoadingButton from "../Button/LoadingButton.astro";
 
 interface Props {
     budgets : Budget[],
@@ -78,9 +78,8 @@ const { budgets, transaction } = Astro.props
 
 
 <script>
-import { el } from "../../../lib/el"
-import { fetchData } from "../../../lib/fetch"
-
+import { el } from "../../lib/el"
+import { fetchData } from "../../lib/fetch"
 
 class TransactionEdit extends HTMLElement {
     

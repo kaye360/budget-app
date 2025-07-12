@@ -1,10 +1,9 @@
 ---
 import { EllipsisVerticalIcon } from "@lucide/astro"
-import type { Transaction } from "../../../types/types"
-import Modal from "../../../components/Modal.astro"
 import DeleteTransaction from "./DeleteTransaction.astro"
 import EditTransaction from "./EditTransaction.astro"
-import type { Budget } from "../../../types/types"
+import type { Budget, Transaction } from "../../types/types"
+import Modal from "../Modal.astro"
 
 interface Props {
     transaction? : Transaction,
@@ -67,8 +66,8 @@ const {
 
 
 <script>
-import { el } from "../../../lib/el"
-import { toDateWithYear, toCurrency } from "../../../lib/utils"
+import { el } from "../../lib/el"
+import { toCurrency, toDateWithYear } from "../../utils/app.utils"
 
 
 class TransactionItem extends HTMLElement {

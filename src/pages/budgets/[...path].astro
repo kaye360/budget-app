@@ -1,28 +1,38 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getTransactions } from "../transactions/_lib/getTransactions";
-import { groupTransactionsByBudget } from "../transactions/_lib/groupTransactionsByBudget";
-import { getBudgets } from "./_lib/getBudgets";
+import { getCurrentYYMM, yymmToMonthYear } from "../../utils/app.utils";
+import { getBudgets, getBudgetsWithTotalSpent } from "../../utils/budget.utils";
+import { getTransactions } from "../../utils/transaction.utils";
 
-const budgets = await getBudgets()
-const transactions = await getTransactions(1, {
-	by : 'month',
-	month : 2506
-})
+const { path } = Astro.params;
 
-const transactionsByBudget = groupTransactionsByBudget(transactions)
+const month = Number( path ? path : getCurrentYYMM() )
 
-const budgetsWithTotals = budgets.map( budget => {
+const [transactions, budgets] = await Promise.all([
+	getTransactions(1, { by : 'month', month }),
+	getBudgets(),
+])
 
-	const match = transactionsByBudget.find( t => t.budgetId === budget.id )
-	const totalSpent = match ? match.total : 0
-  	let percentSpent = Math.min( Math.round( totalSpent / budget.amount * 100 ), 100)
-
-	return { ...budget, totalSpent, percentSpent }
-})
+const budgetsWithTotals = getBudgetsWithTotalSpent(budgets, transactions.data)
 
 ---
 <Layout>
+
+	<div class="flex items-center justify-between mb-4">
+
+		<span>
+			{ yymmToMonthYear(month, -1) }
+		</span>
+
+		<h1 class="text-xl font-semibold font-theme">
+			{ yymmToMonthYear(month) } Spending
+		</h1>
+		
+		<span>
+			{ yymmToMonthYear(month, 1) }
+		</span>
+	</div>
+
 	<div class="grid gap-6 text-lg">
 		{ budgetsWithTotals.map( (budget, i ) => (
 			<div 

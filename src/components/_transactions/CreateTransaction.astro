@@ -1,7 +1,7 @@
 ---
 import { Trash2Icon } from "@lucide/astro";
-import Button from "../../../components/Button/Button.astro";
-import type { Budget } from "../../../types/types";
+import type { Budget } from "../../types/types";
+import Button from "../Button/Button.astro";
 
 interface Props {
     budgets : Budget[]
@@ -55,7 +55,8 @@ const { budgets } = Astro.props
 
 
 <script>
-import { el } from "../../../lib/el"
+import { el } from "../../lib/el"
+
 
 
 class TransactionCreate extends HTMLElement {

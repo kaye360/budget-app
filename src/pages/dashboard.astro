@@ -1,9 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import type { Transaction as TransactionType } from "../types/Transaction";
-import Transaction from "./transactions/_components/Transaction.astro";
 import { ArrowLeftRightIcon } from "@lucide/astro"
-import { getTransactions } from "./transactions/_lib/getTransactions";
+import { getTransactions } from "../utils/transaction.utils";
+import Transaction from "../components/_transactions/Transaction.astro";
+import { getBudgets } from "../utils/budget.utils";
+import type { Transaction as TransactionType } from "../types/types";
 
 const auth = await Astro.session?.get('auth')
 
@@ -12,11 +13,12 @@ if( !auth ) {
 }
 
 
-const transactions = await getTransactions( 1, {
-	by : 'recent',
-	page : 0,
-	perPage : 3
-})
+const [transactions, budgets] = await Promise.all([
+	getTransactions(1, { by : 'recent', page : 0, perPage : 5 }),
+	getBudgets(),
+])
+
+
 ---
 <Layout>
 
@@ -31,7 +33,7 @@ const transactions = await getTransactions( 1, {
 			</h2>
 				<transaction-list class="grid gap-6">
 				{ transactions.data.map( (transaction : TransactionType) =>
-					<Transaction transaction={transaction} mode="simple" />
+					<Transaction {transaction} {budgets} mode="simple" />
 				)}
 			</transaction-list>
 		</div>

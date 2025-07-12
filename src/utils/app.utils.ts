@@ -19,16 +19,47 @@ export function range(start: number, end: number): number[] {
 
 /**
  * Convert a timestamp from the db to human readable date
+ * Note: Keep the 12 hour time shift otherwise days are off
  */
 export function toDateWithYear(datestring: string): string {
 
-	return new Date(datestring).toLocaleDateString('en-us', {
+	return new Date(datestring + 'T12:00:00').toLocaleDateString('en-us', {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric'
 	})
 }
 
+
+/**
+ * Get current date as YYMM
+ */
+export function getCurrentYYMM(): string {
+	const now = new Date()
+	const yy = String(now.getFullYear()).slice(2)
+	const mm = String(now.getMonth() + 1).padStart(2, '0')
+	return yy + mm
+}
+
+
+/**
+ * Convert YYMM to human readable Month Year date
+ */
+export function yymmToMonthYear(
+	yymm: string | number,
+	offset: number = 0
+): string {
+
+	const str = String(yymm).padStart(4, '0')
+	const year = 2000 + Number(str.slice(0, 2))
+	const month = Number(str.slice(2, 4)) - 1
+	const date = new Date(year, month + offset)
+	
+	return date.toLocaleDateString('en-US', {
+		month: 'long',
+		year: 'numeric'
+	});
+}
 
 
 /**

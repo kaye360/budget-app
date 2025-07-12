@@ -2,6 +2,7 @@
 /**
  * 
  * Short querySelector wrappers
+ * Includes typesafe callbacks to apply to element if needed
  * 
  */
 

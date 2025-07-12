@@ -1,11 +1,10 @@
 ---
 
+import FilterTransactions from "../../components/_transactions/FilterTransactions.astro";
+import MoreTransactionsButton from "../../components/_transactions/MoreTransactionsButton.astro";
 import Layout from "../../layouts/Layout.astro";
-import { getBudgets } from "../budgets/_lib/getBudgets";
-import FilterTransactions from "./_components/FilterTransactions.astro";
-import MoreTransactionsButton from "./_components/MoreTransactionsButton.astro";
-import Transaction from "./_components/Transaction.astro";
-import { getTransactions } from "./_lib/getTransactions";
+import { getBudgets } from "../../utils/budget.utils";
+import { getTransactions } from "../../utils/transaction.utils";
 
 const auth = await Astro.session?.get('auth')
 
@@ -15,7 +14,7 @@ if( !auth ) {
 
 
 const [transactions, budgets] = await Promise.all([
-	getTransactions(1, { by : 'recent', page : 0, perPage : 50 }),
+	getTransactions(1, { by : 'month', month : 2506 }),
 	getBudgets(),
 ])
 

@@ -1,4 +1,4 @@
-import { BASE_URL } from "../../config";
+import { BASE_URL } from "../../app.config";
 
 type FetchOptions = {
 	method?: 'GET' | 'PUT' | 'POST' | 'DELETE';
