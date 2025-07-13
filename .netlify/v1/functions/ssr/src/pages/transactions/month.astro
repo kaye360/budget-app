@@ -1,0 +1,33 @@
+---
+
+import FilterTransactions from "../../components/_transactions/FilterTransactions.astro";
+import MoreTransactionsButton from "../../components/_transactions/MoreTransactionsButton.astro";
+import Layout from "../../layouts/Layout.astro";
+import { getBudgets } from "../../utils/budget.utils";
+import { getTransactions } from "../../utils/transaction.utils";
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+	return Astro.redirect('/')
+}
+
+
+const [transactions, budgets] = await Promise.all([
+	getTransactions(1, { by : 'month', month : 2506 }),
+	getBudgets(),
+])
+
+---
+
+<Layout>
+	
+	<FilterTransactions current="month" />
+
+	<transaction-list class="grid gap-6">
+	</transaction-list>
+
+	<MoreTransactionsButton />
+
+</Layout>
+

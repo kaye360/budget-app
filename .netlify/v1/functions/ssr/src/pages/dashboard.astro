@@ -1,0 +1,47 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { ArrowLeftRightIcon } from "@lucide/astro"
+import { getTransactions } from "../utils/transaction.utils";
+import Transaction from "../components/_transactions/Transaction.astro";
+import { getBudgets } from "../utils/budget.utils";
+import type { Transaction as TransactionType } from "../types/types";
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+    return Astro.redirect('/')
+}
+
+
+const [transactions, budgets] = await Promise.all([
+	getTransactions(1, { by : 'recent', page : 0, perPage : 5 }),
+	getBudgets(),
+])
+
+
+---
+<Layout>
+
+	<div class="text-xl">
+		Welcome {auth.userName}
+	</div>
+	<div class="grid gap-4 grid-cols-3 grid-rows-2">
+		<div class="bg-blue/10 backdrop-blur-lg rounded-xl p-4 col-span-2">
+			<h2 class="flex items-center gap-2 font-semibold tex-2xl mb-4">
+				<ArrowLeftRightIcon />
+				Recent Transactions
+			</h2>
+				<transaction-list class="grid gap-6">
+				{ transactions.data.map( (transaction : TransactionType) =>
+					<Transaction {transaction} {budgets} mode="simple" />
+				)}
+			</transaction-list>
+		</div>
+		<div class="border border-slate-700 rounded-xl p-4 row-span-2">Budgets</div>
+		<div class="border border-slate-700 rounded-xl p-4 min-h-32">Debt</div>
+		<div class="border border-slate-700 rounded-xl p-4 min-h-32">Income</div>
+		<div class="border border-slate-700 rounded-xl p-4 min-h-32">
+			Upcoming Bills
+		</div>
+	</div>
+</Layout>

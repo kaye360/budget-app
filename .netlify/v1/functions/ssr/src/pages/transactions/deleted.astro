@@ -1,0 +1,21 @@
+---
+
+import FilterTransactions from "../../components/_transactions/FilterTransactions.astro";
+import MoreTransactionsButton from "../../components/_transactions/MoreTransactionsButton.astro";
+import Layout from "../../layouts/Layout.astro";
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+	return Astro.redirect('/')
+}
+---
+
+<Layout>
+	
+	<FilterTransactions current="deleted" />
+
+	<MoreTransactionsButton />
+
+</Layout>
+
