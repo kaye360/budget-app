@@ -1,6 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions"
-import { LogInIcon, SkullIcon } from "@lucide/astro"
+import { LogInIcon, BotIcon } from "@lucide/astro"
 import { APP_NAME } from "../../app.config"
 import "../styles/main.css"
 import Button from "../components/Button/Button.astro"
@@ -25,7 +25,7 @@ if( auth ) {
         <main class="flex flex-col h-screen max-w-[500px] w-full mx-auto">
             <div class="flex-1 font-theme self-stretch grid place-items-center w-full">
                 <div class="text-center">
-                    <SkullIcon 
+                    <BotIcon 
                         id="logo"
                         width="96" 
                         height="96" 

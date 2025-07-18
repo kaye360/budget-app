@@ -22,7 +22,11 @@
     }
 
     select {
-        @apply bg-bg-2
+        @apply bg-bg-2 hover:bg-bg-1 cursor-pointer px-3 py-2;
+    }
+
+    option {
+        @apply cursor-pointer;
     }
 }
 

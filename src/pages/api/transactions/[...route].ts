@@ -1,8 +1,8 @@
 import type { APIRoute } from "astro"
 import { db } from "../../../lib/db"
-import { getQueryParams, handlers } from "../../../services/transaction.services"
 import { errorResponse } from "../../../services/error.services"
 import { createTransactionRequest } from "../../../requests/transaction.requests"
+import { getQueryParams, handlers } from "../../../handlers/transaction.handlers"
 
 
 
@@ -48,11 +48,11 @@ export const POST: APIRoute = async ({ request }) => {
 
 export const PUT: APIRoute = async ({ request, params }) => {
 
-	if( !params.path || !params.path[0] ) {
+	if( !params.route || !params.route[0] ) {
 		return errorResponse({error : 'Invalid ID'})
 	}
 
-	const id = Number( params.path )
+	const id = Number( params.route )
 	const body = await request.json()
 
 	const { error } = await db
@@ -71,11 +71,11 @@ export const PUT: APIRoute = async ({ request, params }) => {
 
 export const DELETE: APIRoute = async ({ params }) => {
 
-	if( !params.path || !params.path[0] ) {
+	if( !params.route || !params.route[0] ) {
 		return errorResponse({error : 'Invalid ID'})
 	}
 
-	const id = Number( params.path )
+	const id = Number( params.route )
 
 	const { error } = await db
 		.from('Transactions')

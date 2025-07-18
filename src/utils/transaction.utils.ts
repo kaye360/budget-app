@@ -1,39 +1,5 @@
 import { el } from "../lib/el"
-import { fetchData } from "../lib/fetch"
-import { objectValuesToString } from "./app.utils"
 import type { Transaction } from "../types/types"
-
-
-/**
- * 
- * @function getTransactions
- * Fetch Transactions wrapper
- * 
- */
-export interface GetTransactions {
-    data : Transaction[],
-    totalPages? : number,
-    count? : number
-}
-
-export async function getTransactions(
-    userId : number,
-    options? : {
-        by? : string,
-        page? : number,
-        perPage? : number,
-        month? : number,
-    }
-) : Promise<GetTransactions> {
-    const params = options ? '&' + new URLSearchParams( objectValuesToString(options) ) : ''
-
-    const res = await fetchData<GetTransactions>(`/api/transactions?id=${userId}&${params}`)
-
-    if( res.error || !res.response ) return { data : [], totalPages : 0, count : 0 }
-
-    return res.response
-}
-
 
 /**
  * 

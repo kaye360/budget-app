@@ -10,7 +10,8 @@
 
 <script>
 import { el } from "../../lib/el"
-import { getTransactions, renderTransactions } from "../../utils/transaction.utils"
+import { getTransactionsByRecent } from "../../services/transaction.services"
+import { renderTransactions } from "../../utils/transaction.utils"
 
 document.addEventListener('astro:page-load', () => {
 
@@ -24,20 +25,16 @@ document.addEventListener('astro:page-load', () => {
 	const button = el<HTMLButtonElement>('#more-transactions-button', document, btn => {
         btn.addEventListener('click', async () => {
 
-            const transactions = await getTransactions(1, {
-                    by : 'recent',
-                    page : page,
-                    perPage : 50
-                })
+            const transactions = await getTransactionsByRecent(1)
                 
-                if( !transactions.data ) return
-                
-                renderTransactions( transactions.data, el('transaction-list') )
+            if( !transactions.data ) return
+            
+            renderTransactions( transactions.data, el('transaction-list') )
 
-                page += 1
-                if( page === transactions.totalPages) button?.remove()
-            })
+            page += 1
+            if( page === transactions.totalPages) button?.remove()
         })
-
     })
+
+})
 </script>

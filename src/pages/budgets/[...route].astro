@@ -1,0 +1,78 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCurrentYYMM, yyyymmToMonthYear, getRelativeYyyymm } from "../../utils/date.utils";
+import { getBudgets, getBudgetsWithTotalSpent } from "../../utils/budget.utils";
+import { getTransactionsByMonth } from "../../services/transaction.services";
+import Budget from "../../components/_budgets/Budget.astro";
+
+const { route } = Astro.params;
+
+const month = route ? route : getCurrentYYMM()
+
+const [transactions, budgets] = await Promise.all([
+	getTransactionsByMonth(1, { month }),
+	getBudgets(),
+])
+
+const budgetsWithTotals = getBudgetsWithTotalSpent(budgets, transactions.data)
+
+---
+<Layout>
+
+	<div class="flex items-center justify-between mb-4">
+
+		<h1 class="text-lg md:text-xl font-semibold font-theme min-w-max">
+			{ yyyymmToMonthYear(month) }
+		</h1>
+
+		<select 
+			id="month-selector"
+			name="month-selector" 
+			class="w-fit"
+			data-month={month}
+		>
+			<option>Select month to view</option>
+			{ transactions.months.map( month => (
+				<option value={month.month}>
+					{month.title}
+				</option>
+			))}
+		</select>
+		
+	</div>
+
+	<budget-list class="grid gap-6 text-lg transition-all translate-x-24 opacity-0 w-full">
+		{ budgetsWithTotals.map( (budget, index ) => (
+			<Budget {budget} {index} />
+		))}
+	</budget-list>
+</Layout>
+
+<script>
+import { el } from "../../lib/el"
+
+document.addEventListener('astro:page-load', () => {
+
+	// Animate in
+	el('budget-list', document, el => el.classList.remove('translate-x-24', 'opacity-0'))
+
+	el<HTMLSelectElement>('#month-selector', document, select => {
+		select.addEventListener('change', e => {
+
+			if( !(e.target instanceof HTMLSelectElement) ) {
+				return
+			}
+
+			if( e.target.dataset.month === e.target.value ) {
+				return
+			}
+
+			// Animate out
+			el('budget-list', document, el => el.classList.add('-translate-x-24', 'opacity-0'))
+
+			window.location.href = `/budgets/${e.target.value}`
+		})
+	})
+
+})
+</script>

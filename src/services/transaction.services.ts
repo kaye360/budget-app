@@ -1,88 +1,74 @@
-import { db } from "../lib/db"
+import { fetchData } from "../lib/fetch"
+import type { Transaction } from "../types/types"
+import { objectValuesToString } from "../utils/app.utils"
+
 
 /**
  * 
- * Get query params for get request
+ * @function getTransactionsByRecent
+ * Fetch Transactions wrapper for users recent transactions
  * 
  */
-type QueryParams = {
-  id: number
-  by: 'recent' | 'month'
-  page: number
-  perPage: number
-  month: string
+export interface RecentTransactions {
+    data : Transaction[],
+    totalPages? : number,
+    count? : number
 }
 
-export function getQueryParams(url: string): QueryParams {
-    
-    const searchParams = new URL(url).searchParams
+export async function getTransactionsByRecent(
+    userId : number,
+    options? : {
+        page? : number,
+        perPage? : number,
+    }
+) : Promise<RecentTransactions> {
 
-    const toNumber = (key: string|null, defaultValue: number) => {
-        const value = Number(key)
-        return isNaN(value) ? defaultValue : value
+    const params = options 
+        ? new URLSearchParams( objectValuesToString(options) ) 
+        : ''
+
+    const url = `/api/transactions?id=${userId}&by=recent&${params}`
+    const res = await fetchData<RecentTransactions>(url)
+
+    if( res.error || !res.response ) {
+        return { data : [], totalPages : 0, count : 0 }
     }
 
-    const validBy = (by : string|null) : QueryParams['by'] => {
-        if( 
-            typeof by === 'string' && 
-            (['recent', 'month'] as readonly string[]).includes(by)
-        ) {
-            return by as QueryParams['by']
-        }
-        return 'recent'
-    }
-
-    return {
-        by:      validBy(searchParams.get('by')),
-        id:      toNumber(searchParams.get('id'), 0),
-        page:    toNumber(searchParams.get('page'), 0),
-        perPage: toNumber(searchParams.get('perPage'), 50),
-        month:   searchParams.get('month') ?? '0125',
-    }
+    return res.response
 }
 
 
 /**
  * 
- * GET Request Handlers
+ * @function getTransactionsByMonth
+ * Fetch Transactions wrapper for users recent transactions
  * 
  */
-export const handlers = {
+export interface MonthlyTransactions {
+    data : Transaction[],
+    months : {
+        month : string,
+        title : string
+    }[]
+}
 
-    recent : async ({id, page, perPage} : QueryParams ) => {
+export async function getTransactionsByMonth(
+    userId : number,
+    options? : {
+        month : string
+    }
+) : Promise<MonthlyTransactions> {
 
-        const start = page * perPage
-        const end = start + perPage - 1
+    const params = options 
+        ? new URLSearchParams( objectValuesToString(options) ) 
+        : ''
 
-        const { data, count } = await db.from('TransactionView')
-            .select('*', { count: 'exact'})
-            .order('date', { ascending : false })
-            .eq('userId', id)
-            .eq('isDeleted', false)
-            .range(start, end)
-            
-        return { data, count, totalPages : Math.ceil( (count ?? 0) / perPage) }
-    },
+    const url = `/api/transactions?id=${userId}&by=month&${params}`
+    const res = await fetchData<MonthlyTransactions>(url)
 
-    month : async ({id, month: date} : QueryParams ) => {
-
-        const year = Number( "20" + date.slice(0,2) )
-        const month = Number( date.slice(-2) )
-        const startDate = `${year}-${month}-01`
-        const endDate = (new Date(year, month, 0)).toISOString().split('T')[0]
-
-        const { data } = await db.from('TransactionView')
-            .select('*')
-            .eq('userId', id)
-            .eq('isDeleted', false)
-            .gte('date', startDate)
-            .lte('date', endDate)
-
-        return { data }
-    },
-
-    budget : async({} : QueryParams) => {
-        return {}
+    if( res.error || !res.response ) {
+        return { data : [], months : [] }
     }
 
+    return res.response
 }

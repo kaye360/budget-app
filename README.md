@@ -5,10 +5,12 @@ Made with Astro
 - /components -> Global components
     - /components/_feature -> Feature component folder
     - /components/GlobalComponent -> Sub folder for more complex or grouped components
+- /handlers -> Backend API business logic
+    - /handlers/feature.handlers.ts -> Feature handler functions
 - /layouts -> Global Layouts
 - /lib -> External or internal libraries
 - /pages -> App routes
-- /services -> API helper functions
+- /services -> Data fetching - can be used in front or back end
     - /services/feature.services.ts -> Feature services
 - /styles -> Css stylesheets with global classes or tailwind utilities
 - /types -> Typescript types
