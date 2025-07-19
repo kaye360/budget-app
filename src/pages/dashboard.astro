@@ -3,9 +3,9 @@ import Layout from "../layouts/Layout.astro";
 import { ArrowLeftRightIcon, ChartPieIcon } from "@lucide/astro"
 import Transaction from "../components/_transactions/Transaction.astro";
 import { getBudgets, getBudgetsWithTotalSpent } from "../utils/budget.utils";
-import type { Transaction as TransactionType } from "../types/types";
-import { getTransactionsByRecent } from "../services/transaction.services";
+import type { RecentTransactions, Transaction as TransactionType } from "../types/types";
 import Budget from "../components/_budgets/Budget.astro";
+import { fetchData } from "../lib/fetch";
 
 const auth = await Astro.session?.get('auth')
 
@@ -15,11 +15,11 @@ if( !auth ) {
 
 
 const [transactions, budgets] = await Promise.all([
-	getTransactionsByRecent(1, { page : 0, perPage : 5 }),
+	fetchData<RecentTransactions>('/api/transactions/recent?perPage=5'),
 	getBudgets(),
 ])
 
-const budgetsWithTotals = getBudgetsWithTotalSpent(budgets, transactions.data)
+const budgetsWithTotals = getBudgetsWithTotalSpent(budgets, transactions.response?.data)
 
 ---
 <Layout>
@@ -35,7 +35,7 @@ const budgetsWithTotals = getBudgetsWithTotalSpent(budgets, transactions.data)
 				Recent Transactions
 			</h2>
 				<transaction-list class="grid gap-6">
-				{ transactions.data.map( (transaction : TransactionType) =>
+				{ transactions.response?.data.map( (transaction : TransactionType) =>
 					<Transaction {transaction} {budgets} mode="simple" />
 				)}
 			</transaction-list>

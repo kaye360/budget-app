@@ -27,8 +27,12 @@ export async function getBudgets() : Promise<Budget[]> {
  */
 export function getBudgetsWithTotalSpent( 
     budgets : Budget[], 
-    transactions : Transaction[] 
+    transactions : Transaction[] | undefined
 ) {
+
+	if( !transactions ) {
+		return []
+	}
 
     const transactionsGroupedByBudget = groupTransactionsByBudget(transactions)
     

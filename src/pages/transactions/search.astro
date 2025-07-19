@@ -1,6 +1,6 @@
 ---
-
 import FilterTransactions from "../../components/_transactions/FilterTransactions.astro";
+import H1 from "../../components/H1.astro";
 import Layout from "../../layouts/Layout.astro";
 
 const auth = await Astro.session?.get('auth')
@@ -8,14 +8,17 @@ const auth = await Astro.session?.get('auth')
 if( !auth ) {
 	return Astro.redirect('/')
 }
-
-
-
 ---
 
 <Layout>
 	
 	<FilterTransactions current="search" />
+
+	<div class="mb-4">
+		<H1>
+			Search Transactions
+		</H1>
+	</div>
 
 </Layout>
 

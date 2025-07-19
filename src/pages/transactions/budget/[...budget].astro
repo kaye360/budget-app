@@ -1,0 +1,95 @@
+---
+import FilterTransactions from "../../../components/_transactions/FilterTransactions.astro"
+import Transaction from "../../../components/_transactions/Transaction.astro"
+import H1 from "../../../components/H1.astro"
+import Layout from "../../../layouts/Layout.astro"
+import { fetchData } from "../../../lib/fetch"
+import type { BudgetTransactions } from "../../../types/types"
+import { getBudgets } from "../../../utils/budget.utils"
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+	return Astro.redirect('/')
+}
+
+const { budget } = Astro.params
+
+let transactions : BudgetTransactions = { data : [] }
+
+const budgets = await getBudgets()
+
+if( budget ) {
+	const transactionsResult = await fetchData<BudgetTransactions>(`/api/transactions/budget/${budget}`)
+	transactions = transactionsResult.response || { data : []}
+}
+---
+
+<Layout>
+	
+	<FilterTransactions current="budget" />
+
+		<div class="flex items-center justify-between mb-4">
+
+			<H1>
+				{ 
+					budget 
+						? budgets[Number(budget)-1].name 
+						: 'Select a budget'
+				}
+			</H1>
+
+			<select 
+				id="budget-selector"
+				name="budget-selector" 
+				class="w-fit"
+				data-budget={budget}
+			>
+				<option>Select budget to view</option>
+				{ budgets.map( budget => (
+					<option value={budget.id}>
+						{budget.name}
+					</option>
+				))}
+			</select>
+		
+		</div>
+
+		<transaction-list class="grid gap-6  transition-all translate-x-24 opacity-0 w-full">
+			{ transactions.data.map( transaction => (
+				<Transaction {transaction} {budgets} />
+			))}
+		</transaction-list>
+
+</Layout>
+
+
+<script>
+import { el } from "../../../lib/el"
+
+document.addEventListener('astro:page-load', () => {
+
+	// Animate in
+	el('transaction-list', document, el => el.classList.remove('translate-x-24', 'opacity-0'))
+
+	el<HTMLSelectElement>('#budget-selector', document, select => {
+		select.addEventListener('change', e => {
+
+			if( !(e.target instanceof HTMLSelectElement) ) {
+				return
+			}
+
+			if( e.target.dataset.budget === e.target.value ) {
+				return
+			}
+
+			// Animate out
+			el('transaction-list', document, el => el.classList.add('-translate-x-24', 'opacity-0'))
+
+			window.location.href = `/transactions/budget/${e.target.value}`
+		})
+	})
+
+})
+</script>
+

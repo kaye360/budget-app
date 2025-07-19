@@ -1,19 +1,23 @@
 import type { APIRoute } from "astro"
 import { db } from "../../../lib/db"
-import { errorResponse } from "../../../services/error.services"
 import { createTransactionRequest } from "../../../requests/transaction.requests"
-import { getQueryParams, handlers } from "../../../handlers/transaction.handlers"
+import { getQueryParamsFromUrl, handlers, type QueryParams } from "../../../services/transaction.service"
+import { errorResponse } from "../../../services/error.service"
 
 
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, session, cookies }) => {
+	
+	/**
+	 * @todo implement auth check
+	*/
+	const auth = { id: 1 }
+	if( !auth ) return errorResponse({ error : 'Invalid user id'})
 
-	const queryParams = getQueryParams(request.url)
+	const queryParams = getQueryParamsFromUrl(request.url, auth.id)
 
-	if( !queryParams.id ) return errorResponse({ error : 'Invalid user id'})
-		
-	if( handlers[queryParams.by] ) {
-		const response = await handlers[queryParams.by](queryParams)
+	if(  typeof handlers[queryParams.filter] === 'function' ) {
+		const response = await handlers[queryParams.filter](queryParams)
 		return new Response(
 			JSON.stringify(response),
 			{ status: 200, headers: { 'Content-Type': 'application/json' } }
@@ -21,7 +25,7 @@ export const GET: APIRoute = async ({ request }) => {
 	}
 
 	return new Response(
-		JSON.stringify({ error : 'Invalid "by" argument '}),
+		JSON.stringify({ error : 'Invalid transaction filter'}),
 		{ status: 404, headers: { 'Content-Type': 'application/json' } }
 	)
 

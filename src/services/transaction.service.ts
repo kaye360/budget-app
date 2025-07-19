@@ -6,39 +6,36 @@ import { yyyymmToMonthYear } from "../utils/date.utils"
  * Get query params for get request
  * 
  */
-type QueryParams = {
-  id: number
-  by: 'recent' | 'month'
-  page: number
-  perPage: number
-  month: string
+export type QueryParams = {
+    id : number
+    filter : string
+    filterValue : string | null | undefined
+    page : number
+    perPage : number
 }
 
-export function getQueryParams(url: string): QueryParams {
+export function getQueryParamsFromUrl(requestUrl: string, id : number): QueryParams {
     
-    const searchParams = new URL(url).searchParams
+    const url = new URL(requestUrl)
+    const searchParams = url.searchParams
+
+    const pathArray = url.pathname.split('/')
+	const transactionsIndex = pathArray.indexOf('transactions')
+
+	const filter = pathArray[transactionsIndex + 1]
+	const filterValue = pathArray[transactionsIndex + 2] || null
 
     const toNumber = (key: string|null, defaultValue: number) => {
         const value = Number(key)
         return isNaN(value) || value === 0 ? defaultValue : value
     }
 
-    const validBy = (by : string|null) : QueryParams['by'] => {
-        if( 
-            typeof by === 'string' && 
-            (['recent', 'month'] as readonly string[]).includes(by)
-        ) {
-            return by as QueryParams['by']
-        }
-        return 'recent'
-    }
-
     return {
-        by:      validBy(searchParams.get('by')),
-        id:      toNumber(searchParams.get('id'), 0),
+        id,
+        filter,
+        filterValue,
         page:    toNumber(searchParams.get('page'), 0),
         perPage: toNumber(searchParams.get('perPage'), 50),
-        month:   searchParams.get('month') ?? '',
     }
 }
 
@@ -48,7 +45,12 @@ export function getQueryParams(url: string): QueryParams {
  * GET Request Handlers
  * 
  */
-export const handlers = {
+
+type Handlers = {
+    [key : string] : Function
+}
+
+export const handlers : Handlers = {
 
     recent : async ({id, page, perPage} : QueryParams ) => {
 
@@ -65,7 +67,11 @@ export const handlers = {
         return { data, count, totalPages : Math.ceil( (count ?? 0) / perPage) }
     },
 
-    month : async ({id, month: date} : QueryParams ) => {
+    month : async ({id, filterValue: date} : QueryParams ) => {
+
+        if( !date ) {
+            return { error : 'Invalid Date'}
+        }
 
         const [year, month] = date.split('-').map(Number)
         const startDate = `${year}-${month}-01`
@@ -73,6 +79,7 @@ export const handlers = {
 
         const { data } = await db.from('TransactionView')
             .select('*')
+            .order('date', { ascending : false })
             .eq('userId', id)
             .eq('isDeleted', false)
             .gte('date', startDate)
@@ -99,8 +106,27 @@ export const handlers = {
         return { data, months }
     },
 
-    budget : async({} : QueryParams) => {
-        return {}
+    budget : async({id, filterValue: budgetId} : QueryParams) => {
+
+        const { data } = await db.from('TransactionView')
+            .select('*')
+            .order('date', { ascending : false })
+            .eq('userId', id)
+            .eq('isDeleted', false)
+            .eq('budgetId', Number(budgetId))
+
+        return { data }
+    },
+
+    deleted : async({id} : QueryParams) => {
+
+        const { data } = await db.from('TransactionView')
+            .select('*')
+            .order('date', { ascending : false })
+            .eq('userId', id)
+            .eq('isDeleted', true)
+        
+        return { data }
     }
 
 }
