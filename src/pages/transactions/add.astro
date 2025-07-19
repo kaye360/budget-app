@@ -7,7 +7,7 @@ import CreateTransactionCount from "../../components/_transactions/CreateTransac
 import { getBudgets } from "../../utils/budget.utils";
 import H1 from "../../components/H1.astro";
 
-const budgets = await getBudgets()
+const budgets = await fetchData<GetBudgets>('/api/budgets'))
 ---
 
 <Layout>

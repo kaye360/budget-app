@@ -4,7 +4,7 @@ import Transaction from "../../../components/_transactions/Transaction.astro"
 import H1 from "../../../components/H1.astro"
 import Layout from "../../../layouts/Layout.astro"
 import { fetchData } from "../../../lib/fetch"
-import type { BudgetTransactions } from "../../../types/types"
+import type { BudgetTransactions, GetBudgets } from "../../../types/types"
 import { getBudgets } from "../../../utils/budget.utils"
 
 const auth = await Astro.session?.get('auth')
@@ -17,7 +17,7 @@ const { budget } = Astro.params
 
 let transactions : BudgetTransactions = { data : [] }
 
-const budgets = await getBudgets()
+const budgets = await fetchData<GetBudgets>('/api/budgets')
 
 if( budget ) {
 	const transactionsResult = await fetchData<BudgetTransactions>(`/api/transactions/budget/${budget}`)
@@ -34,7 +34,7 @@ if( budget ) {
 			<H1>
 				{ 
 					budget 
-						? budgets[Number(budget)-1].name 
+						? budgets.response?.data[Number(budget)-1].name 
 						: 'Select a budget'
 				}
 			</H1>
@@ -46,7 +46,7 @@ if( budget ) {
 				data-budget={budget}
 			>
 				<option>Select budget to view</option>
-				{ budgets.map( budget => (
+				{ budgets.response?.data.map( budget => (
 					<option value={budget.id}>
 						{budget.name}
 					</option>
@@ -57,7 +57,7 @@ if( budget ) {
 
 		<transaction-list class="grid gap-6  transition-all translate-x-24 opacity-0 w-full">
 			{ transactions.data.map( transaction => (
-				<Transaction {transaction} {budgets} />
+				<Transaction {transaction} budgets={budgets.response?.data} />
 			))}
 		</transaction-list>
 

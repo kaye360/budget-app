@@ -5,8 +5,7 @@ import Transaction from "../../components/_transactions/Transaction.astro";
 import H1 from "../../components/H1.astro";
 import Layout from "../../layouts/Layout.astro";
 import { fetchData } from "../../lib/fetch";
-import type { RecentTransactions } from "../../types/types";
-import { getBudgets } from "../../utils/budget.utils";
+import type { GetBudgets, RecentTransactions } from "../../types/types";
 
 const auth = await Astro.session?.get('auth')
 
@@ -16,7 +15,7 @@ if( !auth ) {
 
 const [transactions, budgets] = await Promise.all([
 	fetchData<RecentTransactions>('/api/transactions/recent'),
-	getBudgets(),
+	fetchData<GetBudgets>('/api/budgets'),
 ])
 
 ---
@@ -33,10 +32,10 @@ const [transactions, budgets] = await Promise.all([
 
 	<transaction-list class="grid gap-6">
 		{ transactions.response?.data.map( transaction => (
-			<Transaction {transaction} {budgets} />
+			<Transaction {transaction} budgets={budgets.response?.data} />
 		))}
 		<template id="transaction-template">
-			<Transaction {budgets}/>
+			<Transaction budgets={budgets.response?.data}/>
 		</template>
 	</transaction-list>
 

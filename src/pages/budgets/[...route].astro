@@ -1,10 +1,10 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCurrentYYMM, yyyymmToMonthYear } from "../../utils/date.utils";
-import { getBudgets, getBudgetsWithTotalSpent } from "../../utils/budget.utils";
+import { getBudgetsWithTotalSpent } from "../../utils/budget.utils";
 import Budget from "../../components/_budgets/Budget.astro";
 import { fetchData } from "../../lib/fetch";
-import type { MonthlyTransactions } from "../../types/types";
+import type { GetBudgets, MonthlyTransactions } from "../../types/types";
 
 const { route } = Astro.params;
 
@@ -12,10 +12,10 @@ const month = route ? route : getCurrentYYMM()
 
 const [transactions, budgets] = await Promise.all([
 	fetchData<MonthlyTransactions>(`/api/transactions/month/${month}`),
-	getBudgets(),
+	fetchData<GetBudgets>('/api/budgets'),
 ])
 
-const budgetsWithTotals = getBudgetsWithTotalSpent(budgets, transactions.response?.data)
+const budgetsWithTotals = getBudgetsWithTotalSpent(budgets.response?.data, transactions.response?.data)
 ---
 <Layout>
 

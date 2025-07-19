@@ -1,22 +1,5 @@
-import { fetchData } from "../lib/fetch"
 import type { Budget, Transaction } from "../types/types"
 import { groupTransactionsByBudget } from "./transaction.utils"
-
-
-/**
- * 
- * @function getBudgets
- * Get a users budgets
- * 
- */
-export async function getBudgets() : Promise<Budget[]> {
-
-    const res = await fetchData<{ data: Budget[]}>('/api/budgets?id=1')
-
-    if( res.error || !res.response ) return []
-
-    return res.response?.data as Budget[]
-}
 
 
 /**
@@ -26,11 +9,11 @@ export async function getBudgets() : Promise<Budget[]> {
  * 
  */
 export function getBudgetsWithTotalSpent( 
-    budgets : Budget[], 
+    budgets : Budget[] | undefined, 
     transactions : Transaction[] | undefined
 ) {
 
-	if( !transactions ) {
+	if( !transactions || !budgets ) {
 		return []
 	}
 
