@@ -5,9 +5,7 @@ import H1 from "../../../components/H1.astro";
 import Layout from "../../../layouts/Layout.astro";
 import { fetchData } from "../../../lib/fetch";
 import type { GetBudgets, MonthlyTransactions } from "../../../types/types";
-import { getBudgets } from "../../../utils/budget.utils";
 import { getCurrentYYMM, yyyymmToMonthYear } from "../../../utils/date.utils";
-
 
 const auth = await Astro.session?.get('auth')
 

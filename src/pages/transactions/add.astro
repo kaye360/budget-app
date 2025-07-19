@@ -4,10 +4,11 @@ import LoadingButton from "../../components/Button/LoadingButton.astro";
 import Layout from "../../layouts/Layout.astro";
 import CreateTransaction from "../../components/_transactions/CreateTransaction.astro";
 import CreateTransactionCount from "../../components/_transactions/CreateTransactionCount.astro";
-import { getBudgets } from "../../utils/budget.utils";
 import H1 from "../../components/H1.astro";
+import { fetchData } from "../../lib/fetch";
+import type { GetBudgets } from "../../types/types";
 
-const budgets = await fetchData<GetBudgets>('/api/budgets'))
+const budgets = await fetchData<GetBudgets>('/api/budgets')
 ---
 
 <Layout>
@@ -28,11 +29,11 @@ const budgets = await fetchData<GetBudgets>('/api/budgets'))
     <form>
 
         <transaction-create-list class="grid gap-4">
-            <CreateTransaction {budgets} />
+            <CreateTransaction budgets={budgets.response?.data} />
         </transaction-create-list>
 
         <template id="transaction-create">
-            <CreateTransaction {budgets} />
+            <CreateTransaction budgets={budgets.response?.data} />
         </template>
 
         <div class="sm:col-span-2 grid grid-cols-2 gap-4">

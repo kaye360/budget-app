@@ -4,7 +4,7 @@ import type { Budget } from "../../types/types";
 import Button from "../Button/Button.astro";
 
 interface Props {
-    budgets : Budget[]
+    budgets : Budget[] | undefined
 }
 
 const { budgets } = Astro.props
@@ -30,7 +30,7 @@ const { budgets } = Astro.props
     <label>
         Budget: <br />
         <select name="budgetId-0" data-name="budgetId" class="w-full">
-            { budgets.map( budget => (
+            { budgets && budgets.map( budget => (
                 <option value={budget.id}>{budget.name}</option>
             ))}
         </select>
