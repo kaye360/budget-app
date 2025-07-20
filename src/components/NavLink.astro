@@ -18,13 +18,13 @@ const { href, title, Icon, isActive } = Astro.props
         href === "/transactions/add" && "bg-black/70 scale-105"
     ]}
 >
-    <Icon stroke-width={1} width="30" height="30" />
-    <span class="hidden sm:block font-theme">
+    <Icon stroke-width={1} width="24" height="24" />
+    <span class="hidden sm:block font-theme text-sm">
         {title}
     </span>
     { isActive &&
         <span 
-            class="absolute bottom-0 left-0 right-0 md:left-auto md:top-0 bg-red h-1 md:h-full md:w-1 rounded-full"
+            class="absolute bottom-0 left-0 right-0 bg-red h-1 rounded-full"
             transition:name="navlink-active" 
         />
     }

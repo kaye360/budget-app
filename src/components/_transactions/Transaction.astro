@@ -20,35 +20,21 @@ const {
 
 <transaction-item 
     data-isdeleted={transaction?.isDeleted}
-    class="relative flex items-center pb-6 border-b border-red/20  data-[isdeleted=true]:opacity-90 transition-all max-h-[500px]"
+    class="relative flex flex-wrap items-center py-8 border-b border-red/20 data-[isdeleted=true]:opacity-90 transition-all max-h-[500px]"
     {...transaction}
 >
 
-    <transaction-info>
+    <div>
 
         <transaction-date  
             class="block text-sm text-accent-text mb-1 border border-transparent rounded" 
         />
 
         <transaction-description 
-            class="block font-semibold text-lg mb-2 border border-transparent data-[iseditable=true]:hover:border-slate-300 rounded" 
+            class="block font-semibold text-2xl md:text-xl mb-2 border border-transparent data-[iseditable=true]:hover:border-slate-300 rounded" 
         />
 
-        <transaction-budget
-            class="bg-gradient-to-r from-blue/30 to-green/30  inline-block px-3 py-1 text-xs font-medium rounded-xl tracking-wide capitalize mr-2" 
-        />
-
-        { mode === 'detailed' &&
-            <span class="bg-gradient-to-r from-red/30 to-orange/30 inline-block px-3 py-1 font-medium rounded-xl tracking-wide text-xs capitalize ">
-                Everyday &#9679; Chequing 9084
-                <transaction-account-name />
-                
-                <transaction-account-type />
-                <transaction-account-number />
-            </span>
-        }
-
-    </transaction-info>
+    </div>
 
     <transaction-amount  
         class="ml-auto text-2xl font-semibold font-theme border border-transparent data-[iseditable=true]:hover:border-slate-300 rounded" 
@@ -56,7 +42,7 @@ const {
 
     { mode === 'detailed' && 
         <transaction-edit>
-            <button class="p-2 ml-2 border border-red/30 group hover:border-slate-500 rounded-lg cursor-pointer transition-colors active:scale-95">
+            <button class="p-2 ml-2 border border-red/30 group hover:border-slate-500 rounded-sm cursor-pointer transition-colors active:scale-95">
                 <EllipsisVerticalIcon class="stroke-slate-400 group-hover:stroke-slate-500 transition-colors" />
             </button>
         </transaction-edit>
@@ -65,6 +51,23 @@ const {
             <DeleteTransaction />
         </Modal>
     }
+
+    <div class="w-full">
+        <transaction-budget
+            class="bg-gradient-to-r from-blue/30 to-green/30  inline-block px-3 py-1 text-xs font-medium rounded-sm tracking-wide capitalize mr-2" 
+        />
+
+        { mode === 'detailed' &&
+            <span class="bg-gradient-to-r from-red/30 to-orange/30 inline-block px-3 py-1 font-medium rounded-sm tracking-wide text-xs capitalize ">
+                Everyday &#9679; Chequing 9084
+                <transaction-account-name />
+                
+                <transaction-account-type />
+                <transaction-account-number />
+            </span>
+        }
+    </div>
+
 </transaction-item>
 
 

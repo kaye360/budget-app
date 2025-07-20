@@ -16,7 +16,7 @@ const { budget, index } = Astro.props
 
 <div 
     class:list={[
-        "relative rounded-2xl flex items-center justify-between px-4 py-2 font-semibold",
+        "relative rounded-sm flex items-center justify-between px-4 py-2 font-semibold",
         index % 5 === 0 && 'bg-blue/10',
         index % 5 === 1 && 'bg-green/10',
         index % 5 === 2 && 'bg-purple/10',
@@ -34,7 +34,7 @@ const { budget, index } = Astro.props
 
     <span 
         class:list={[
-            "absolute left-0 top-0 bottom-0 -z-10 rounded-2xl",
+            "absolute left-0 top-0 bottom-0 -z-10 rounded-sm",
             index % 5 === 0 && 'bg-blue/30',
             index % 5 === 1 && 'bg-green/30',
             index % 5 === 2 && 'bg-purple/30',

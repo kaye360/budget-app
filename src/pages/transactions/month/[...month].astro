@@ -48,7 +48,7 @@ const [transactions, budgets] = await Promise.all([
 		
 	</div>
 
-	<transaction-list class="grid gap-6">
+	<transaction-list class="grid">
 		{ transactions.response?.data.map( transaction => (
 			<Transaction {transaction} budgets={budgets.response?.data} />
 		))}

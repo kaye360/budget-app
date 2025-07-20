@@ -54,7 +54,7 @@ if( budget ) {
 		
 		</div>
 
-		<transaction-list class="grid gap-6  transition-all translate-x-24 opacity-0 w-full">
+		<transaction-list class="grid transition-all translate-x-24 opacity-0 w-full">
 			{ transactions.data.map( transaction => (
 				<Transaction {transaction} budgets={budgets.response?.data} />
 			))}
