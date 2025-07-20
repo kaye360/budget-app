@@ -34,12 +34,15 @@ const {
             class="block font-semibold text-lg mb-2 border border-transparent data-[iseditable=true]:hover:border-slate-300 rounded" 
         />
 
-        <transaction-budget      class="bg-blue text-black inline-block px-3 py-1 text-sm font-semibold rounded-xl tracking-wide first-letter:uppercase" />
+        <transaction-budget
+            class="bg-gradient-to-r from-blue/30 to-green/30  inline-block px-3 py-1 text-xs font-medium rounded-xl tracking-wide capitalize mr-2" 
+        />
 
         { mode === 'detailed' &&
-            <span class="block sm:inline-block mt-3 sm:mt-auto sm:ml-2 text-sm text-accent-text tracking-wide capitalize">
+            <span class="bg-gradient-to-r from-red/30 to-orange/30 inline-block px-3 py-1 font-medium rounded-xl tracking-wide text-xs capitalize ">
+                Everyday &#9679; Chequing 9084
                 <transaction-account-name />
-                &#9679;
+                
                 <transaction-account-type />
                 <transaction-account-number />
             </span>
@@ -66,9 +69,9 @@ const {
 
 
 <script>
+import { convertDate } from "../../lib/convertDate"
 import { el } from "../../lib/el"
 import { toCurrency } from "../../utils/app.utils"
-import { toDateWithYear } from "../../utils/date.utils"
 
 
 class TransactionItem extends HTMLElement {
@@ -108,7 +111,7 @@ class TransactionItem extends HTMLElement {
 
         const handlers: Record<string, () => void> = {
             date : () => {
-                el('transaction-date', this, el => el.textContent = toDateWithYear(newValue) )
+                el('transaction-date', this, el => el.textContent = convertDate(newValue).to('MMM-DD-YYYY') )
                 el<HTMLInputElement>('input[name=date]', this, el => el.value = newValue)
             },
             description : () => {

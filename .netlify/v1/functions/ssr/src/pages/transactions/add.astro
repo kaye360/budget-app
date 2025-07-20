@@ -1,0 +1,100 @@
+---
+import { BanknoteArrowUpIcon, ImportIcon } from "@lucide/astro";
+import LoadingButton from "../../components/Button/LoadingButton.astro";
+import Layout from "../../layouts/Layout.astro";
+import CreateTransaction from "../../components/_transactions/CreateTransaction.astro";
+import CreateTransactionCount from "../../components/_transactions/CreateTransactionCount.astro";
+import H1 from "../../components/H1.astro";
+import { fetchData } from "../../lib/fetch";
+import type { GetBudgets } from "../../types/types";
+
+const budgets = await fetchData<GetBudgets>('/api/budgets')
+---
+
+<Layout>
+
+    <div class="flex items-center justify-between mb-6">
+        <H1>
+            Add Transactions
+        </H1>
+        <div class="flex items-stretch gap-2">
+            <CreateTransactionCount />
+            <button class="flex items-center gap-1 border border-red/60 rounded-md px-2 py-1 cursor-pointer">
+                Import
+                <ImportIcon />
+            </button>
+        </div>
+    </div>
+
+    <form>
+
+        <transaction-create-list class="grid gap-4">
+            <CreateTransaction budgets={budgets.response?.data} />
+        </transaction-create-list>
+
+        <template id="transaction-create">
+            <CreateTransaction budgets={budgets.response?.data} />
+        </template>
+
+        <div class="sm:col-span-2 grid grid-cols-2 gap-4">
+            <LoadingButton 
+                state={{ initial : 'Save', loading : 'Saving...', error : ' Failed', success : 'Saved!' }}
+                variant="fill" 
+                Icon={BanknoteArrowUpIcon} 
+                type="submit"
+                class="w-full"
+            >
+            </LoadingButton>
+
+            <view-transactions-link class="self-center opacity-0 -translate-x-4 pl-2 transition-all">
+                <a href="/transactions/recent">
+                    View Transactions &rarr;
+                </a>
+            </view-transactions-link>
+        </div>
+    </form>
+
+</Layout>
+
+
+<script>
+import { el } from "../../lib/el"
+import { fetchData } from "../../lib/fetch"
+import { sleep } from "../../utils/app.utils"
+
+
+document.addEventListener('astro:page-load', () => {
+
+    el<HTMLFormElement>('form', document, form => {
+        form.addEventListener('submit', async ( e: SubmitEvent ) => {
+        
+            e.preventDefault()
+
+            const button = el('loading-button')
+
+            button?.setAttribute('state', 'loading')
+
+            const transactions = Object.fromEntries( 
+                new FormData(form).entries() 
+            )
+
+            const response = await fetchData('/api/transactions', {
+                method : 'POST',
+                body : transactions
+            })
+
+            if( response.error ) {
+                button?.setAttribute('state', 'error')
+                return
+            }
+
+            button?.setAttribute('state', 'success')
+            await sleep(1000)
+            el('view-transactions-link', this, el => el.classList.remove('opacity-0', '-translate-x-4'))
+        })
+    })
+
+
+})
+
+</script>

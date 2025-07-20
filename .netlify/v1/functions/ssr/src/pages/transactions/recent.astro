@@ -1,0 +1,45 @@
+---
+import FilterTransactions from "../../components/_transactions/FilterTransactions.astro";
+import MoreTransactionsButton from "../../components/_transactions/MoreTransactionsButton.astro";
+import Transaction from "../../components/_transactions/Transaction.astro";
+import H1 from "../../components/H1.astro";
+import Layout from "../../layouts/Layout.astro";
+import { fetchData } from "../../lib/fetch";
+import type { GetBudgets, RecentTransactions } from "../../types/types";
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+	return Astro.redirect('/')
+}
+
+const [transactions, budgets] = await Promise.all([
+	fetchData<RecentTransactions>('/api/transactions/recent'),
+	fetchData<GetBudgets>('/api/budgets'),
+])
+
+---
+
+<Layout>
+	
+	<FilterTransactions current="recent" />
+
+	<div class="mb-4">
+		<H1>
+			Recent Transactions
+		</H1>
+	</div>
+
+	<transaction-list class="grid gap-6">
+		{ transactions.response?.data.map( transaction => (
+			<Transaction {transaction} budgets={budgets.response?.data} />
+		))}
+		<template id="transaction-template">
+			<Transaction budgets={budgets.response?.data}/>
+		</template>
+	</transaction-list>
+
+	<MoreTransactionsButton />
+
+</Layout>
+

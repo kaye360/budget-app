@@ -1,5 +1,5 @@
+import { convertDate } from "../lib/convertDate"
 import { db } from "../lib/db"
-import { yyyymmToMonthYear } from "../utils/date.utils"
 
 /**
  * 
@@ -100,7 +100,7 @@ export const handlers : Handlers = {
             .reverse()
             .map( month => ({
                 month,
-                title : yyyymmToMonthYear(month as string)
+                title : convertDate(month).to('MMM-YYYY')
             }))
 
         return { data, months }

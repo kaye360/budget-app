@@ -1,0 +1,19 @@
+---
+
+if( Astro.request.method !== 'POST') {
+    return Astro.redirect('/')
+}
+
+const data = await Astro.request.formData()
+const password = data.get('password')
+const isAuth = password === import.meta.env.APP_PASSWORD
+
+const defaultAuth = {
+    userId : 1,
+    userName : 'Josh',
+}
+
+Astro.session?.set('auth', isAuth ? defaultAuth : false )
+
+return Astro.redirect(isAuth ? '/dashboard' : '/?witherror')
+---

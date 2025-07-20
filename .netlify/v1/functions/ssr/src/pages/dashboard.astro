@@ -1,0 +1,63 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { ArrowLeftRightIcon, ChartPieIcon } from "@lucide/astro"
+import Transaction from "../components/_transactions/Transaction.astro";
+import { getBudgetsWithTotalSpent } from "../utils/budget.utils";
+import type { GetBudgets, RecentTransactions, Transaction as TransactionType } from "../types/types";
+import Budget from "../components/_budgets/Budget.astro";
+import { fetchData } from "../lib/fetch";
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+    return Astro.redirect('/')
+}
+
+
+const [transactions, budgets] = await Promise.all([
+	fetchData<RecentTransactions>('/api/transactions/recent?perPage=5'),
+	fetchData<GetBudgets>('/api/budgets'),
+])
+
+const budgetsWithTotals = getBudgetsWithTotalSpent(budgets.response?.data, transactions.response?.data)
+
+---
+<Layout>
+
+	<div class="text-xl">
+		Welcome {auth.userName}
+	</div>
+	<div class="grid grid-cols-2 gap-4">
+
+		<div class="bg-blue/10 backdrop-blur-lg rounded-xl p-4">
+			<h2 class="flex items-center gap-2 font-semibold tex-2xl mb-4">
+				<ArrowLeftRightIcon />
+				Recent Transactions
+			</h2>
+			<transaction-list class="grid gap-6">
+				{ 
+					transactions.response?.data.map( (transaction : TransactionType) =>
+						<Transaction {transaction} budgets={budgets.response?.data} mode="simple" />
+					)
+				}
+			</transaction-list>
+		</div>
+
+		<div class="border border-slate-700 rounded-xl p-4">
+			<h2 class="flex items-center gap-2 font-semibold tex-2xl mb-4">
+				<ChartPieIcon />
+				Your Budgets
+			</h2>
+			<budget-list class="grid gap-6 text-lg w-full">
+				{ budgetsWithTotals.map( (budget, index ) => (
+					<Budget {budget} {index} />
+				))}
+			</budget-list>
+		</div>
+		<div class="border border-slate-700 rounded-xl p-4 min-h-32">Debt</div>
+		<div class="border border-slate-700 rounded-xl p-4 min-h-32">Income</div>
+		<div class="border border-slate-700 rounded-xl p-4 min-h-32">
+			Upcoming Bills
+		</div>
+	</div>
+</Layout>
