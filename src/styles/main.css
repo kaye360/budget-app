@@ -1,15 +1,39 @@
 @import "tailwindcss";
 
+html {
+    ---base-color-green : hsl(163, 97%, 50%);
+    ---base-color-blue : hsl(205, 90%, 50%);
+    ---base-color-orange : hsl(14, 81%, 50%);
+    ---base-color-red : hsl(336, 81%, 50%);
+    ---base-color-purple : hsl(272, 94%, 50%);
+    ---base-color-bg-1 : hsl(223, 45%, 98%);
+    ---base-color-bg-2 : hsl(189, 52%, 98%);
+    ---base-color-base-text : hsl(223, 30%, 35%);
+    ---base-color-accent-text : hsl(223, 30%, 25%);
+}
+
+html.dark {
+    ---base-color-green : hsl(163, 97%, 56%);
+    ---base-color-blue : hsl(205, 90%, 70%);
+    ---base-color-orange : hsl(14, 81%, 59%);
+    ---base-color-red : hsl(336, 81%, 59%);
+    ---base-color-purple : hsl(272, 94%, 62%);
+    ---base-color-bg-1 : hsl(223, 45%, 8%);
+    ---base-color-bg-2 : hsl(189, 52%, 12%);
+    ---base-color-base-text : hsl(223, 30%, 95%);
+    ---base-color-accent-text : hsl(223, 30%, 75%);
+}
+
 @theme {
-    --color-green : hsl(163, 97%, 56%);
+    --color-green : var(---base-color-green);
     --color-blue : hsl(205, 90%, 70%);
     --color-orange : hsl(14, 81%, 59%);
     --color-red : hsl(336, 81%, 59%);
     --color-purple : hsl(272, 94%, 62%);
-    --color-bg-1 : hsl(223, 45%, 8%);
-    --color-bg-2 : hsl(189, 52%, 12%);
-    --color-base-text : hsl(223, 30%, 95%);
-    --color-accent-text : hsl(223, 30%, 75%);
+    --color-bg-1 : var(---base-color-bg-1);
+    --color-bg-2 : var(---base-color-bg-2);
+    --color-base-text : var(---base-color-base-text);
+    --color-accent-text : var(---base-color-accent-text);
 
     --font-base : 'Helvetica', 'sans-serif';
     --font-theme : 'Sora Variable', 'Lato', 'Helvetica', 'sans-serif';

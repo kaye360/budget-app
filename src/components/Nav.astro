@@ -14,19 +14,21 @@ const navLinks = [
 ---
 { auth && 
     <div class:list={[
-        "fixed bottom-4 w-full z-[9999] flex items-center md:items-start justify-center",
+        "fixed bottom-4 left-0 right-0 w-full z-[9999] flex items-center md:items-start justify-center",
         "md:relative md:bottom-auto md:mt-4",
         "md:sticky md:top-4 md:mb-8",
     ]}>
         <nav 
             transition:name="nav"
             class:list={[
-                "bg-bg-1/65 backdrop-blur-lg rounded-sm shadow-md shadow-blue/20",
+                "bg-bg-1/50 backdrop-blur-lg rounded-sm shadow-md shadow-blue/20",
                 "flex w-[95vw] justify-evenly md:w-full mx-auto ",
                 "md:flex items-center md:gap-4 justify-between md:justify-start"
             ]}
         >
-            <BotIcon stroke-width={1} width="30" height="30" class="md:ml-4 md:mr-auto"/>
+            <a href="/dashboard" class="hidden md:block md:ml-4 md:mr-auto">
+                <BotIcon stroke-width={1} width="30" height="30" />
+            </a>
             { navLinks.map( link => 
                 <NavLink {...link}  isActive={Astro.url.pathname.startsWith(link.href)} />
             )}

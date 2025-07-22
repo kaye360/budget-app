@@ -1,5 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+    return Astro.redirect('/')
+}
 ---
 
 <Layout>

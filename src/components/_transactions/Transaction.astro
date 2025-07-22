@@ -1,5 +1,5 @@
 ---
-import { EllipsisVerticalIcon } from "@lucide/astro"
+import { EllipsisIcon, EllipsisVerticalIcon } from "@lucide/astro"
 import DeleteTransaction from "./DeleteTransaction.astro"
 import EditTransaction from "./EditTransaction.astro"
 import type { Budget, Transaction } from "../../types/types"
@@ -20,51 +20,45 @@ const {
 
 <transaction-item 
     data-isdeleted={transaction?.isDeleted}
-    class="relative flex flex-wrap items-center py-8 border-b border-red/20 data-[isdeleted=true]:opacity-90 transition-all max-h-[500px]"
+    class="relative grid gap-2 py-8 border-b border-red/20 data-[isdeleted=true]:opacity-90 transition-all max-h-[500px]"
     {...transaction}
 >
 
-    <div>
-
-        <transaction-date  
-            class="block text-sm text-accent-text mb-1 border border-transparent rounded" 
-        />
-
-        <transaction-description 
-            class="block font-semibold text-2xl md:text-xl mb-2 border border-transparent data-[iseditable=true]:hover:border-slate-300 rounded" 
-        />
-
-    </div>
-
-    <transaction-amount  
-        class="ml-auto text-2xl font-semibold font-theme border border-transparent data-[iseditable=true]:hover:border-slate-300 rounded" 
+    <transaction-date  
+        class="block text-sm text-accent-text rounded" 
     />
 
-    { mode === 'detailed' && 
-        <transaction-edit>
-            <button class="p-2 ml-2 border border-red/30 group hover:border-slate-500 rounded-sm cursor-pointer transition-colors active:scale-95">
-                <EllipsisVerticalIcon class="stroke-slate-400 group-hover:stroke-slate-500 transition-colors" />
-            </button>
-        </transaction-edit>
-        <Modal title="Transaction Options">
-            <EditTransaction transaction={transaction} budgets={budgets || []} />
-            <DeleteTransaction />
-        </Modal>
-    }
+    <div class="flex justify-start items-start w-full">
+        <transaction-description 
+            class="block font-semibold text-xl md:text-xl rounded" 
+        />
+        <transaction-amount  
+            class="ml-auto text-xl font-semibold font-theme" 
+        />
+    </div>
 
-    <div class="w-full">
+    <div class="w-full flex items-stretch gap-2 ">
         <transaction-budget
-            class="bg-gradient-to-r from-blue/30 to-green/30  inline-block px-3 py-1 text-xs font-medium rounded-sm tracking-wide capitalize mr-2" 
+            class="bg-blue/20 px-3 text-xs font-medium rounded-sm tracking-wide capitalize flex items-center" 
         />
 
         { mode === 'detailed' &&
-            <span class="bg-gradient-to-r from-red/30 to-orange/30 inline-block px-3 py-1 font-medium rounded-sm tracking-wide text-xs capitalize ">
+            <span class="bg-red/10 px-3 font-medium rounded-sm tracking-wide text-xs capitalize flex items-center ">
                 Everyday &#9679; Chequing 9084
                 <transaction-account-name />
                 
                 <transaction-account-type />
                 <transaction-account-number />
             </span>
+            <transaction-edit class="ml-auto">
+                <button class="ml-2  group cursor-pointer transition-all active:scale-95">
+                    <EllipsisIcon class="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
+                </button>
+            </transaction-edit>
+            <Modal title="Transaction Options">
+                <EditTransaction transaction={transaction} budgets={budgets || []} />
+                <DeleteTransaction />
+            </Modal>
         }
     </div>
 

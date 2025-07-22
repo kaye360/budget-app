@@ -3,9 +3,7 @@ import ClientRouter from "astro/components/ClientRouter.astro"
 import "../styles/main.css"
 import '@fontsource/lato'
 import '@fontsource-variable/sora'
-import { BotIcon, SkullIcon } from "@lucide/astro"
 import Loader from "../components/Loader/Loader.astro"
-import UserAvatar from "../components/UserAvatar.astro"
 import Nav from "../components/Nav.astro"
 import { APP_NAME } from "../../app.config"
 
@@ -18,7 +16,7 @@ const {
 } = Astro.props
 
 ---
-<html lang="en">
+<html lang="en" class="ddark">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -26,18 +24,8 @@ const {
 		<title>{APP_NAME} - {import.meta.env.MODE}</title>
         <ClientRouter />
 	</head>
-	<body class="min-h-screen bg-gradient-to-br from-bg-1 to-bg-2 bg-fixed text-base-text font-base">
-        <!-- <header class="flex items-center justify-between gap-4 p-4 text-blue">
-            <a href="/" class="flex items-center gap-1 font-theme">
-                <BotIcon size={30} transition:name="top-logo" />
-                <span class="text-xl font-semibold tracking-wide translate-y-[2px]">{APP_NAME}</span>
-            </a>
-            <UserAvatar />
-        </header> -->
-        <div class:list={[
-            "max-w-[1000px] w-full mx-auto p-4"
-            // "md:grid md:grid-cols-[200px_1fr] md:gap-8 md:mx-4"
-        ]}>
+	<body class="min-h-screen bg-gradient-to-tr from-bg-1 via-bg-1 to-blue/20 bg-fixed text-base-text font-base">
+        <div class:list={"max-w-[1000px] w-full mx-auto p-4"}>
             <Nav />
             { loader && <Loader /> }
             <main class="transition-opacity">

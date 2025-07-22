@@ -8,6 +8,12 @@ import H1 from "../../components/H1.astro";
 import { fetchData } from "../../lib/fetch";
 import type { GetBudgets } from "../../types/types";
 
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+    return Astro.redirect('/')
+}
+
 const budgets = await fetchData<GetBudgets>('/api/budgets')
 ---
 
