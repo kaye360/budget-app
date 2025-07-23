@@ -23,8 +23,27 @@ export const GET: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
 
+    const formData = await request.json()
+
+    /**
+     * @todo implement auth
+     */
+    const { data, error } = await db.from('Budgets')
+        .insert([{ 
+            userId : 1, 
+            name : formData.name,
+            amount : Number(formData.amount)
+        }])
+        .select()
+
+    if(!data) {
+        return new Response(
+            JSON.stringify({data, error}),
+            { status: 500, headers: { 'Content-Type': 'application/json' } }
+    )}
+
 	return new Response(
-        JSON.stringify({}),
+        JSON.stringify({data : data[0], error}),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
     )
 }

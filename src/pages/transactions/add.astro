@@ -69,7 +69,7 @@ import { fetchData } from "../../lib/fetch"
 import { sleep } from "../../utils/app.utils"
 
 
-document.addEventListener('astro:page-load', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
     el<HTMLFormElement>('form', document, form => {
         form.addEventListener('submit', async ( e: SubmitEvent ) => {

@@ -1,8 +1,6 @@
 import type { CreateTransaction } from "../types/types"
 
 /**
- * @todo Figure out wtf this is and make it more clear
- * 
  * Take a flat group of Transactions and group them by index
  * Returns array of Transactions
  */

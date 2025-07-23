@@ -8,22 +8,21 @@ interface BudgetWithTotals extends Budget {
 
 interface Props {
     budget : BudgetWithTotals
-    index : number
     isTotal? : boolean
 }
 
-const { budget, index, isTotal = false } = Astro.props
+const { budget, isTotal = false } = Astro.props
 ---
 
 <div 
     class:list={[
         "relative rounded-sm flex items-center justify-between px-4 py-2 font-semibold",
-        index % 5 === 0 && 'bg-blue/10',
-        index % 5 === 1 && 'bg-green/10',
-        index % 5 === 2 && 'bg-purple/10',
-        index % 5 === 3 && 'bg-red/10',
-        index % 5 === 4 && 'bg-orange/10',
-        isTotal && '!bg-transparent'
+        "nth-[5n+1]:bg-blue/10 [&:nth-child(5n+1)_span.progress-bar]:bg-blue/20",
+        "nth-[5n+2]:bg-green/10 [&:nth-child(5n+2)_span.progress-bar]:bg-green/20",
+        "nth-[5n+3]:bg-purple/10 [&:nth-child(5n+3)_span.progress-bar]:bg-purple/20",
+        "nth-[5n+4]:bg-red/10 [&:nth-child(5n+4)_span.progress-bar]:bg-red/20",
+        "nth-[5n]:bg-orange/10 [&:nth-child(5n)_span.progress-bar]:bg-orange/20",
+        isTotal && '!bg-white/50'
     ]}
 >
     <a href={`/transactions/budget/${budget.id}`} class="hover:underline">
@@ -37,14 +36,9 @@ const { budget, index, isTotal = false } = Astro.props
     <span 
         class:list={[
             "absolute left-0 top-0 bottom-0 -z-10 rounded-sm",
-            index % 5 === 0 && 'bg-blue/20',
-            index % 5 === 1 && 'bg-green/20',
-            index % 5 === 2 && 'bg-purple/20',
-            index % 5 === 3 && 'bg-red/20',
-            index % 5 === 4 && 'bg-orange/20',
+            'progress-bar',
             isTotal && '!bg-slate-300'
         ]}
         style={`width : ${budget.percentSpent}%`}
-    >
-    </span>
+    />
 </div>

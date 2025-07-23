@@ -5,6 +5,10 @@ import { getAllBudgetTotalSpent, getBudgetsWithTotalSpent } from "../../utils/bu
 import { fetchData } from "../../lib/fetch";
 import type { GetBudgets, MonthlyTransactions } from "../../types/types";
 import { convertDate } from "../../lib/convertDate";
+import Button from "../../components/Button/Button.astro";
+import { ChartPieIcon, CirclePlusIcon } from "@lucide/astro";
+import Modal from "../../components/Modal.astro";
+import LoadingButton from "../../components/Button/LoadingButton.astro";
 
 const auth = await Astro.session?.get('auth')
 
@@ -61,23 +65,140 @@ const allBudgetTotals = getAllBudgetTotalSpent(budgetsWithTotals)
 				name : `${ convertDate(month).to('MMMM-YYYY') } Total `,
 				userId : 1
 			}}
-			index={0}
 			isTotal
 		/>
 		<div class="my-6 border-b border-slate-300"/>
 	</div>
 
 	<budget-list class="grid gap-6 text-lg transition-all translate-x-24 opacity-0 w-full">
-		{ budgetsWithTotals.map( (budget, index ) => (
-			<Budget {budget} {index} />
+		{ budgetsWithTotals.map( budget => (
+			<Budget {budget} />
 		))}
 	</budget-list>
+
+	<template id="budget-template">
+		<Budget 
+			budget={{
+				amount : 0,
+				id : 0,
+				name : '',
+				userId : auth.userId,
+				totalSpent : 0,
+				percentSpent : 0
+			}}
+		/>
+	</template>
+
+	<budget-create class="block my-8">
+		<Button variant="outline" Icon={CirclePlusIcon} class="w-full md:w-[300px]">
+			Add a Budget
+		</Button>
+		<Modal title="Add a budget">
+			<form 
+				id="add-budget-form"
+				class="grid gap-4" 
+				autocomplete="off"
+			>
+				<label>
+					Name: <br />
+					<input type="text" name="name" required />
+				</label>
+				<label>
+					Amount per month: <br />
+					<input type="number" name="amount" required />
+				</label>
+				<LoadingButton 
+					type="submit" 
+					variant="fill" 
+					class="w-full"
+					Icon={ChartPieIcon}
+					state={{
+						initial : 'Add Budget',
+						loading : 'Adding...',
+						error : 'Something went wrong',
+						success : 'Budget Added!'
+					}}
+				/>
+			</div>
+		</Modal>
+	</budget-create>
 </Layout>
 
 <script>
 import { el } from "../../lib/el"
+import { fetchData } from "../../lib/fetch"
+import { sleep } from "../../utils/app.utils"
 
-document.addEventListener('astro:page-load', () => {
+// if( import.meta.env.DEV ) {
+// 	document.addEventListener('DOMContentLoaded', () => {
+// 		setTimeout( () => {
+// 			const dialog = document.querySelectorAll('dialog')
+// 			dialog[0]?.showModal()
+// 		}, 1000)
+// 	})
+// }
+
+document.addEventListener('DOMContentLoaded', () => {
+
+	const createButton = el<HTMLButtonElement>('budget-create button', this)
+	const dialog = el<HTMLDialogElement>('budget-create dialog', this)
+	
+	if( createButton && dialog ) {
+		createButton.addEventListener('click', () => dialog.showModal() )
+	}
+
+	el<HTMLFormElement>('#add-budget-form', document, form => {
+		form.addEventListener('submit', async (e: Event) => {
+
+			e.preventDefault()
+
+			const button = el<HTMLButtonElement>('loading-button', form)
+			
+			button?.setAttribute('state', 'loading')
+
+			const formData = new FormData(form)
+			const budget = {
+				name : formData.get('name'),
+				amount : Number(formData.get('amount'))
+			}
+
+			const response = await fetchData<{data : { name : string, id : number }}>(`/api/budgets/`, {
+				method : 'POST',
+				body: budget 
+			})
+
+			if( response.error ) {
+				button?.setAttribute('state', 'error')
+				return 
+			}
+
+			button?.setAttribute('state', 'success')
+			await sleep(1000)
+			dialog?.close()
+
+			const budgetList = el('budget-list')
+			const template = el<HTMLTemplateElement>('#budget-template')
+			const fragment = template?.content.cloneNode(true)
+
+			const div = el('div', fragment)
+
+			if(!div) {
+				console.warn('Invalid Budget template')
+				return
+			}
+
+			el<HTMLAnchorElement>('a', fragment, link => {
+				link.textContent = response.response?.data.name || ''
+				link.setAttribute('href', `/transactions/budget/${response.response?.data.id}`)
+				console.log(link)
+			})
+			
+			budgetList?.append(div)
+			
+		})
+	})
+
+
 
 	// Animate in
 	el('budget-list', document, el => el.classList.remove('translate-x-24', 'opacity-0'))

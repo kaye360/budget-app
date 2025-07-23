@@ -22,13 +22,13 @@ const {
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{APP_NAME} - {import.meta.env.MODE}</title>
-        <ClientRouter />
+        <!-- <ClientRouter /> -->
 	</head>
 	<body class="min-h-screen bg-gradient-to-tr from-bg-1 via-bg-1 to-blue/20 bg-fixed text-base-text font-base">
         <div class:list={"max-w-[1000px] w-full mx-auto p-4"}>
             <Nav />
             { loader && <Loader /> }
-            <main class="transition-opacity">
+            <main class="transition-opacity mb-24">
                 <slot />
             </main>
         </div>

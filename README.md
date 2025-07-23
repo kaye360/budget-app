@@ -23,3 +23,4 @@ Made with Astro
 - look into storage all transaction data into one prop
 - Make universal date converter class
 - Make undelete transaction function
+- DOM utils - cloneNode wrapper

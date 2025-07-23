@@ -61,7 +61,7 @@ const [transactions, budgets] = await Promise.all([
 import { el } from "../../../lib/el"
 
 
-document.addEventListener('astro:page-load', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
 	// Animate in
 	el('budget-list', document, el => el.classList.remove('translate-x-24', 'opacity-0'))
