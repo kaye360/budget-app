@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro"
 import { db } from "../../../lib/db"
+import { errorResponse } from "../../../services/error.service"
 
 
 export const GET: APIRoute = async () => {
@@ -11,6 +12,7 @@ export const GET: APIRoute = async () => {
 
     const { data, error } = await db.from('Budgets')
         .select('*')
+        .order('name')
         .eq('userId', id)
 
 	return new Response(
@@ -50,10 +52,24 @@ export const POST: APIRoute = async ({ request }) => {
 
 
 
+
 export const PUT: APIRoute = async ({ request, params }) => {
 
-	return new Response(
-        JSON.stringify({}),
+    if( !params.route || !params.route[0] ) {
+        return errorResponse({error : 'Invalid ID'})
+    }
+
+    const id = Number( params.route )
+    const body = await request.json()
+
+    const { error } = await db
+        .from('Budgets')
+        .update(body)
+        .eq('id', id)
+        .select()
+
+    return new Response(
+        JSON.stringify({ error }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
     )
 }

@@ -1,10 +1,10 @@
 ---
-import type { Budget } from '../../types/types'
+import { EllipsisVerticalIcon } from '@lucide/astro'
+import type { Budget, BudgetWithTotals } from '../../types/types'
+import Modal from '../Modal.astro'
+import EditBudget from './EditBudget.astro'
 
-interface BudgetWithTotals extends Budget {
-    totalSpent : number
-    percentSpent : number
-}
+
 
 interface Props {
     budget : BudgetWithTotals
@@ -14,7 +14,8 @@ interface Props {
 const { budget, isTotal = false } = Astro.props
 ---
 
-<div 
+<budget-item 
+    state={JSON.stringify(budget)}
     class:list={[
         "relative rounded-sm flex items-center justify-between px-4 py-2 font-semibold",
         "nth-[5n+1]:bg-blue/10 [&:nth-child(5n+1)_span.progress-bar]:bg-blue/20",
@@ -26,12 +27,22 @@ const { budget, isTotal = false } = Astro.props
     ]}
 >
     <a href={`/transactions/budget/${budget.id}`} class="hover:underline">
-        {budget.name} 
+        <budget-name />
+        <!-- {budget.name}  -->
     </a>
 
-    <span class="text-2xl">
-        {budget.totalSpent} / {budget.amount}
-    </span>
+    <budget-edit class="flex items-center gap-4">
+        <span class="text-2xl">
+            <budget-totalspent /> / <budget-amount />
+            <!-- {budget.totalSpent} / {budget.amount} -->
+        </span>
+        <button>
+            <EllipsisVerticalIcon class="text-base-text/60 hover:text-red active:scale-90 cursor-pointer"/>
+        </button>
+        <Modal title="Edit Budget">
+            <EditBudget {budget} />
+        </Modal>
+    </budget-edit>
 
     <span 
         class:list={[
@@ -42,3 +53,59 @@ const { budget, isTotal = false } = Astro.props
         style={`width : ${budget.percentSpent}%`}
     />
 </div>
+
+<script>
+import { el } from "../../lib/el";
+import type { BudgetWithTotals } from "../../types/types";
+
+
+class BudgetItem extends HTMLElement {
+
+    /**
+     * 
+     * Add showModal event listener to edit Button
+     * 
+     */
+    connectedCallback() {
+        const editButton = el<HTMLButtonElement>('budget-edit button', this)
+        const dialog = el<HTMLDialogElement>('dialog', this)
+        
+        if( editButton && dialog ) {
+            editButton.addEventListener('click', () => dialog.showModal() )
+        }
+    }
+
+    /**
+     * 
+     * Budget State
+     * 
+     */
+    static observedAttributes = ["state"]
+
+    attributeChangedCallback(name: string, _: any, newValue : string) {
+
+        if( name !== 'state' ) {
+            return
+        }
+
+        const budget = JSON.parse(newValue) as BudgetWithTotals
+        
+        /**
+         * Budget Name
+         */
+        el('budget-name', this, el => el.textContent = budget.name)
+        /**
+         * Budget Total spent
+         */
+        el('budget-totalspent', this, el => el.textContent = budget.totalSpent.toString())
+        /**
+         * Budget Amount
+         */
+        el('budget-amount', this, el => el.textContent = budget.amount.toString())
+
+    }
+}
+
+customElements.define('budget-item', BudgetItem)
+
+</script>

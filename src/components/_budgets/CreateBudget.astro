@@ -1,0 +1,107 @@
+---
+import { CirclePlusIcon, ChartPieIcon } from "@lucide/astro";
+import Button from "../Button/Button.astro";
+import LoadingButton from "../Button/LoadingButton.astro";
+import Modal from "../Modal.astro";
+---
+<budget-create class="block my-8">
+    <Button variant="outline" Icon={CirclePlusIcon} class="w-full md:w-[300px]">
+        Add a Budget
+    </Button>
+    <Modal title="Add a budget">
+        <form 
+            id="add-budget-form"
+            class="grid gap-4" 
+            autocomplete="off"
+            method="POST"
+        >
+            <label>
+                Name: <br />
+                <input type="text" name="name" required />
+            </label>
+            <label>
+                Amount per month: <br />
+                <input type="number" name="amount" required />
+            </label>
+            <LoadingButton 
+                type="submit" 
+                variant="fill" 
+                class="w-full"
+                Icon={ChartPieIcon}
+                state={{
+                    initial : 'Add Budget',
+                    loading : 'Adding...',
+                    error : 'Something went wrong',
+                    success : 'Budget Added!'
+                }}
+            />
+        </form>
+    </Modal>
+</budget-create>
+
+
+<script>
+
+import { el } from "../../lib/el"
+import { fetchData } from "../../lib/fetch"
+import { sleep } from "../../utils/app.utils"
+
+
+const createButton = el<HTMLButtonElement>('budget-create button', this)
+const dialog = el<HTMLDialogElement>('budget-create dialog', this)
+
+if( createButton && dialog ) {
+    createButton.addEventListener('click', () => dialog.showModal() )
+}
+
+el<HTMLFormElement>('#add-budget-form', document, form => {
+    form.addEventListener('submit', async (e: Event) => {
+
+        e.preventDefault()
+
+        const button = el<HTMLButtonElement>('loading-button', form)
+        
+        button?.setAttribute('state', 'loading')
+
+        const formData = new FormData(form)
+        const budget = {
+            name : formData.get('name'),
+            amount : Number(formData.get('amount'))
+        }
+
+        const response = await fetchData<{data : { name : string, id : number }}>(`/api/budgets/`, {
+            method : 'POST',
+            body: budget 
+        })
+
+        if( response.error ) {
+            button?.setAttribute('state', 'error')
+            return 
+        }
+
+        button?.setAttribute('state', 'success')
+        await sleep(1000)
+        dialog?.close()
+
+        const budgetList = el('budget-list')
+        const template = el<HTMLTemplateElement>('#budget-template')
+        const fragment = template?.content.cloneNode(true)
+
+        const div = el('div', fragment)
+
+        if(!div) {
+            console.warn('Invalid Budget template')
+            return
+        }
+
+        el<HTMLAnchorElement>('a', fragment, link => {
+            link.textContent = response.response?.data.name || ''
+            link.setAttribute('href', `/transactions/budget/${response.response?.data.id}`)
+        })
+        
+        budgetList?.append(div)
+        
+    })
+})
+
+</script>

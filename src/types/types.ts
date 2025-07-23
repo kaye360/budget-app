@@ -48,3 +48,9 @@ export type Budget = Database['public']['Tables']['Budgets']['Row']
 export interface GetBudgets {
     data : Budget[]
 }
+
+
+export interface BudgetWithTotals extends Budget {
+    totalSpent : number
+    percentSpent : number
+}
