@@ -1,0 +1,41 @@
+---
+import FilterTransactions from "../../components/_transactions/FilterTransactions.astro";
+import Transaction from "../../components/_transactions/Transaction.astro";
+import H1 from "../../components/H1.astro";
+import Layout from "../../layouts/Layout.astro";
+import { fetchData } from "../../lib/fetch";
+import type { DeletedTransactions, GetBudgets } from "../../types/types";
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+	return Astro.redirect('/')
+}
+
+const [transactions, budgets] = await Promise.all([
+	fetchData<DeletedTransactions>(`/api/transactions/uncategorized`),
+	fetchData<GetBudgets>('/api/budgets'),
+])
+
+console.log(transactions)
+
+---
+
+<Layout>
+	
+	<FilterTransactions current="deleted" />
+
+	<div class="mb-4">
+		<H1>
+			Uncategorized Transactions
+		</H1>
+	</div>
+
+	<transaction-list class="grid">
+		{ transactions.response?.data && transactions.response.data.map( transaction => (
+			<Transaction {transaction} budgets={budgets.response?.data} />
+		))}
+	</transaction-list>
+
+</Layout>
+

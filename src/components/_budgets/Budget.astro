@@ -3,6 +3,7 @@ import { EllipsisVerticalIcon } from '@lucide/astro'
 import type { Budget, BudgetWithTotals } from '../../types/types'
 import Modal from '../Modal.astro'
 import EditBudget from './EditBudget.astro'
+import DeleteBudget from './DeleteBudget.astro'
 
 
 
@@ -28,29 +29,27 @@ const { budget, isTotal = false } = Astro.props
 >
     <a href={`/transactions/budget/${budget.id}`} class="hover:underline">
         <budget-name />
-        <!-- {budget.name}  -->
     </a>
 
     <budget-edit class="flex items-center gap-4">
         <span class="text-2xl">
             <budget-totalspent /> / <budget-amount />
-            <!-- {budget.totalSpent} / {budget.amount} -->
         </span>
         <button>
             <EllipsisVerticalIcon class="text-base-text/60 hover:text-red active:scale-90 cursor-pointer"/>
         </button>
         <Modal title="Edit Budget">
             <EditBudget {budget} />
+            <DeleteBudget />
         </Modal>
     </budget-edit>
 
     <span 
         class:list={[
-            "absolute left-0 top-0 bottom-0 -z-10 rounded-sm",
+            "absolute left-0 top-0 bottom-0 -z-10 rounded-sm block animate-progress-bar origin-bottom-left",
             'progress-bar',
             isTotal && '!bg-slate-300'
         ]}
-        style={`width : ${budget.percentSpent}%`}
     />
 </div>
 
@@ -89,7 +88,7 @@ class BudgetItem extends HTMLElement {
         }
 
         const budget = JSON.parse(newValue) as BudgetWithTotals
-        
+
         /**
          * Budget Name
          */
@@ -102,6 +101,10 @@ class BudgetItem extends HTMLElement {
          * Budget Amount
          */
         el('budget-amount', this, el => el.textContent = budget.amount.toString())
+        /**
+         * Budget Percent
+         */
+        el<HTMLElement>('span.progress-bar', this, el => el.setAttribute('style', `width : ${budget.percentSpent}%` ))
 
     }
 }

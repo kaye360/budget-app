@@ -1,0 +1,79 @@
+---
+import { Trash2Icon } from "@lucide/astro";
+import LoadingButton from "../Button/LoadingButton.astro";
+---
+
+<budget-delete>
+    <div class="grid gap-4 border-l border-blue pl-4">
+        <h3 class="text-lg font-semibold tracking-wide">Delete this Budget?</h3>
+        <LoadingButton 
+            state={{ initial : "Delete Budget", loading : 'Deleting...', error : 'Failed to delete', success : 'Deleted!'}}
+            variant="destruct" 
+            Icon={Trash2Icon} 
+            class="w-full"
+        >
+            Delete Budget
+        </LoadingButton>
+    </div>
+</budget-delete>
+
+<script>
+import { el } from "../../lib/el"
+import { fetchData } from "../../lib/fetch"
+import { sleep } from "../../utils/app.utils"
+
+
+class BudgetDelete extends HTMLElement {
+    
+    /**
+     * 
+     * Deletes a budget and removes it from the list of transactions
+     * in the DOM
+     * 
+     */
+    connectedCallback() {
+        el<HTMLFormElement>('button', this, button => {
+            button.addEventListener('click', async () => {
+                
+                const budgetItem = this.closest('budget-item')
+
+                const budget = JSON.parse(budgetItem?.getAttribute('state') || '')
+
+                console.log(budget)
+                const loadingButton = el<HTMLButtonElement>('loading-button', this )
+                
+                if( !loadingButton || !budget ) {
+                    console.warn('Invalid budget or loadingButton')
+                    return
+                }
+
+                // Button wrapper custom element
+                loadingButton.setAttribute('state', 'loading')
+
+                const result = await fetchData(`/api/budgets/${budget.id}`, {
+                    method : 'DELETE',
+                })
+
+                console.log(result)
+
+                if( result.error ) {
+                    loadingButton.setAttribute('state', 'error')
+                    return 
+                }
+
+                
+                loadingButton.setAttribute('state', 'success')
+                this.closest('dialog')?.close()
+
+                await sleep(500)
+                budgetItem?.remove()
+            })
+        })
+    }
+
+
+}
+
+customElements.define('budget-delete', BudgetDelete)
+
+</script>

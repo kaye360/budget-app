@@ -3,7 +3,7 @@ import { CirclePlusIcon } from '@lucide/astro'
 
 
 interface Props {
-    current : 'recent' | 'month' | 'budget' | 'deleted' | 'search'
+    current : 'recent' | 'month' | 'budget' | 'uncategorized' | 'deleted' | 'search'
 }
 
 const { current } = Astro.props
@@ -37,6 +37,15 @@ const { current } = Astro.props
         href="/transactions/budget"
     >
         Budget
+    </a>
+    <a 
+        class:list={[
+            "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
+            current === 'uncategorized' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
+        ]}
+        href="/transactions/uncategorized"
+    >
+        Uncategorized
     </a>
     <a 
         class:list={[

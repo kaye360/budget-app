@@ -24,3 +24,4 @@ Made with Astro
 - Make universal date converter class
 - Make undelete transaction function
 - DOM utils - cloneNode wrapper
+- Add "Uncategorized" to transaction filters

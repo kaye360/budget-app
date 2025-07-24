@@ -78,8 +78,19 @@ export const PUT: APIRoute = async ({ request, params }) => {
 
 export const DELETE: APIRoute = async ({ params }) => {
 
+    if( !params.route || !params.route[0] ) {
+		return errorResponse({error : 'Invalid ID'})
+	}
+
+	const id = Number( params.route )
+
+    const { error } = await db
+        .from('Budgets')
+        .delete()
+        .eq('id', id)
+
 	return new Response(
-        JSON.stringify({}),
+        JSON.stringify({ error }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
     )
 }

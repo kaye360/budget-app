@@ -63,7 +63,7 @@ export const handlers : Handlers = {
             .eq('userId', id)
             .eq('isDeleted', false)
             .range(start, end)
-            
+
         return { data, count, totalPages : Math.ceil( (count ?? 0) / perPage) }
     },
 
@@ -125,6 +125,16 @@ export const handlers : Handlers = {
             .order('date', { ascending : false })
             .eq('userId', id)
             .eq('isDeleted', true)
+        
+        return { data }
+    },
+
+    uncategorized : async({id} : QueryParams) => {
+        const { data } = await db.from('TransactionView')
+            .select('*')
+            .order('date', { ascending : false })
+            .eq('userId', id)
+            .eq('budget', 'Uncategorized')
         
         return { data }
     }

@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro"
 import { db } from "../../../lib/db"
 import { createTransactionRequest } from "../../../requests/transaction.requests"
-import { getQueryParamsFromUrl, handlers, type QueryParams } from "../../../services/transaction.service"
+import { getQueryParamsFromUrl, handlers } from "../../../services/transaction.service"
 import { errorResponse } from "../../../services/error.service"
 
 
