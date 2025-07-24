@@ -1,4 +1,5 @@
 ---
+import CreateTransactionButton from "../../../components/_transactions/CreateTransactionButton.astro"
 import FilterTransactions from "../../../components/_transactions/FilterTransactions.astro"
 import Transaction from "../../../components/_transactions/Transaction.astro"
 import H1 from "../../../components/H1.astro"
@@ -28,37 +29,39 @@ if( budget ) {
 	
 	<FilterTransactions current="budget" />
 
-		<div class="flex items-center justify-between mb-4">
+	<div class="flex items-center justify-start gap-2 mb-4">
 
-			<H1>
-				{ 
-					budget 
-						? budgets.response?.data[Number(budget)-1].name 
-						: 'Select a budget'
-				}
-			</H1>
+		<H1>
+			{ 
+				budget 
+					? budgets.response?.data[Number(budget)-1].name 
+					: 'Select a budget'
+			}
+		</H1>
 
-			<select 
-				id="budget-selector"
-				name="budget-selector" 
-				class="w-fit"
-				data-budget={budget}
-			>
-				<option>Select budget to view</option>
-				{ budgets.response?.data.map( budget => (
-					<option value={budget.id}>
-						{budget.name}
-					</option>
-				))}
-			</select>
-		
-		</div>
-
-		<transaction-list class="grid transition-all translate-x-24 opacity-0 w-full">
-			{ transactions.data.map( transaction => (
-				<Transaction {transaction} budgets={budgets.response?.data} />
+		<select 
+			id="budget-selector"
+			name="budget-selector" 
+			class="max-w-fit ml-auto"
+			data-budget={budget}
+		>
+			<option>Select budget to view</option>
+			{ budgets.response?.data.map( budget => (
+				<option value={budget.id}>
+					{budget.name}
+				</option>
 			))}
-		</transaction-list>
+		</select>
+
+		<CreateTransactionButton />
+	
+	</div>
+
+	<transaction-list class="grid transition-all translate-x-24 opacity-0 w-full">
+		{ transactions.data.map( transaction => (
+			<Transaction {transaction} budgets={budgets.response?.data} />
+		))}
+	</transaction-list>
 
 </Layout>
 

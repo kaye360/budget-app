@@ -1,4 +1,5 @@
 ---
+import CreateTransactionButton from "../../components/_transactions/CreateTransactionButton.astro";
 import FilterTransactions from "../../components/_transactions/FilterTransactions.astro";
 import H1 from "../../components/H1.astro";
 import Layout from "../../layouts/Layout.astro";
@@ -14,10 +15,12 @@ if( !auth ) {
 	
 	<FilterTransactions current="search" />
 
-	<div class="mb-4">
+	<div class="mb-2 flex items-center justify-between">
 		<H1>
 			Search Transactions
 		</H1>
+
+		<CreateTransactionButton />
 	</div>
 
 </Layout>

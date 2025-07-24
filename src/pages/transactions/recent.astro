@@ -6,6 +6,7 @@ import H1 from "../../components/H1.astro";
 import Layout from "../../layouts/Layout.astro";
 import { fetchData } from "../../lib/fetch";
 import type { GetBudgets, RecentTransactions } from "../../types/types";
+import CreateTransactionButton from "../../components/_transactions/CreateTransactionButton.astro";
 
 const auth = await Astro.session?.get('auth')
 
@@ -24,10 +25,12 @@ const [transactions, budgets] = await Promise.all([
 	
 	<FilterTransactions current="recent" />
 
-	<div class="mb-4">
+	<div class="mb-2 flex items-center justify-between">
 		<H1>
 			Recent Transactions
 		</H1>
+
+		<CreateTransactionButton />
 	</div>
 
 	<transaction-list class="grid">
