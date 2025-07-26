@@ -50,7 +50,7 @@ export interface GetBudgets {
 }
 
 
-export interface BudgetWithTotals extends Budget {
+export interface BudgetWithSpending extends Budget {
     totalSpent : number
     percentSpent : number
 }

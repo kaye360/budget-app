@@ -1,0 +1,45 @@
+---
+interface Props {
+    currentMonth : string,
+    months? : { month: string, title: string }[]
+}
+
+const { currentMonth, months = [] } = Astro.props
+---
+
+<select 
+    id="month-selector"
+    name="month-selector" 
+    class="w-fit"
+    data-month={currentMonth}
+>
+    <option>Select month to view</option>
+    { months.map( month => (
+        <option value={month.month}>
+            {month.title}
+        </option>
+    ))}
+</select>
+
+<script>
+import { el } from "../../lib/el"
+
+document.addEventListener('DOMContentLoaded', () => {
+
+	el<HTMLSelectElement>('#month-selector', document, select => {
+		select.addEventListener('change', e => {
+
+			if( !(e.target instanceof HTMLSelectElement) ) {
+				return
+			}
+
+			if( e.target.dataset.month === e.target.value ) {
+				return
+			}
+
+			window.location.href = `/budgets/${e.target.value}`
+		})
+	})
+
+})
+</script>

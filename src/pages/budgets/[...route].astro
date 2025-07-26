@@ -1,15 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Budget from "../../components/_budgets/Budget.astro"
-import { getAllBudgetTotalSpent, getBudgetsWithTotalSpent } from "../../utils/budget.utils";
+import { getBudgetsWithTotalSpent } from "../../utils/budget.utils";
 import { fetchData } from "../../lib/fetch";
 import type { GetBudgets, MonthlyTransactions } from "../../types/types";
 import { convertDate } from "../../lib/convertDate";
-import Button from "../../components/Button/Button.astro";
-import { ChartPieIcon, CirclePlusIcon } from "@lucide/astro";
-import Modal from "../../components/Modal.astro";
-import LoadingButton from "../../components/Button/LoadingButton.astro";
 import CreateBudget from "../../components/_budgets/CreateBudget.astro";
+import MonthlyBudget from "../../components/_budgets/MonthlyBudget.astro";
+import SelectMonthlyBudget from "../../components/_budgets/SelectMonthlyBudget.astro";
 
 const auth = await Astro.session?.get('auth')
 
@@ -30,7 +28,6 @@ const budgetsWithTotals = getBudgetsWithTotalSpent(
 	budgets.response?.data, transactions.response?.data
 )
 
-const allBudgetTotals = getAllBudgetTotalSpent(budgetsWithTotals)
 ---
 <Layout>
 
@@ -40,36 +37,11 @@ const allBudgetTotals = getAllBudgetTotalSpent(budgetsWithTotals)
 			{ convertDate(month).to('MMMM-YYYY') }
 		</h1>
 
-		<select 
-			id="month-selector"
-			name="month-selector" 
-			class="w-fit"
-			data-month={month}
-		>
-			<option>Select month to view</option>
-			{ transactions.response?.months.map( month => (
-				<option value={month.month}>
-					{month.title}
-				</option>
-			))}
-		</select>
+		<SelectMonthlyBudget currentMonth={month} months={transactions.response?.months} /> 
 		
 	</div>
 
-	<div>
-		<Budget
-			budget={{
-				totalSpent : allBudgetTotals.totalSpent,
-				percentSpent : allBudgetTotals.percentSpent,
-				amount : allBudgetTotals.totalAmount,
-				id : 1,
-				name : `${ convertDate(month).to('MMMM-YYYY') } Total `,
-				userId : 1
-			}}
-			isTotal
-		/>
-		<div class="my-6 border-b border-slate-300"/>
-	</div>
+	<MonthlyBudget name={ `${convertDate(month).to('MMMM-YYYY')} Total Spending` } />
 
 	<budget-list class="grid gap-6 text-lg w-full">
 		{ budgetsWithTotals.map( budget => (

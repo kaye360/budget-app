@@ -1,30 +1,28 @@
 ---
 import { EllipsisVerticalIcon } from '@lucide/astro'
-import type { Budget, BudgetWithTotals } from '../../types/types'
+import type { Budget, BudgetWithSpending } from '../../types/types'
 import Modal from '../Modal.astro'
 import EditBudget from './EditBudget.astro'
 import DeleteBudget from './DeleteBudget.astro'
 
 
-
 interface Props {
-    budget : BudgetWithTotals
-    isTotal? : boolean
+    budget : BudgetWithSpending
 }
 
-const { budget, isTotal = false } = Astro.props
+const { budget } = Astro.props
 ---
 
 <budget-item 
     state={JSON.stringify(budget)}
     class:list={[
         "relative rounded-sm flex items-center justify-between px-4 py-2 font-semibold",
-        "nth-[5n+1]:bg-blue/10 [&:nth-child(5n+1)_span.progress-bar]:bg-blue/20",
-        "nth-[5n+2]:bg-green/10 [&:nth-child(5n+2)_span.progress-bar]:bg-green/20",
-        "nth-[5n+3]:bg-purple/10 [&:nth-child(5n+3)_span.progress-bar]:bg-purple/20",
-        "nth-[5n+4]:bg-red/10 [&:nth-child(5n+4)_span.progress-bar]:bg-red/20",
-        "nth-[5n]:bg-orange/10 [&:nth-child(5n)_span.progress-bar]:bg-orange/20",
-        isTotal && '!bg-white/50'
+        // Apply darker bg and border styles to progress bar children 
+        "nth-[5n+1]:bg-blue/10 [&:nth-child(5n+1)_span.progress-bar]:bg-blue/20 [&:nth-child(5n+1)_span.progress-bar]:border-blue/50",
+        "nth-[5n+2]:bg-green/10 [&:nth-child(5n+2)_span.progress-bar]:bg-green/20 [&:nth-child(5n+2)_span.progress-bar]:border-green/50",
+        "nth-[5n+3]:bg-purple/10 [&:nth-child(5n+3)_span.progress-bar]:bg-purple/20 [&:nth-child(5n+3)_span.progress-bar]:border-purple/50",
+        "nth-[5n+4]:bg-red/10 [&:nth-child(5n+4)_span.progress-bar]:bg-red/20 [&:nth-child(5n+4)_span.progress-bar]:border-red/50",
+        "nth-[5n]:bg-orange/10 [&:nth-child(5n)_span.progress-bar]:bg-orange/20 [&:nth-child(5n)_span.progress-bar]:border-orange/50",
     ]}
 >
     <a href={`/transactions/budget/${budget.id}`} class="hover:underline">
@@ -46,16 +44,15 @@ const { budget, isTotal = false } = Astro.props
 
     <span 
         class:list={[
-            "absolute left-0 top-0 bottom-0 -z-10 rounded-sm block animate-progress-bar origin-bottom-left",
+            "absolute left-0 top-0 bottom-0 -z-10 rounded-sm block animate-progress-bar origin-left border",
             'progress-bar',
-            isTotal && '!bg-slate-300'
         ]}
     />
-</div>
+</budget-item>
 
 <script>
 import { el } from "../../lib/el";
-import type { BudgetWithTotals } from "../../types/types";
+import type { BudgetWithSpending } from "../../types/types";
 
 
 class BudgetItem extends HTMLElement {
@@ -87,7 +84,7 @@ class BudgetItem extends HTMLElement {
             return
         }
 
-        const budget = JSON.parse(newValue) as BudgetWithTotals
+        const budget = JSON.parse(newValue) as BudgetWithSpending
 
         /**
          * Budget Name
@@ -96,11 +93,11 @@ class BudgetItem extends HTMLElement {
         /**
          * Budget Total spent
          */
-        el('budget-totalspent', this, el => el.textContent = budget.totalSpent.toString())
+        el('budget-totalspent', this, el => el.textContent = Math.round(budget.totalSpent).toString())
         /**
          * Budget Amount
          */
-        el('budget-amount', this, el => el.textContent = budget.amount.toString())
+        el('budget-amount', this, el => el.textContent = Math.round(budget.amount).toString())
         /**
          * Budget Percent
          */

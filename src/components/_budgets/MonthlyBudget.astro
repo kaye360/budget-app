@@ -1,0 +1,113 @@
+---
+
+const {
+    name
+} = Astro.props
+
+---
+
+<monthly-budget>
+    <budget-total class="relative rounded-sm flex items-center justify-between px-4 py-2 font-semibold !bg-white/50">
+        <span>
+            {name}
+        </span>
+
+        <span class="text-2xl">
+            <budget-totalspent /> / <budget-amount />
+        </span>
+
+        <span 
+            class:list={[
+                "absolute left-0 top-0 bottom-0 -z-10 rounded-sm block origin-bottom-left bg-slate-300 border border-slate-400",
+                'progress-bar animate-progress-bar',
+            ]}
+        />
+    </budget-total>
+
+    <div class="my-6 border-b border-slate-300" />
+
+</monthly-budget>
+
+
+<script>
+import { el, els } from "../../lib/el";
+import type { BudgetWithSpending } from "../../types/types";
+
+
+class MonthlyBudget extends HTMLElement {
+
+    private budgetList : HTMLElement | null = null
+    private observer !: MutationObserver
+
+    /**
+     * Observe budgetList and update total amount and spent when dom changes
+     */
+    connectedCallback() {
+
+        this.budgetList = el('budget-list')
+        this.observeBudgets()
+
+    }
+
+    observeBudgets() {
+
+        this.observer = new MutationObserver( () => {
+            if( !this.budgetList ) return
+
+            const budgets : Pick<BudgetWithSpending, 'amount' | 'totalSpent' >[] = 
+                els('budget-item', this.budgetList ).map( budget => {
+                    const { totalSpent, amount } = JSON.parse(budget.getAttribute('state') as string)
+                    return { 
+                        totalSpent : Number(totalSpent), 
+                        amount : Number(amount) 
+                    }
+                })
+                
+            const totals = this.calculateTotals(budgets)
+
+            this.updateDomWithTotals(totals)
+        })
+
+        this.observer.observe( this.budgetList as Node, {
+            childList : true,
+            attributes : false,
+            subtree : true,
+        })
+    }
+
+    calculateTotals( 
+        budgets : Pick<BudgetWithSpending, 'amount' | 'totalSpent' >[] 
+    ) {
+        const totals = budgets.reduce(
+            (acc, budget) => {
+                acc.totalSpent += budget.totalSpent;
+                acc.amount += budget.amount;
+                return acc;
+            },
+            { totalSpent: 0, amount: 0 }
+        )
+
+        return {
+            amount : Math.floor(totals.amount),
+            totalSpent : Math.floor(totals.totalSpent)
+        }
+    }
+
+    updateDomWithTotals( totals : Pick<BudgetWithSpending, 'amount' | 'totalSpent'> ) {
+
+        const percent = Math.min(
+            Math.round( totals.totalSpent / totals.amount * 100 ),
+            100
+        )
+
+        el('budget-totalspent', this, el => el.textContent = String(totals.totalSpent))
+        el('budget-amount', this, el => el.textContent = String(totals.amount))
+        el<HTMLSpanElement>('span.progress-bar', this, el => el.style.width = `${percent}%` )
+
+    }
+
+}
+
+customElements.define('monthly-budget', MonthlyBudget)
+
+</script>
