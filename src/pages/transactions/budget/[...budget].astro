@@ -18,11 +18,16 @@ const { budget } = Astro.params
 let transactions : BudgetTransactions = { data : [] }
 
 const budgets = await fetchData<GetBudgets>('/api/budgets')
-
+	
 if( budget ) {
 	const transactionsResult = await fetchData<BudgetTransactions>(`/api/transactions/budget/${budget}`)
 	transactions = transactionsResult.response || { data : []}
 }
+
+const budgetName = budget 
+	? budgets.response?.data.find( b => b.id === Number(budget) )?.name
+	: 'Select a budget'
+
 ---
 
 <Layout>
@@ -32,11 +37,7 @@ if( budget ) {
 	<div class="flex items-center justify-start gap-2 mb-4">
 
 		<H1>
-			{ 
-				budget 
-					? budgets.response?.data[Number(budget)-1].name 
-					: 'Select a budget'
-			}
+			{ budgetName }
 		</H1>
 
 		<select 
@@ -57,7 +58,7 @@ if( budget ) {
 	
 	</div>
 
-	<transaction-list class="grid transition-all translate-x-24 opacity-0 w-full">
+	<transaction-list class="grid w-full">
 		{ transactions.data.map( transaction => (
 			<Transaction {transaction} budgets={budgets.response?.data} />
 		))}
@@ -71,9 +72,6 @@ import { el } from "../../../lib/el"
 
 document.addEventListener('DOMContentLoaded', () => {
 
-	// Animate in
-	el('transaction-list', document, el => el.classList.remove('translate-x-24', 'opacity-0'))
-
 	el<HTMLSelectElement>('#budget-selector', document, select => {
 		select.addEventListener('change', e => {
 
@@ -84,9 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			if( e.target.dataset.budget === e.target.value ) {
 				return
 			}
-
-			// Animate out
-			el('transaction-list', document, el => el.classList.add('-translate-x-24', 'opacity-0'))
 
 			window.location.href = `/transactions/budget/${e.target.value}`
 		})
