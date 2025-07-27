@@ -3,7 +3,7 @@ import { db } from "../../../lib/db"
 import { errorResponse } from "../../../services/error.service"
 
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ request }) => {
 
 	/**
 	 * @todo implement auth

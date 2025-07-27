@@ -25,3 +25,4 @@ Made with Astro
 - Make undelete transaction function
 - DOM utils - cloneNode wrapper
 - Add "Uncategorized" to transaction filters
+- when adding transaction, have it default to negative. or have some sort of toggle button

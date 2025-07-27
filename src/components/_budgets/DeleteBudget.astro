@@ -39,7 +39,6 @@ class BudgetDelete extends HTMLElement {
 
                 const budget = JSON.parse(budgetItem?.getAttribute('state') || '')
 
-                console.log(budget)
                 const loadingButton = el<HTMLButtonElement>('loading-button', this )
                 
                 if( !loadingButton || !budget ) {
@@ -54,7 +53,6 @@ class BudgetDelete extends HTMLElement {
                     method : 'DELETE',
                 })
 
-                console.log(result)
 
                 if( result.error ) {
                     loadingButton.setAttribute('state', 'error')

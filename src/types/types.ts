@@ -54,3 +54,13 @@ export interface BudgetWithSpending extends Budget {
     totalSpent : number
     percentSpent : number
 }
+
+
+/**
+ * Summary Types
+ */
+
+export interface MonthlySpendingSummaryAPIResponse {
+    budgets: number, 
+    spent : number
+}
