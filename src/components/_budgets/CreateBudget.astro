@@ -42,8 +42,8 @@ import Modal from "../Modal.astro";
 
 <script>
 
+import { actions } from "astro:actions"
 import { el } from "../../lib/el"
-import { fetchData } from "../../lib/fetch"
 import { sleep } from "../../utils/app.utils"
 
 
@@ -64,14 +64,10 @@ el<HTMLFormElement>('#add-budget-form', document, form => {
         button?.setAttribute('state', 'loading')
 
         const formData = new FormData(form)
-        const budget = {
-            name : formData.get('name'),
-            amount : Number(formData.get('amount'))
-        }
 
-        const response = await fetchData<{data : { name : string, id : number }}>(`/api/budgets/`, {
-            method : 'POST',
-            body: budget 
+        const response = await actions.budget.store({
+            name : String( formData.get('name') ),
+            amount : Number(formData.get('amount'))
         })
 
         if( response.error ) {
@@ -87,20 +83,23 @@ el<HTMLFormElement>('#add-budget-form', document, form => {
         const template = el<HTMLTemplateElement>('#budget-template')
         const fragment = template?.content.cloneNode(true)
 
-        const div = el('div', fragment)
+        const budgetItem = el('budget-item', fragment)
 
-        if(!div) {
+        if(!budgetItem) {
             console.warn('Invalid Budget template')
             return
         }
 
-        el<HTMLAnchorElement>('a', fragment, link => {
-            link.textContent = response.response?.data.name || ''
-            link.setAttribute('href', `/transactions/budget/${response.response?.data.id}`)
-        })
+        const state = {
+            name : response.data[0].name,
+            amount : response.data[0].amount,
+            id : response.data[0].id,
+            totalSpent : 0
+        }
+
+        budgetItem.setAttribute('state', JSON.stringify(state))
         
-        budgetList?.append(div)
-        
+        budgetList?.append(budgetItem)
     })
 })
 

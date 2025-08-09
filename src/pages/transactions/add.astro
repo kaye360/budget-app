@@ -5,16 +5,13 @@ import Layout from "../../layouts/Layout.astro";
 import CreateTransaction from "../../components/_transactions/CreateTransaction.astro";
 import CreateTransactionCount from "../../components/_transactions/CreateTransactionCount.astro";
 import H1 from "../../components/H1.astro";
-import { fetchData } from "../../lib/fetch";
-import type { GetBudgets } from "../../types/types";
+import { actions } from "astro:actions";
 
 const auth = await Astro.session?.get('auth')
 
-if( !auth ) {
-    return Astro.redirect('/')
-}
+if( !auth ) return Astro.redirect('/')
 
-const budgets = await fetchData<GetBudgets>('/api/budgets')
+const budgets = await Astro.callAction( actions.budget.index, {} )
 ---
 
 <Layout>
@@ -35,11 +32,11 @@ const budgets = await fetchData<GetBudgets>('/api/budgets')
     <form>
 
         <transaction-create-list class="grid gap-4">
-            <CreateTransaction budgets={budgets.response?.data} />
+            <CreateTransaction budgets={budgets.data} />
         </transaction-create-list>
 
         <template id="transaction-create">
-            <CreateTransaction budgets={budgets.response?.data} />
+            <CreateTransaction budgets={budgets.data} />
         </template>
 
         <div class="sm:col-span-2 grid grid-cols-2 gap-4">
@@ -64,8 +61,8 @@ const budgets = await fetchData<GetBudgets>('/api/budgets')
 
 
 <script>
+import { actions } from "astro:actions"
 import { el } from "../../lib/el"
-import { fetchData } from "../../lib/fetch"
 import { sleep } from "../../utils/app.utils"
 
 
@@ -80,23 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             button?.setAttribute('state', 'loading')
 
-            const transactions = Object.fromEntries( 
-                new FormData(form).entries() 
-            )
+            const formData = new FormData(form)
 
-            const response = await fetchData('/api/transactions', {
-                method : 'POST',
-                body : transactions
-            })
+            const { error } = await actions.transaction.store(formData)
 
-            if( response.error ) {
+            if( error ) {
                 button?.setAttribute('state', 'error')
                 return
             }
 
             button?.setAttribute('state', 'success')
             await sleep(1000)
-            el('view-transactions-link', this, el => el.classList.remove('opacity-0', '-translate-x-4'))
+            el('view-transactions-link', this, el => 
+                el.classList.remove('opacity-0', '-translate-x-4')
+            )
         })
     })
 

@@ -32,6 +32,21 @@ export function toCurrency(amount: number | string | undefined): string {
 
 
 /**
+ * Convert a string to only digits. Allows 1 decimal
+ */
+export function toOnlyDigits(value: string | number): number {
+	const cleaned = value
+		.toString()
+		.replace(/[^0-9.]/g, '')         // keep digits and dots
+		.replace(/^\.*/g, '')            // remove leading dots
+		.replace(/(\..*?)\..*/g, '$1');  // keep only the first decimal
+
+	return Number(cleaned);
+}
+
+
+
+/**
  * Convert all values in an object to string typ
  */
 export function objectValuesToString(obj: Record<string, any>): Record<string, string> {

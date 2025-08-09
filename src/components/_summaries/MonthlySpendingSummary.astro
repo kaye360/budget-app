@@ -31,8 +31,8 @@ const {
 
 
 <script>
+import { actions } from "astro:actions";
 import { el, } from "../../lib/el";
-import { fetchData } from "../../lib/fetch";
 import type { MonthlySpendingSummaryAPIResponse } from "../../types/types";
 
 
@@ -48,7 +48,7 @@ class MonthlySpendingSummary extends HTMLElement {
      * 
      * Else, just get the spending summary data directly and don't
      * worry about any DOM elements changing as we won't need to 
-     * update the spending summary data
+     * update the spending summary data. Home page for example.
      */
     async connectedCallback() {
         this.budgetList = el('budget-list')
@@ -81,8 +81,8 @@ class MonthlySpendingSummary extends HTMLElement {
     async getAndRenderSpendingData() {
             const totals = await this.getMonthlySpendingSummary(this.month)
             
-            if( totals?.response ) {
-                this.renderSpendingData(totals.response)
+            if( totals ) {
+                this.renderSpendingData(totals)
             }
     }
 
@@ -91,10 +91,11 @@ class MonthlySpendingSummary extends HTMLElement {
      */
     async getMonthlySpendingSummary( month : string | null ) {
 
-        const res = await fetchData<MonthlySpendingSummaryAPIResponse>(`/api/summaries/monthly-spending/${month}`)
+        // const res = await fetchData<MonthlySpendingSummaryAPIResponse>(`/api/summaries/monthly-spending/${month}`)
+        const res = await actions.summary.getMonthlySpending({date : month})
             
-        if( res.response?.spent && res.response?.budgets ) {
-            return res
+        if( res.data?.spent && res.data?.budgets ) {
+            return res.data
         }
 
         return null

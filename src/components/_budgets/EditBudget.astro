@@ -42,8 +42,8 @@ const { budget } = Astro.props
 
 
 <script>
+import { actions } from "astro:actions"
 import { el } from "../../lib/el"
-import { fetchData } from "../../lib/fetch"
 
 
 class BudgetEdit extends HTMLElement {
@@ -69,15 +69,13 @@ class BudgetEdit extends HTMLElement {
                 button?.setAttribute('state', 'loading')
 
                 const formData = new FormData(form)
-                const name = formData.get('name')
-                const amount = formData.get('amount')
+                const name = String( formData.get('name') )
+                const amount = Number( formData.get('amount') )
+                const id = Number( form.dataset.budgetid )
 
-                const result = await fetchData(`/api/budgets/${form.dataset.budgetid}`, {
-                    method : 'PUT',
-                    body: { name, amount }
-                })
+                const response = await actions.budget.update({name, amount, id})
 
-                if( result.error ) {
+                if( response.error ) {
                     button?.setAttribute('state', 'error')
                     return 
                 }

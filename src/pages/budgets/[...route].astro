@@ -2,31 +2,25 @@
 import Layout from "../../layouts/Layout.astro";
 import Budget from "../../components/_budgets/Budget.astro"
 import { getBudgetsWithTotalSpent } from "../../utils/budget.utils";
-import { fetchData } from "../../lib/fetch";
-import type { GetBudgets, MonthlyTransactions } from "../../types/types";
 import { convertDate } from "../../lib/convertDate";
 import CreateBudget from "../../components/_budgets/CreateBudget.astro";
 import SelectMonthlyBudget from "../../components/_budgets/SelectMonthlyBudget.astro";
 import MonthlySpendingSummary from "../../components/_summaries/MonthlySpendingSummary.astro";
+import { actions } from "astro:actions";
 
 const auth = await Astro.session?.get('auth')
-
-if( !auth ) {
-    return Astro.redirect('/')
-}
+if( !auth ) return Astro.redirect('/') 
 
 const { route } = Astro.params;
 
 const month = route ? route : convertDate().to('YYYY-MM')
 
 const [transactions, budgets] = await Promise.all([
-	fetchData<MonthlyTransactions>(`/api/transactions/month/${month}`),
-	fetchData<GetBudgets>('/api/budgets'),
+	Astro.callAction( actions.transaction.index, { filter : 'month', filterValue : month } ),
+	Astro.callAction( actions.budget.index, {} )
 ])
 
-const budgetsWithTotals = getBudgetsWithTotalSpent(
-	budgets.response?.data, transactions.response?.data
-)
+const budgetsWithTotalSpent = getBudgetsWithTotalSpent(budgets.data, transactions.data.list)
 
 ---
 <Layout>
@@ -37,7 +31,7 @@ const budgetsWithTotals = getBudgetsWithTotalSpent(
 			{ convertDate(month).to('MMMM-YYYY') }
 		</h1>
 
-		<SelectMonthlyBudget currentMonth={month} months={transactions.response?.months} /> 
+		<SelectMonthlyBudget currentMonth={month} months={transactions.data.months} /> 
 		
 	</div>
 
@@ -46,7 +40,7 @@ const budgetsWithTotals = getBudgetsWithTotalSpent(
 	<section-divider class="block my-6 border-b border-slate-300 animate-progress-bar" />
 
 	<budget-list class="grid gap-6 text-lg w-full">
-		{ budgetsWithTotals.map( budget => (
+		{ budgetsWithTotalSpent.map( budget => (
 			<Budget {budget} />
 		))}
 	</budget-list>

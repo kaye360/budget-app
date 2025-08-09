@@ -91,6 +91,10 @@ class BudgetItem extends HTMLElement {
          */
         el('budget-name', this, el => el.textContent = budget.name)
         /**
+         * Budget Id
+         */
+        el('a', this, a => a.setAttribute('href', `/transactions/budget/${budget.id}`))
+        /**
          * Budget Total spent
          */
         el('budget-totalspent', this, el => el.textContent = Math.round(budget.totalSpent).toString())

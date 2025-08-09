@@ -13,7 +13,7 @@ export type CreateTransaction = Database['public']['Tables']['Transactions']['In
  * API Transaction types
  */
 
-export interface RecentTransactions {
+export interface RecentTransactionsAPIResponse {
     data : Transaction[],
     totalPages? : number,
     count? : number

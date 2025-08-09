@@ -2,10 +2,11 @@
 import Layout from "../layouts/Layout.astro";
 import { ArrowLeftRightIcon, BotIcon, ChartColumnIncreasingIcon, MoveRightIcon } from "@lucide/astro"
 import Transaction from "../components/_transactions/Transaction.astro";
-import type { GetBudgets, RecentTransactions, Transaction as TransactionType } from "../types/types";
+import type { GetBudgets, Transaction as TransactionType } from "../types/types";
 import { fetchData } from "../lib/fetch";
 import { convertDate } from "../lib/convertDate";
 import MonthlySpendingSummary from "../components/_summaries/MonthlySpendingSummary.astro";
+import { actions } from "astro:actions";
 
 const auth = await Astro.session?.get('auth')
 
@@ -13,9 +14,8 @@ if( !auth ) {
     return Astro.redirect('/')
 }
 
-const [transactions, budgets] = await Promise.all([
-	fetchData<RecentTransactions>('/api/transactions/recent?perPage=5'),
-	fetchData<GetBudgets>('/api/budgets'),
+const [transactions] = await Promise.all([
+	Astro.callAction( actions.transaction.index, { filter : 'recent', perPage : 5} ),
 ])
 
 ---
@@ -48,8 +48,8 @@ const [transactions, budgets] = await Promise.all([
 			</h2>
 			<transaction-list class="grid">
 				{ 
-					transactions.response?.data.map( (transaction : TransactionType) =>
-						<Transaction {transaction} budgets={budgets.response?.data} mode="simple" />
+					!transactions.error && transactions.data.list.map( (transaction : TransactionType) =>
+						<Transaction {transaction} budgets={[]} mode="simple" />
 					)
 				}
 			</transaction-list>

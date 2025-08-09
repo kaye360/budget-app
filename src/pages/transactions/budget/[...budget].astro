@@ -1,11 +1,11 @@
 ---
+import { actions } from "astro:actions"
 import CreateTransactionButton from "../../../components/_transactions/CreateTransactionButton.astro"
 import FilterTransactions from "../../../components/_transactions/FilterTransactions.astro"
 import Transaction from "../../../components/_transactions/Transaction.astro"
 import H1 from "../../../components/H1.astro"
 import Layout from "../../../layouts/Layout.astro"
-import { fetchData } from "../../../lib/fetch"
-import type { BudgetTransactions, GetBudgets } from "../../../types/types"
+import type { Transaction as TransactionType } from "../../../types/types"
 
 const auth = await Astro.session?.get('auth')
 
@@ -14,20 +14,23 @@ if( !auth ) {
 }
 
 const { budget } = Astro.params
-
-let transactions : BudgetTransactions = { data : [] }
-
-const budgets = await fetchData<GetBudgets>('/api/budgets')
-	
-if( budget ) {
-	const transactionsResult = await fetchData<BudgetTransactions>(`/api/transactions/budget/${budget}`)
-	transactions = transactionsResult.response || { data : []}
-}
-
+const budgets = await Astro.callAction( actions.budget.index, {} )
 const budgetName = budget 
-	? budgets.response?.data.find( b => b.id === Number(budget) )?.name
+	? budgets.data?.find( b => b.id === Number(budget) )?.name
 	: 'Select a budget'
+	
 
+let transactions: TransactionType[] = []
+if( budget ) {
+	const transactionsResult = await Astro.callAction( actions.transaction.index, {
+		filter : 'budget', 
+		filterValue : budget, 
+	})
+
+	if( !transactionsResult.error ) {
+		transactions = transactionsResult.data as TransactionType[]
+	}
+}
 ---
 
 <Layout>
@@ -47,7 +50,7 @@ const budgetName = budget
 			data-budget={budget}
 		>
 			<option>Select budget to view</option>
-			{ budgets.response?.data.map( budget => (
+			{ budgets.data?.map( budget => (
 				<option value={budget.id}>
 					{budget.name}
 				</option>
@@ -59,8 +62,8 @@ const budgetName = budget
 	</div>
 
 	<transaction-list class="grid w-full">
-		{ transactions.data.map( transaction => (
-			<Transaction {transaction} budgets={budgets.response?.data} />
+		{ transactions.map( (transaction: TransactionType) => (
+			<Transaction {transaction} budgets={budgets.data} />
 		))}
 	</transaction-list>
 

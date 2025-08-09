@@ -17,12 +17,16 @@ Made with Astro
 
 
 ## Todo
-- fix transaction delete - don't immediately close modal
-- implement proper auth
-- form validation
-- look into storage all transaction data into one prop
-- Make universal date converter class
 - Make undelete transaction function
 - DOM utils - cloneNode wrapper
-- Add "Uncategorized" to transaction filters
 - when adding transaction, have it default to negative. or have some sort of toggle button
+
+## Bugs
+- look into storage all transaction data into one prop
+- fix transaction delete - don't immediately close modal
+- More transactions button doesn't work - still on api
+
+## Upcoming Features
+- implement proper auth
+- data visualization and graphs
+- error toast

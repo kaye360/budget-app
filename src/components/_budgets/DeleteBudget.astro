@@ -18,6 +18,7 @@ import LoadingButton from "../Button/LoadingButton.astro";
 </budget-delete>
 
 <script>
+import { actions } from "astro:actions"
 import { el } from "../../lib/el"
 import { fetchData } from "../../lib/fetch"
 import { sleep } from "../../utils/app.utils"
@@ -36,9 +37,7 @@ class BudgetDelete extends HTMLElement {
             button.addEventListener('click', async () => {
                 
                 const budgetItem = this.closest('budget-item')
-
                 const budget = JSON.parse(budgetItem?.getAttribute('state') || '')
-
                 const loadingButton = el<HTMLButtonElement>('loading-button', this )
                 
                 if( !loadingButton || !budget ) {
@@ -46,24 +45,17 @@ class BudgetDelete extends HTMLElement {
                     return
                 }
 
-                // Button wrapper custom element
                 loadingButton.setAttribute('state', 'loading')
 
-                const result = await fetchData(`/api/budgets/${budget.id}`, {
-                    method : 'DELETE',
-                })
+                const response = await actions.budget.destroy({id : budget.id})
 
-
-                if( result.error ) {
+                if( response.error ) {
                     loadingButton.setAttribute('state', 'error')
                     return 
                 }
-
                 
                 loadingButton.setAttribute('state', 'success')
                 this.closest('dialog')?.close()
-
-                await sleep(500)
                 budgetItem?.remove()
             })
         })

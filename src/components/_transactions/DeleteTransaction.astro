@@ -21,6 +21,7 @@ import LoadingButton from "../Button/LoadingButton.astro";
 </transaction-delete>
 
 <script>
+import { actions } from "astro:actions"
 import { el } from "../../lib/el"
 import { fetchData } from "../../lib/fetch"
 import { sleep } from "../../utils/app.utils"
@@ -40,18 +41,15 @@ class TransactionDelete extends HTMLElement {
                 
                 const transaction = this.closest('transaction-item')
                 const loadingButton = el<HTMLButtonElement>('loading-button', this )
-                
+                    
                 if( !transaction || !loadingButton ) {
                     console.warn('Invalid transaction or loadingButton')
                     return
                 }
-
-                // Button wrapper custom element
+                    
                 loadingButton.setAttribute('state', 'loading')
 
-                const result = await fetchData(`/api/transactions/${transaction.id}`, {
-                    method : 'DELETE',
-                })
+                const result = await actions.transaction.destroy({id : Number(transaction.id)})
 
                 if( result.error ) {
                     loadingButton.setAttribute('state', 'error')
@@ -59,18 +57,17 @@ class TransactionDelete extends HTMLElement {
                 }
                 
                 loadingButton.setAttribute('state', 'success')
-                this.removeTransactionFromDom(transaction)
+                this.removeTransactionAnimation(transaction)
                 this.closest('dialog')?.close()
 
                 await sleep(500)
-                transaction.setAttribute('isdeleted', "true")
-                transaction.setAttribute('data-isdeleted', "true")
+                transaction.remove()
             })
         })
     }
 
 
-    removeTransactionFromDom( transaction: Element | null ) {
+    removeTransactionAnimation( transaction: Element | null ) {
         transaction?.classList.add('scale-0', '!max-h-0', 'duration-500', 'origin-top', 'opacity-0')
     }
 }

@@ -1,11 +1,12 @@
 ---
+import { actions } from "astro:actions";
 import CreateTransactionButton from "../../components/_transactions/CreateTransactionButton.astro";
 import FilterTransactions from "../../components/_transactions/FilterTransactions.astro";
 import Transaction from "../../components/_transactions/Transaction.astro";
 import H1 from "../../components/H1.astro";
 import Layout from "../../layouts/Layout.astro";
 import { fetchData } from "../../lib/fetch";
-import type { DeletedTransactions, GetBudgets } from "../../types/types";
+import type { GetBudgets, Transaction as TransactionType } from "../../types/types";
 
 const auth = await Astro.session?.get('auth')
 
@@ -14,8 +15,8 @@ if( !auth ) {
 }
 
 const [transactions, budgets] = await Promise.all([
-	fetchData<DeletedTransactions>(`/api/transactions/deleted`),
-	fetchData<GetBudgets>('/api/budgets'),
+	Astro.callAction( actions.transaction.index, {filter : 'deleted' } ),
+	Astro.callAction( actions.budget.index, {} ),
 ])
 
 ---
@@ -33,8 +34,8 @@ const [transactions, budgets] = await Promise.all([
 	</div>
 
 	<transaction-list class="grid">
-		{ transactions.response?.data && transactions.response.data.map( transaction => (
-			<Transaction {transaction} budgets={budgets.response?.data} />
+		{ !transactions.error && transactions.data.map( (transaction: TransactionType) => (
+			<Transaction {transaction} budgets={budgets.data} />
 		))}
 	</transaction-list>
 

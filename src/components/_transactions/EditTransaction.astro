@@ -14,7 +14,13 @@ const { budgets, transaction } = Astro.props
 
 <transaction-edit>
 
-    <form class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12" autocomplete="off">
+    <form 
+        method="post"
+        class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12" 
+        autocomplete="off"
+    >
+
+        <input type="hidden" name="id" />
 
         <h3 class="sm:col-span-2 text-lg font-semibold tracking-wide">
             Edit Transaction
@@ -37,11 +43,12 @@ const { budgets, transaction } = Astro.props
 
         <label>
             Budget: <br />
-            <select name="budget-id" class="w-full bg-bg-2" data-budgetid={transaction?.budgetId}>
+            <select name="budgetId" class="w-full bg-bg-2" data-budgetid={transaction?.budgetId}>
                 <option value="0">Uncategorized</option>
                 { budgets.map( budget => (
                     <option 
                         value={budget.id}
+                        selected={budget.id === transaction?.budgetId}
                     >
                         {budget.name}
                     </option>
@@ -51,9 +58,9 @@ const { budgets, transaction } = Astro.props
 
         <label>
             Account: <br />
-            <select name="account-id" class="w-full bg-bg-2">
-                <option value="account-1">account 1</option>
-                <option selected value="account-2">account 2</option>
+            <select name="accountId" class="w-full bg-bg-2">
+                <option value="1">account 1</option>
+                <option selected value="2">account 2</option>
             </select>
         </label>
 
@@ -78,8 +85,8 @@ const { budgets, transaction } = Astro.props
 
 
 <script>
+import { actions } from "astro:actions"
 import { el } from "../../lib/el"
-import { fetchData } from "../../lib/fetch"
 
 class TransactionEdit extends HTMLElement {
     
@@ -108,17 +115,14 @@ class TransactionEdit extends HTMLElement {
                 const formData = new FormData(form)
                 const updatedTransaction = this.getUpdatedTransaction(formData)
 
-                const result = await fetchData(`/api/transactions/${transaction.id}`, {
-                    method : 'PUT',
-                    body: updatedTransaction
-                })
+                const response = await actions.transaction.update(updatedTransaction)
 
-                if( result.error ) {
+                if( response.error ) {
                     button?.setAttribute('state', 'error')
                     return 
                 }
                 
-                this.updateTransaction( transaction, formData ) 
+                this.updateTransaction( transaction, updatedTransaction ) 
                 button?.setAttribute('state', 'success')
             })
         })
@@ -127,25 +131,29 @@ class TransactionEdit extends HTMLElement {
 
     getUpdatedTransaction( formData: FormData ) {
         return {
-            date : formData.get('date'),
-            description : formData.get('description'),
+            id : Number(formData.get('id')),
+            date : String(formData.get('date')),
+            description : String(formData.get('description')),
             amount : Number(formData.get('amount')),
-            budgetId : Number(formData.get('budget-id')),
+            budgetId : Number(formData.get('budgetId')),
             accountId : 1,
         }
     }
 
 
-    updateTransaction( transaction : Element | null, formData: FormData) {
+    updateTransaction( 
+        transaction : Element | null, 
+        { amount, date, description, budgetId } : { [key : string] : string | number}
+    ) {
 
-        const select = el<HTMLSelectElement>('select[name="budget-id"', this)
+        const select = el<HTMLSelectElement>('select[name="budgetId"]', this)
         const budget = String( select?.options[select.selectedIndex].text )
 
-        transaction?.setAttribute('amount', String(formData.get('amount')) )
-        transaction?.setAttribute('date', String(formData.get('date')) )
-        transaction?.setAttribute('description', String(formData.get('description')) )
-        transaction?.setAttribute('budget', budget )
-        transaction?.setAttribute('budget-id', String(formData.get('budget')) )
+        transaction?.setAttribute('amount', String(amount) )
+        transaction?.setAttribute('date', String(date) )
+        transaction?.setAttribute('description', String(description) )
+        transaction?.setAttribute('budget', String(budget) )
+        transaction?.setAttribute('budgetid', String(budgetId) )
     }
 }
 
