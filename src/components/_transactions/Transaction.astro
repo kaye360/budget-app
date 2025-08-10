@@ -19,36 +19,40 @@ const {
 ---
 
 <transaction-item 
-    data-isdeleted={transaction?.isDeleted}
-    class="relative grid gap-2 py-8 border-b border-red/20 data-[isdeleted=true]:opacity-90 transition-all max-h-[500px]"
-    {...transaction}
+    class="relative grid gap-2 py-8 border-b border-red/20 transition-all max-h-[500px]"
+    state={JSON.stringify(transaction)}
 >
 
     <transaction-date  
         class="block text-sm text-accent-text rounded" 
+        data-bind="date"
     />
 
     <div class="flex justify-start items-start w-full">
         <transaction-description 
             class="block font-semibold text-xl md:text-xl rounded" 
+            data-bind="description"
         />
         <transaction-amount  
             class="ml-auto text-xl font-semibold font-theme" 
+            data-bind="amountCurrency"
         />
     </div>
 
     <div class="w-full flex items-stretch gap-2 ">
         <transaction-budget
             class="bg-blue/20 px-3 text-xs font-medium rounded-sm tracking-wide capitalize flex items-center" 
+            data-bind="budget"
         />
 
         { mode === 'detailed' &&
-            <span class="bg-red/10 px-3 font-medium rounded-sm tracking-wide text-xs capitalize flex items-center ">
-                Everyday &#9679; Chequing 9084
-                <transaction-account-name />
-                
-                <transaction-account-type />
-                <transaction-account-number />
+            <span class="bg-red/10 px-3 font-medium rounded-sm tracking-wide text-xs capitalize flex items-center gap-1">
+                <transaction-account-name data-bind="accountName" />
+                &#9679;
+                <transaction-account-type data-bind="accountType" />
+                <span>
+                    (<transaction-account-number data-bind="accountNumber" />)
+                </span>
             </span>
             <transaction-edit class="ml-auto">
                 <button class="ml-2  group cursor-pointer transition-all active:scale-95">
@@ -67,7 +71,8 @@ const {
 
 <script>
 import { convertDate } from "../../lib/convertDate"
-import { el } from "../../lib/el"
+import { el, els } from "../../lib/el"
+import type { Transaction } from "../../types/types"
 import { toCurrency } from "../../utils/app.utils"
 
 
@@ -92,57 +97,40 @@ class TransactionItem extends HTMLElement {
      * Transaction attribute state and handlers
      * 
      */
-    static observedAttributes = [
-        'date', 
-        'description', 
-        'budget', 
-        'budgetid',
-        'amount', 
-        'accountname', 
-        'accounttype', 
-        'accountnumber', 
-        'isdeleted',
-        'id'
-    ]
+    static observedAttributes = ['state']
 
-    attributeChangedCallback(name: string, _: any, newValue:string) {
 
-        const handlers: Record<string, () => void> = {
-            date : () => {
-                el('transaction-date', this, el => el.textContent = convertDate(newValue).to('MMM-DD-YYYY') )
-                el<HTMLInputElement>('input[name=date]', this, el => el.value = newValue)
-            },
-            description : () => {
-                el('transaction-description', this, el => el.textContent = newValue )
-                el<HTMLInputElement>( 'input[name=description]', this, el => el.value = newValue ) 
-            },
-            budget : () => {
-                el('transaction-budget', this, el => el.textContent = newValue )
-            },
-            budgetid : () => {
-                el<HTMLInputElement>('select[name="budget-id"]', this, el => el.value = newValue )
-            },
-            amount : () => {
-                el( 'transaction-amount', this, el => el.textContent = toCurrency(newValue) )
-                el<HTMLInputElement>( 'input[name=amount]', this, el => 
-                    el.value = toCurrency(newValue).replace('$', '') 
-                )
-            },
-            accountname : () => {
-                el('transaction-account-name', this, el => el.textContent = newValue )
-            },
-            accounttype : () => {
-                el('transaction-account-type', this, el => el.textContent = newValue )
-            },
-            accountnumber : () => {
-                el('transaction-account-number', this, el => el.textContent = newValue )
-            },
-            id : () => {
-                el<HTMLInputElement>('input[name=id]', this, el => el.value = newValue)
-            }
+    attributeChangedCallback(attr: string, _oldValue: any, newValue: string) {
+
+        if( attr !== 'state') {
+            return
         }
-        if( handlers[name] ) {
-            handlers[name]()
+
+        const transaction: Transaction = JSON.parse(newValue)
+        const computedTransaction = this.getComputedTransaction(transaction)
+
+        /**
+         * Bind new values to DOM elements
+         */
+        els('[data-bind]', this, el => {
+            const key = el.getAttribute('data-bind') as keyof typeof computedTransaction
+            const value =  computedTransaction[key] ?? ''
+
+            if( 'value' in el) el.value = String(value)
+            if( 'textContent' in el ) el.textContent = String(value)
+
+        })
+    }
+
+    getComputedTransaction( transaction: Transaction) {
+        return {
+            ...transaction,
+            date: convertDate(transaction.date).to('YYYY-MM-DD'),
+            amount: transaction.amount,
+            amountCurrency: toCurrency(transaction.amount),
+            accountName: 'Everyday',
+            accountType: 'Chequing',
+            accountNumber: '8495'
         }
     }
 }

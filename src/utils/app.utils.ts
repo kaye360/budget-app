@@ -18,7 +18,7 @@ export function range(start: number, end: number): number[] {
 /**
  * Takes a number and returns a human readable dollar amount
  */
-export function toCurrency(amount: number | string | undefined): string {
+export function toCurrency(amount: number | string | undefined | null): string {
 	if (!amount) {
 		return '0.00'
 	}

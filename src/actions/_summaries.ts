@@ -16,7 +16,6 @@ export const summary = {
         }),
         handler : async ({date}) => {
             
-            console.log(date)
             if(!date) {
                 date = convertDate().to('YYYY-MM')
             }

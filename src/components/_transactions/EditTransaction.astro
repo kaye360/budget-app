@@ -20,7 +20,7 @@ const { budgets, transaction } = Astro.props
         autocomplete="off"
     >
 
-        <input type="hidden" name="id" />
+        <input type="hidden" name="id" data-bind="id" />
 
         <h3 class="sm:col-span-2 text-lg font-semibold tracking-wide">
             Edit Transaction
@@ -28,17 +28,17 @@ const { budgets, transaction } = Astro.props
 
         <label>
             Date: <br />
-            <input type="date" name="date" />
+            <input type="date" name="date" data-bind="date" />
         </label>
 
         <label>
             Description: <br />
-            <input type="text" name="description" />
+            <input type="text" name="description" data-bind="description" />
         </label>
 
         <label>
             Amount: <br />
-            <input type="text" name="amount" />
+            <input type="text" name="amount" data-bind="amount" />
         </label>
 
         <label>
@@ -115,6 +115,8 @@ class TransactionEdit extends HTMLElement {
                 const formData = new FormData(form)
                 const updatedTransaction = this.getUpdatedTransaction(formData)
 
+                console.log(updatedTransaction)
+
                 const response = await actions.transaction.update(updatedTransaction)
 
                 if( response.error ) {
@@ -149,11 +151,22 @@ class TransactionEdit extends HTMLElement {
         const select = el<HTMLSelectElement>('select[name="budgetId"]', this)
         const budget = String( select?.options[select.selectedIndex].text )
 
-        transaction?.setAttribute('amount', String(amount) )
-        transaction?.setAttribute('date', String(date) )
-        transaction?.setAttribute('description', String(description) )
-        transaction?.setAttribute('budget', String(budget) )
-        transaction?.setAttribute('budgetid', String(budgetId) )
+        const prevState = JSON.parse( transaction?.getAttribute('state') ?? '' )
+        const newState = {
+            ...prevState,
+            amount : String(amount),
+            date : String(date),
+            description : String(description),
+            budget : String(budget),
+            budgetId : String(budgetId)
+        }
+        transaction?.setAttribute('state', JSON.stringify(newState))
+
+        // transaction?.setAttribute('amount', String(amount) )
+        // transaction?.setAttribute('date', String(date) )
+        // transaction?.setAttribute('description', String(description) )
+        // transaction?.setAttribute('budget', String(budget) )
+        // transaction?.setAttribute('budgetid', String(budgetId) )
     }
 }
 

@@ -33,6 +33,11 @@ export const transaction = {
             /**
              * @todo implement auth, accounts
             */
+
+
+            /**
+             * @todo look at doing this before submitting and remove accept form
+             */
             const transactions = formDataToCreateTransactions(input)
             const validated = transactions.map( transaction => 
                 TransactionValidator.store.parse(transaction)
@@ -83,8 +88,6 @@ export const transaction = {
                 .from('Transactions')
                 .update({ isDeleted : true})
                 .eq('id', input.id)
-                .select()
-                .single()
         
             if( error ) {
                 throw new Error(error.message)

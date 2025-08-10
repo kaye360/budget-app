@@ -78,9 +78,9 @@ class BudgetItem extends HTMLElement {
      */
     static observedAttributes = ["state"]
 
-    attributeChangedCallback(name: string, _: any, newValue : string) {
+    attributeChangedCallback(attr: string, oldValue: any, newValue : string) {
 
-        if( name !== 'state' ) {
+        if( attr !== 'state' ) {
             return
         }
 
