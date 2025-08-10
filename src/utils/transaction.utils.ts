@@ -64,9 +64,7 @@ function createTransactionFromTemplate(
     const fragment = template.content.cloneNode(true)
 
     const newTransaction = el('transaction-item', fragment, el => {
-        Object.entries(transaction).forEach(([key, value]) => {
-            el.setAttribute(key.toLowerCase(), String(value))
-        })
+        el.setAttribute('state', JSON.stringify(transaction))
     })
 
     return newTransaction

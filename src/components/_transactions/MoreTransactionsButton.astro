@@ -2,16 +2,15 @@
 ---
 <button 
     id="more-transactions-button" 
-    class="bg-slate-700 p-6 mt-6 rounded-xl mb-36 w-full cursor-pointer text-lg hover:bg-blue "
+    class="p-6 mt-6 rounded-xl mb-36 w-full cursor-pointer bg-blue/20  hover:bg-blue/60 font-semibold"
 >
     More Transactions
 </button>
 
 
 <script>
+import { actions } from "astro:actions"
 import { el } from "../../lib/el"
-import { fetchData } from "../../lib/fetch"
-import type { RecentTransactions } from "../../types/types"
 import { renderTransactions } from "../../utils/transaction.utils"
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -26,14 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
 	const button = el<HTMLButtonElement>('#more-transactions-button', document, btn => {
         btn.addEventListener('click', async () => {
 
-            const transactions = await fetchData<RecentTransactions>(`/api/transactions/recent?page=${page}`)
-                
-            if( !transactions.response?.data ) return
+            const transactions = await actions.transaction.index({
+                filter : 'recent',
+                page
+            })
+
+            if( !transactions.data ) return
             
-            renderTransactions( transactions.response?.data, el('transaction-list') )
+            renderTransactions( transactions.data.list, el('transaction-list') )
 
             page += 1
-            if( page === transactions.response?.totalPages) button?.remove()
+            if( page === transactions.data.totalPages) button?.remove()
         })
     })
 
