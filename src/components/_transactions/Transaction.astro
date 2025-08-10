@@ -1,14 +1,16 @@
 ---
-import { EllipsisIcon } from "@lucide/astro"
+import { ArchiveRestoreIcon, EllipsisIcon } from "@lucide/astro"
 import DeleteTransaction from "./DeleteTransaction.astro"
 import EditTransaction from "./EditTransaction.astro"
 import type { Budget, Transaction } from "../../types/types"
 import Modal from "../Modal.astro"
+import LoadingButton from "../Button/LoadingButton.astro"
+import RestoreTransaction from "./RestoreTransaction.astro"
 
 interface Props {
     transaction? : Transaction,
     budgets? : Budget[],
-    mode? : 'simple' | 'detailed'
+    mode? : 'simple' | 'detailed' | 'restore'
 }
 
 const { 
@@ -41,7 +43,7 @@ const {
 
     <div class="w-full flex items-stretch gap-2 ">
         <transaction-budget
-            class="bg-blue/20 px-3 text-xs font-medium rounded-sm tracking-wide capitalize flex items-center" 
+            class="bg-blue/20 px-3 py-2 text-xs font-medium rounded-sm tracking-wide capitalize flex items-center" 
             data-bind="budget"
         />
 
@@ -64,6 +66,17 @@ const {
                 <DeleteTransaction />
             </Modal>
         }
+
+        { mode === 'restore' && (
+            <transaction-restore-modal-button class="ml-auto">
+                <button class="ml-2  group cursor-pointer transition-all active:scale-95">
+                    <ArchiveRestoreIcon class="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
+                </button>
+            </transaction-restore-modal-button>
+            <Modal title="Restore Transaction">
+                <RestoreTransaction />
+            </Modal>
+        )}
     </div>
 
 </transaction-item>
@@ -79,26 +92,28 @@ import { toCurrency } from "../../utils/app.utils"
 class TransactionItem extends HTMLElement {
     
     /**
-     * 
-     * Add showModal event listener to edit Button
-     * 
+     * Add any event listeners :
+     * - Show Edit Modal
+     * - Show Restore Modal
      */
     connectedCallback() {
         const editButton = el<HTMLButtonElement>('transaction-edit button', this)
+        const restoreButton = el<HTMLButtonElement>('transaction-restore-modal-button button', this)
         const dialog = el<HTMLDialogElement>('dialog', this)
         
         if( editButton && dialog ) {
             editButton.addEventListener('click', () => dialog.showModal() )
         }
+
+        if( restoreButton && dialog ) {
+            restoreButton.addEventListener('click', () => dialog.showModal() )
+        }
     }
 
     /**
-     * 
      * Transaction attribute state and handlers
-     * 
      */
     static observedAttributes = ['state']
-
 
     attributeChangedCallback(attr: string, _oldValue: any, newValue: string) {
 
@@ -106,28 +121,30 @@ class TransactionItem extends HTMLElement {
             return
         }
 
-        const transaction: Transaction = JSON.parse(newValue)
-        const computedTransaction = this.getComputedTransaction(transaction)
+        const transactionState: Transaction = JSON.parse(newValue)
+        const computedTransactionState = this.getComputedTransactionValues(transactionState)
 
-        /**
-         * Bind new values to DOM elements
-         */
+        // Bind new values to DOM elements
         els('[data-bind]', this, el => {
-            const key = el.getAttribute('data-bind') as keyof typeof computedTransaction
-            const value =  computedTransaction[key] ?? ''
+            const key = el.getAttribute('data-bind') as keyof typeof computedTransactionState
+            const value =  computedTransactionState[key] ?? ''
 
             if( 'value' in el) el.value = String(value)
             if( 'textContent' in el ) el.textContent = String(value)
-
         })
     }
 
-    getComputedTransaction( transaction: Transaction) {
+    /**
+     * @method getComputedTransactionValues
+     * 
+     * Takes a Transaction object and returns the same object
+     * with extra values that need to be calculated.
+     */
+    getComputedTransactionValues( transaction: Transaction) {
         return {
             ...transaction,
             date: convertDate(transaction.date).to('YYYY-MM-DD'),
             dateHumanReadable: convertDate(transaction.date).to('MMM-DD-YYYY'),
-            amount: transaction.amount,
             amountCurrency: toCurrency(transaction.amount),
             accountName: 'Everyday',
             accountType: 'Chequing',

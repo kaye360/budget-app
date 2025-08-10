@@ -91,9 +91,7 @@ import { el } from "../../lib/el"
 class TransactionEdit extends HTMLElement {
     
     /**
-     * 
      * Edits a transaction and updates DOM
-     * 
      */
     connectedCallback() {
 
@@ -112,11 +110,7 @@ class TransactionEdit extends HTMLElement {
 
                 button?.setAttribute('state', 'loading')
 
-                const formData = new FormData(form)
-                const updatedTransaction = this.getUpdatedTransaction(formData)
-
-                console.log(updatedTransaction)
-
+                const updatedTransaction = this.getUpdatedTransaction(form)
                 const response = await actions.transaction.update(updatedTransaction)
 
                 if( response.error ) {
@@ -131,7 +125,10 @@ class TransactionEdit extends HTMLElement {
     }
 
 
-    getUpdatedTransaction( formData: FormData ) {
+    getUpdatedTransaction( form : HTMLFormElement ) {
+
+        const formData = new FormData(form)
+
         return {
             id : Number(formData.get('id')),
             date : String(formData.get('date')),
@@ -161,12 +158,6 @@ class TransactionEdit extends HTMLElement {
             budgetId : String(budgetId)
         }
         transaction?.setAttribute('state', JSON.stringify(newState))
-
-        // transaction?.setAttribute('amount', String(amount) )
-        // transaction?.setAttribute('date', String(date) )
-        // transaction?.setAttribute('description', String(description) )
-        // transaction?.setAttribute('budget', String(budget) )
-        // transaction?.setAttribute('budgetid', String(budgetId) )
     }
 }
 

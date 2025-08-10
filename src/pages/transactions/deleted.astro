@@ -5,8 +5,7 @@ import FilterTransactions from "../../components/_transactions/FilterTransaction
 import Transaction from "../../components/_transactions/Transaction.astro";
 import H1 from "../../components/H1.astro";
 import Layout from "../../layouts/Layout.astro";
-import { fetchData } from "../../lib/fetch";
-import type { GetBudgets, Transaction as TransactionType } from "../../types/types";
+import type { Transaction as TransactionType } from "../../types/types";
 
 const auth = await Astro.session?.get('auth')
 
@@ -14,10 +13,7 @@ if( !auth ) {
 	return Astro.redirect('/')
 }
 
-const [transactions, budgets] = await Promise.all([
-	Astro.callAction( actions.transaction.index, {filter : 'deleted' } ),
-	Astro.callAction( actions.budget.index, {} ),
-])
+const transactions = await Astro.callAction( actions.transaction.index, {filter : 'deleted' } )
 
 ---
 
@@ -35,7 +31,7 @@ const [transactions, budgets] = await Promise.all([
 
 	<transaction-list class="grid">
 		{ !transactions.error && transactions.data.map( (transaction: TransactionType) => (
-			<Transaction {transaction} budgets={budgets.data} />
+			<Transaction {transaction} budgets={[]} mode="restore" />
 		))}
 	</transaction-list>
 
