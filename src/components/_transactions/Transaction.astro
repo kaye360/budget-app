@@ -4,7 +4,6 @@ import DeleteTransaction from "./DeleteTransaction.astro"
 import EditTransaction from "./EditTransaction.astro"
 import type { Budget, Transaction } from "../../types/types"
 import Modal from "../Modal.astro"
-import LoadingButton from "../Button/LoadingButton.astro"
 import RestoreTransaction from "./RestoreTransaction.astro"
 
 interface Props {
@@ -17,7 +16,7 @@ const {
     transaction,
     budgets,
     mode = 'detailed'
-}= Astro.props
+} = Astro.props
 ---
 
 <transaction-item 

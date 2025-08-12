@@ -21,8 +21,11 @@ Made with Astro
 
 ### Component and data naming collisions
 When using a component and its data, use the following naming structure to avoid naming collison:
+
 ``const entityComponent = document.querySelector()``
+
 ``const entityState = JSON.parse( entityComponent.getAttribute('state') )``
+
 For example:
 ``const transaction = ...`` could be either the element or the data so use ``transactionComponent`` and ``transactionState``
 
@@ -31,13 +34,13 @@ Use ``el.closest('transaction-item')`` and get the state from there in nested el
 
 
 ## Todo
-- Make restore transaction function
+
+### Bugs
 - when adding transaction, have it default to negative. or have some sort of toggle button
 - remove 'accept form' in all actions
 
-## Bugs
-
-## Upcoming Features
+### Upcoming Features
+- import bulk transactions
 - implement proper auth
 - data visualization and graphs
     - Budgets -> view spending over months
@@ -45,6 +48,6 @@ Use ``el.closest('transaction-item')`` and get the state from there in nested el
 - error toast
 - search transactions
 
-## Maybe
+### Maybe
 - DOM utils - cloneNode wrapper
 - getClosest wrapper

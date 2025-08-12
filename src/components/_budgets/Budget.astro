@@ -26,12 +26,12 @@ const { budget } = Astro.props
     ]}
 >
     <a href={`/transactions/budget/${budget.id}`} class="hover:underline">
-        <budget-name />
+        <budget-name data-bind="name" />
     </a>
 
     <budget-edit class="flex items-center gap-4">
         <span class="text-2xl">
-            <budget-totalspent /> / <budget-amount />
+            <budget-totalspent data-bind="totalspent" /> / <budget-amount data-bind="amount" />
         </span>
         <button>
             <EllipsisVerticalIcon class="text-base-text/60 hover:text-red active:scale-90 cursor-pointer"/>
@@ -52,7 +52,7 @@ const { budget } = Astro.props
 
 <script>
 import { el } from "../../lib/el";
-import type { BudgetWithSpending } from "../../types/types";
+import type { Budget, BudgetWithSpending } from "../../types/types";
 
 
 class BudgetItem extends HTMLElement {
@@ -107,6 +107,13 @@ class BudgetItem extends HTMLElement {
          */
         el<HTMLElement>('span.progress-bar', this, el => el.setAttribute('style', `width : ${budget.percentSpent}%` ))
 
+    }
+
+    getComputedBudgetValues( budget : Budget ) {
+        return {
+            ...budget,
+            
+        }
     }
 }
 
