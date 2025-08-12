@@ -1,4 +1,4 @@
-import { z } from "astro:content";
+import { z } from "astro/zod"
 
 /**
  * Base Transaction Schema
@@ -7,7 +7,7 @@ const transactionSchema = z.object({
     date: z.string().length(10),
     description: z.string().min(1),
     amount: z.number(),
-    budgetId: z.number(),
+    budgetId: z.number().nullable().optional(),
     accountId: z.number(),
     isDeleted : z.boolean(),
     userId : z.number(),
@@ -27,7 +27,10 @@ export const TransactionValidator =  {
         perPage : z.number().optional()
     }),
 
-    store : transactionSchema,
+    store : z.union([
+        transactionSchema,
+        z.array(transactionSchema)
+    ]).transform( t => Array.isArray(t) ? t : [t]),
 
     update : transactionSchema.partial().extend({
         id : z.number()

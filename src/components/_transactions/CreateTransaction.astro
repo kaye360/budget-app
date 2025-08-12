@@ -24,7 +24,7 @@ const { budgets } = Astro.props
 
     <label>
         Amount: <br />
-        <input type="text" name="amount-0" data-name="amount" required />
+        <input type="text" name="amount-0" data-name="amount" value="-" required />
     </label>
 
     <label>
@@ -56,8 +56,6 @@ const { budgets } = Astro.props
 
 <script>
 import { el } from "../../lib/el"
-
-
 
 class TransactionCreate extends HTMLElement {
     

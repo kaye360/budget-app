@@ -64,6 +64,8 @@ const budgets = await Astro.callAction( actions.budget.index, {} )
 import { actions } from "astro:actions"
 import { el } from "../../lib/el"
 import { sleep } from "../../utils/app.utils"
+import { formDataToCreateTransactions } from "../../utils/transaction.utils"
+import { TransactionValidator } from "../../actions/_transaction.validator"
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -77,9 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             button?.setAttribute('state', 'loading')
 
-            const formData = new FormData(form)
-
-            const { error } = await actions.transaction.store(formData)
+            const transactions = formDataToCreateTransactions(new FormData(form))
+            const validated = TransactionValidator.store.parse(transactions)
+            const { error } = await actions.transaction.store(validated)
 
             if( error ) {
                 button?.setAttribute('state', 'error')

@@ -36,11 +36,11 @@ Use ``el.closest('transaction-item')`` and get the state from there in nested el
 ## Todo
 
 ### Bugs
-- when adding transaction, have it default to negative. or have some sort of toggle button
-- remove 'accept form' in all actions
+-
 
 ### Upcoming Features
 - import bulk transactions
+- add and implement Accounts
 - implement proper auth
 - data visualization and graphs
     - Budgets -> view spending over months

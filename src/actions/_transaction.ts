@@ -1,10 +1,7 @@
 import { ActionError, defineAction } from "astro:actions";
-import { getTransactionsBy, formDataToCreateTransactions } from "./_transaction.services";
-import { z } from "astro:content";
+import { getTransactionsBy } from "./_transaction.services";
 import { db } from "../lib/db";
 import { TransactionValidator } from "./_transaction.validator";
-import type { Transaction } from "../types/types";
-
 
 export const transaction = {
 
@@ -26,26 +23,15 @@ export const transaction = {
 
 
     store : defineAction({
-        accept : 'form',
-        input : z.any(),
+        input : TransactionValidator.store,
         handler : async (input) => {
 
             /**
              * @todo implement auth, accounts
             */
-
-
-            /**
-             * @todo look at doing this before submitting and remove accept form
-             */
-            const transactions = formDataToCreateTransactions(input)
-            const validated = transactions.map( transaction => 
-                TransactionValidator.store.parse(transaction)
-            )
-
             const { error } = await db
                 .from('Transactions')
-                .insert(validated)
+                .insert(input)
 
             if( error ) {
                 throw new Error(error.message)
