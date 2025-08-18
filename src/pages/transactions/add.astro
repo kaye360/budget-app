@@ -64,39 +64,31 @@ const budgets = await Astro.callAction( actions.budget.index, {} )
 import { actions } from "astro:actions"
 import { el } from "../../lib/el"
 import { sleep } from "../../utils/app.utils"
-import { formDataToCreateTransactions } from "../../utils/transaction.utils"
 import { TransactionValidator } from "../../actions/_transaction.validator"
+import { formDataToCreateTransactions } from "../../utils/transactions/formDataToCreateTransaction"
+import { LoadingButton } from '../../components/Button/LoadingButton'
 
+el<HTMLFormElement>('form', document, form => {
+    form.addEventListener('submit', async ( e: SubmitEvent ) => {
+        e.preventDefault()
 
-document.addEventListener('DOMContentLoaded', () => {
+        const loadingButton = new LoadingButton('loading-button', {initialState : 'loading'})
 
-    el<HTMLFormElement>('form', document, form => {
-        form.addEventListener('submit', async ( e: SubmitEvent ) => {
-        
-            e.preventDefault()
+        const transactions = formDataToCreateTransactions(new FormData(form))
+        const validated = TransactionValidator.store.parse(transactions)
+        const { error } = await actions.transaction.store(validated)
 
-            const button = el('loading-button')
+        if( error ) {
+            loadingButton.setState('error')
+            return
+        }
 
-            button?.setAttribute('state', 'loading')
-
-            const transactions = formDataToCreateTransactions(new FormData(form))
-            const validated = TransactionValidator.store.parse(transactions)
-            const { error } = await actions.transaction.store(validated)
-
-            if( error ) {
-                button?.setAttribute('state', 'error')
-                return
-            }
-
-            button?.setAttribute('state', 'success')
-            await sleep(1000)
-            el('view-transactions-link', this, el => 
-                el.classList.remove('opacity-0', '-translate-x-4')
-            )
-        })
+        loadingButton.setState('success')
+        await sleep(1000)
+        el('view-transactions-link', this, el => 
+            el.classList.remove('opacity-0', '-translate-x-4')
+        )
     })
-
-
 })
 
 </script>

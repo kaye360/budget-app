@@ -5,5 +5,3 @@ export interface ButtonProps extends HTMLAttributes<'button'> {
     variant: 'outline' | 'fill' | 'ghost' | 'destruct';
     class?: string;
 }
-
-export type LoadingButtonValidState = 'initial' | 'loading' | 'error' | 'success'

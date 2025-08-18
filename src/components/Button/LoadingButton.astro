@@ -1,6 +1,7 @@
 ---
 import Button from "./Button.astro";
-import type { ButtonProps, LoadingButtonValidState } from "./type";
+import type { LoadingButtonValidState } from "./LoadingButton";
+import type { ButtonProps } from "./type";
 
 interface Props extends ButtonProps {
     state : {
@@ -32,7 +33,7 @@ const {
 <script>
 import { el } from "../../lib/el"
 import { sleep } from "../../utils/app.utils"
-import type { LoadingButtonValidState } from "./type"
+import type { LoadingButtonValidState } from "./LoadingButton"
 
 class LoadingButton extends HTMLElement {
 
@@ -45,7 +46,11 @@ class LoadingButton extends HTMLElement {
 
     static observedAttributes = ['state']
 
-    async attributeChangedCallback(_: any, prevState: LoadingButtonValidState, newState : LoadingButtonValidState) {
+    async attributeChangedCallback(
+        _: any, 
+        prevState: LoadingButtonValidState, 
+        newState : LoadingButtonValidState
+    ) {
 
         // Check if newState is valid
         if( !this.validStates.includes(newState) ) {
@@ -119,8 +124,6 @@ class LoadingButton extends HTMLElement {
             .join('')
             .replaceAll(',', '')
     }
-
-    
 
 }
 

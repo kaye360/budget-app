@@ -4,11 +4,10 @@ import MoreTransactionsButton from "../../components/_transactions/MoreTransacti
 import Transaction from "../../components/_transactions/Transaction.astro";
 import H1 from "../../components/H1.astro";
 import Layout from "../../layouts/Layout.astro";
-import { fetchData } from "../../lib/fetch";
-import type { GetBudgets } from "../../types/types";
 import CreateTransactionButton from "../../components/_transactions/CreateTransactionButton.astro";
 import { actions } from "astro:actions";
 import type { Transaction as TransactionType } from "../../types/types";
+import ImportTransactionButton from "../../components/_transactions/ImportTransactionButton.astro";
 
 const auth = await Astro.session?.get('auth')
 
@@ -28,12 +27,15 @@ const [transactions, budgets] = await Promise.all([
 	
 	<FilterTransactions current="recent" />
 
-	<div class="mb-2 flex items-center justify-between">
+	<div class="mb-2 flex items-center">
 		<H1>
 			Recent Transactions
 		</H1>
 
-		<CreateTransactionButton />
+		<span class="ml-auto flex items-center gap-2">
+			<CreateTransactionButton />
+			<ImportTransactionButton />
+		</span>
 	</div>
 
 	<transaction-list class="grid">

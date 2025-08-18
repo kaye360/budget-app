@@ -34,6 +34,8 @@ Use ``el.closest('transaction-item')`` and get the state from there in nested el
 
 
 ## Todo
+- Make larger util functions into their own files
+- Implement LoadingButton classs
 
 ### Bugs
 -
@@ -51,3 +53,4 @@ Use ``el.closest('transaction-item')`` and get the state from there in nested el
 ### Maybe
 - DOM utils - cloneNode wrapper
 - getClosest wrapper
+- implement AlpineJs or something similar
