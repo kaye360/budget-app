@@ -3,7 +3,7 @@ import { ImportIcon } from "@lucide/astro";
 import H1 from "../../components/H1.astro";
 import Layout from "../../layouts/Layout.astro";
 import LoadingButton from "../../components/Button/LoadingButton.astro";
-import ImportTransactions from "../../components/_transactions/ImportTransactions.astro";
+import ImportTransactionsDroppable from "../../components/_transactions/ImportTransactionsDroppable.astro";
 ---
 
 <Layout>
@@ -14,7 +14,7 @@ import ImportTransactions from "../../components/_transactions/ImportTransaction
         </H1>
     </div>
 
-    <ImportTransactions />
+    <ImportTransactionsDroppable />
 
     <form
         id="import-transactions-form"

@@ -2,8 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { ArrowLeftRightIcon, BotIcon, ChartColumnIncreasingIcon, MoveRightIcon } from "@lucide/astro"
 import Transaction from "../components/_transactions/Transaction.astro";
-import type { GetBudgets, Transaction as TransactionType } from "../types/types";
-import { fetchData } from "../lib/fetch";
+import type { Transaction as TransactionType } from "../types/types";
 import { convertDate } from "../lib/convertDate";
 import MonthlySpendingSummary from "../components/_summaries/MonthlySpendingSummary.astro";
 import { actions } from "astro:actions";
@@ -14,9 +13,10 @@ if( !auth ) {
     return Astro.redirect('/')
 }
 
-const [transactions] = await Promise.all([
-	Astro.callAction( actions.transaction.index, { filter : 'recent', perPage : 5} ),
-])
+const transactions = await Astro.callAction( 
+	actions.transaction.index, 
+	{ filter : 'recent', perPage : 5 } 
+)
 
 ---
 <Layout>

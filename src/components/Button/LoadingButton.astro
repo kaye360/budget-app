@@ -38,10 +38,10 @@ import type { LoadingButtonValidState } from "./LoadingButton"
 class LoadingButton extends HTMLElement {
 
     connectedCallback() {
-        const loadingEl = el('loading-state', this)
-        if( loadingEl ) {
-            loadingEl.innerHTML = this.createWavyText(loadingEl.textContent)
-        }
+        // Add wavy text animation to loading state
+        el('loading-state', this, el => {
+            el.innerHTML = this.createWavyText(el.textContent)
+        })
     }
 
     static observedAttributes = ['state']
