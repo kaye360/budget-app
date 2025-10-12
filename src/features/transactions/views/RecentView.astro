@@ -1,0 +1,53 @@
+---
+import { actions } from "astro:actions"
+import H1 from "../../../components/H1.astro"
+import CreateTransactionButton from "../components/CreateTransactionButton.astro"
+import FilterTransactions from "../components/FilterTransactions.astro"
+import ImportTransactionButton from "../components/ImportTransactionButton.astro"
+import MoreTransactionsButton from "../components/MoreTransactionsButton.astro"
+import Transaction from "../components/Transaction.astro"
+import AppLayout from "../../../layouts/AppLayout.astro"
+import type { Transaction as TransactionType } from "../../../types/types"
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+	return Astro.redirect('/')
+}
+
+const [transactions, budgets] = await Promise.all([
+	Astro.callAction( actions.transaction.index, {filter : 'recent'} ),
+	Astro.callAction( actions.budget.index, {} )
+])
+
+
+---
+
+<AppLayout>
+	
+	<FilterTransactions current="recent" />
+
+	<div class="mb-2 flex items-center">
+		<H1>
+			Recent Transactions
+		</H1>
+
+		<span class="ml-auto flex items-center gap-2">
+			<CreateTransactionButton />
+			<ImportTransactionButton />
+		</span>
+	</div>
+
+	<transaction-list class="grid">
+		{ !transactions.error && transactions.data.list.map( (transaction: TransactionType ) => (
+			<Transaction {transaction} budgets={budgets.data} />
+		))}
+		<template id="transaction-template">
+			<Transaction budgets={budgets.data}/>
+		</template>
+	</transaction-list>
+
+	<MoreTransactionsButton />
+
+</Layout>
+

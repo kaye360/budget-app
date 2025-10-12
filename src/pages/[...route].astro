@@ -1,0 +1,27 @@
+---
+import type { AstroComponentFactory } from "astro/runtime/server/index.js"
+import HomeView from "../features/static/HomeView.astro"
+import Error404View from "../features/static/Error404View.astro"
+import DashboardView from "../features/dashboard/DashboardView.astro"
+import * as Transactions from  '../features/transactions/views/'
+
+
+
+const routes: Record<string, AstroComponentFactory> = {
+    "index" : HomeView,
+    "dashboard" : DashboardView,
+    "transactions/add" : Transactions.AddView,
+    "transactions/budget" : Transactions.BudgetView,
+    "transactions/deleted" : Transactions.DeletedView,
+    "transactions/import" : Transactions.ImportView,
+    "transactions/month" : Transactions.MonthView,
+    "transactions/recent" : Transactions.RecentView,
+    "transactions/search" : Transactions.SearchView,
+    "transactions/uncategorized" : Transactions.UncategorizedView,
+}
+
+const { route = 'index' } = Astro.params
+const View = routes[route] ?? Error404View
+---
+
+<View />

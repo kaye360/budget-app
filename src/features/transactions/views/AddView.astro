@@ -1,0 +1,94 @@
+---
+import { BanknoteArrowUpIcon, ImportIcon } from "@lucide/astro";
+import { actions } from "astro:actions";
+import H1 from "../../../components/H1.astro";
+import AppLayout from "../../../layouts/AppLayout.astro";
+import CreateTransaction from "../components/CreateTransaction.astro";
+import CreateTransactionCount from "../components/CreateTransactionCount.astro";
+import LoadingButton from "../../../components/Button/LoadingButton.astro";
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) return Astro.redirect('/')
+
+const budgets = await Astro.callAction( actions.budget.index, {} )
+---
+
+<AppLayout>
+
+    <div class="flex items-center justify-between mb-6">
+        <H1>
+            Add Transactions
+        </H1>
+        <div class="flex items-stretch gap-2">
+            <CreateTransactionCount />
+            <button class="flex items-center gap-1 border border-red/60 rounded-md px-2 py-1 cursor-pointer">
+                Import
+                <ImportIcon />
+            </button>
+        </div>
+    </div>
+
+    <form>
+
+        <transaction-create-list class="grid gap-4">
+            <CreateTransaction budgets={budgets.data} />
+        </transaction-create-list>
+
+        <template id="transaction-create">
+            <CreateTransaction budgets={budgets.data} />
+        </template>
+
+        <div class="sm:col-span-2 grid grid-cols-2 gap-4">
+            <LoadingButton 
+                state={{ initial : 'Save', loading : 'Saving...', error : ' Failed', success : 'Saved!' }}
+                variant="fill" 
+                Icon={BanknoteArrowUpIcon} 
+                type="submit"
+                class="w-full"
+            >
+            </LoadingButton>
+
+            <view-transactions-link class="self-center opacity-0 -translate-x-4 pl-2 transition-all">
+                <a href="/transactions/recent">
+                    View Transactions &rarr;
+                </a>
+            </view-transactions-link>
+        </div>
+    </form>
+
+</Layout>
+
+
+<script>
+import { actions } from "astro:actions"
+import { el } from "../../../lib/el"
+import { LoadingButton } from '../../../components/Button/LoadingButton'
+import { TransactionValidator } from "../actions/transaction.validator"
+import { formDataToCreateTransactions } from "../utils/formDataToCreateTransaction"
+import { sleep } from "../../app/app.utils"
+
+el<HTMLFormElement>('form', document, form => {
+    form.addEventListener('submit', async ( e: SubmitEvent ) => {
+        e.preventDefault()
+
+        const loadingButton = new LoadingButton('loading-button', {initialState : 'loading'})
+
+        const transactions = formDataToCreateTransactions(new FormData(form))
+        const validated = TransactionValidator.store.parse(transactions)
+        const { error } = await actions.transaction.store(validated)
+
+        if( error ) {
+            loadingButton.setState('error')
+            return
+        }
+
+        loadingButton.setState('success')
+        await sleep(1000)
+        el('view-transactions-link', this, el => 
+            el.classList.remove('opacity-0', '-translate-x-4')
+        )
+    })
+})
+
+</script>

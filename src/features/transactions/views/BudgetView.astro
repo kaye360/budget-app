@@ -1,0 +1,95 @@
+---
+import { actions } from "astro:actions"
+import type { Transaction as TransactionType } from "../../../types/types"
+import AppLayout from "../../../layouts/AppLayout.astro"
+import H1 from "../../../components/H1.astro"
+import CreateTransactionButton from "../components/CreateTransactionButton.astro"
+import FilterTransactions from "../components/FilterTransactions.astro"
+import Transaction from "../components/Transaction.astro"
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+	return Astro.redirect('/')
+}
+
+const { budget } = Astro.params
+const budgets = await Astro.callAction( actions.budget.index, {} )
+const budgetName = budget 
+	? budgets.data?.find( b => b.id === Number(budget) )?.name
+	: 'Select a budget'
+	
+
+let transactions: TransactionType[] = []
+if( budget ) {
+	const transactionsResult = await Astro.callAction( actions.transaction.index, {
+		filter : 'budget', 
+		filterValue : budget, 
+	})
+
+	if( !transactionsResult.error ) {
+		transactions = transactionsResult.data as TransactionType[]
+	}
+}
+---
+
+<AppLayout>
+	
+	<FilterTransactions current="budget" />
+
+	<div class="flex items-center justify-start gap-2 mb-4">
+
+		<H1>
+			{ budgetName }
+		</H1>
+
+		<select 
+			id="budget-selector"
+			name="budget-selector" 
+			class="max-w-fit ml-auto"
+			data-budget={budget}
+		>
+			<option>Select budget to view</option>
+			{ budgets.data?.map( budget => (
+				<option value={budget.id}>
+					{budget.name}
+				</option>
+			))}
+		</select>
+
+		<CreateTransactionButton />
+	
+	</div>
+
+	<transaction-list class="grid w-full">
+		{ transactions.map( (transaction: TransactionType) => (
+			<Transaction {transaction} budgets={budgets.data} />
+		))}
+	</transaction-list>
+
+</Layout>
+
+
+<script>
+import { el } from "../../../lib/el"
+
+document.addEventListener('DOMContentLoaded', () => {
+
+	el<HTMLSelectElement>('#budget-selector', document, select => {
+		select.addEventListener('change', e => {
+
+			if( !(e.target instanceof HTMLSelectElement) ) {
+				return
+			}
+
+			if( e.target.dataset.budget === e.target.value ) {
+				return
+			}
+
+			window.location.href = `/transactions/budget/${e.target.value}`
+		})
+	})
+
+})
+</script>
+

@@ -1,0 +1,56 @@
+---
+import { ArchiveRestoreIcon } from "@lucide/astro";
+import LoadingButton from "../../../components/Button/LoadingButton.astro";
+---
+
+<transaction-restore 
+    class="grid gap-2 w-fit"
+>
+    Are you sure you want to restore this transaction?
+    <LoadingButton
+        state={{
+            initial : 'Restore Transaction',
+            error : 'Failed',
+            loading : 'Restoring...',
+            success : 'Successfully restored.'
+        }}
+        variant="fill"
+        Icon={ArchiveRestoreIcon}
+        class="w-full"
+    />
+</transaction-restore>
+
+<script>
+import { actions } from "astro:actions";
+import { el } from "../../../lib/el";
+
+class TransactionRestore extends HTMLElement {
+
+    connectedCallback() {
+        el('button', this, button => {
+            button.addEventListener('click', async () => {
+
+                const transactionComponent = button.closest('transaction-item')
+                const transactionState = JSON.parse(transactionComponent?.getAttribute('state') ?? '')
+
+                button.setAttribute('state', 'loading')
+
+                const response = await actions.transaction.update({
+                    isDeleted : false,
+                    id : transactionState.id
+                })
+
+                if( response.error ) {
+                    button.setAttribute('state', 'error')
+                    return
+                }
+
+                button.setAttribute('state', 'success')
+                transactionComponent?.remove()
+            })
+        })
+    }
+}
+
+customElements.define('transaction-restore', TransactionRestore)
+</script>

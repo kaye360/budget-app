@@ -1,0 +1,80 @@
+---
+import { ImportIcon } from "@lucide/astro";
+import AppLayout from "../../../layouts/AppLayout.astro";
+import LoadingButton from "../../../components/Button/LoadingButton.astro";
+import H1 from "../../../components/H1.astro";
+import ImportTransactionsDroppable from "../components/ImportTransactionsDroppable.astro";
+---
+
+<AppLayout>
+
+    <div class="flex items-center justify-between mb-6">
+        <H1>
+            Import Transactions
+        </H1>
+    </div>
+
+    <ImportTransactionsDroppable />
+
+    <form
+        id="import-transactions-form"
+        class="grid gap-2"
+        method="POST"
+    >
+        Imported Transactions
+        <textarea 
+            name="transactions" 
+        />
+
+        <label class="lg:max-w-1/2">
+            Bank Account:
+            <select name="account">
+                <option value="rbc">RBC</option>
+                <option value="cibc">CIBC</option>
+            </select>
+        </label>
+
+        <LoadingButton 
+            state={{
+                initial : 'Import Transactions',
+                loading : 'Importing...',
+                error : 'Import Failed',
+                success : 'Transactions Imported'
+            }}
+            Icon={ImportIcon}
+            variant="fill"
+            class="w-full lg:max-w-1/2"
+            type="submit"
+        />
+    </form>
+
+</Layout>
+
+<script>
+import { actions } from "astro:actions";
+import { el } from "../../../lib/el";
+import { csvToTransactions } from "../utils/csvToTransactions";
+import { formDataToCsv } from "../utils/formDataToCsv";
+
+el<HTMLFormElement>('#import-transactions-form', document, form => {
+    form.addEventListener('submit', async (e: Event) => {
+        e.preventDefault()
+
+        const loadingButton = el('loading-button')
+        loadingButton?.setAttribute('state', 'loading')
+
+        const { transactions, account } = formDataToCsv(form)
+        const createTransactions = csvToTransactions(transactions, account)
+
+        const { error } = await actions.transaction.store(createTransactions)
+
+        if( error ) {
+            loadingButton?.setAttribute('state', 'error')
+            throw new Error(error.message)
+        }
+
+        loadingButton?.setAttribute('state', 'success')
+    })
+})
+
+</script>

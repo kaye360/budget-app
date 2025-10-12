@@ -1,0 +1,27 @@
+---
+import H1 from "../../../components/H1.astro"
+import AppLayout from "../../../layouts/AppLayout.astro"
+import CreateTransactionButton from "../components/CreateTransactionButton.astro"
+import FilterTransactions from "../components/FilterTransactions.astro"
+
+const auth = await Astro.session?.get('auth')
+
+if( !auth ) {
+	return Astro.redirect('/')
+}
+---
+
+<AppLayout>
+	
+	<FilterTransactions current="search" />
+
+	<div class="mb-2 flex items-center justify-between">
+		<H1>
+			Search Transactions
+		</H1>
+
+		<CreateTransactionButton />
+	</div>
+
+</Layout>
+

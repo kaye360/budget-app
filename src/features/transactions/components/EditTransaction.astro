@@ -1,0 +1,165 @@
+---
+import { BanIcon, SaveIcon } from "@lucide/astro";
+import Button from "../../../components/Button/Button.astro";
+import LoadingButton from "../../../components/Button/LoadingButton.astro";
+import type { Budget, Transaction } from "../../../types/types";
+
+interface Props {
+    budgets : Budget[],
+    transaction? : Transaction
+}
+
+const { budgets, transaction } = Astro.props
+---
+
+<transaction-edit>
+
+    <form 
+        method="post"
+        class="grid sm:grid-cols-2 gap-4 border-l border-blue pl-4 mb-12" 
+        autocomplete="off"
+    >
+
+        <input type="hidden" name="id" data-bind="id" />
+
+        <h3 class="sm:col-span-2 text-lg font-semibold tracking-wide">
+            Edit Transaction
+        </h3>
+
+        <label>
+            Date: <br />
+            <input type="date" name="date" data-bind="date" />
+        </label>
+
+        <label>
+            Description: <br />
+            <input type="text" name="description" data-bind="description" />
+        </label>
+
+        <label>
+            Amount: <br />
+            <input type="text" name="amount" data-bind="amount" />
+        </label>
+
+        <label>
+            Budget: <br />
+            <select name="budgetId" class="w-full bg-bg-2" data-budgetid={transaction?.budgetId}>
+                <option value="0">Uncategorized</option>
+                { budgets.map( budget => (
+                    <option 
+                        value={budget.id}
+                        selected={budget.id === transaction?.budgetId}
+                    >
+                        {budget.name}
+                    </option>
+                ))}
+            </select>
+        </label>
+
+        <label>
+            Account: <br />
+            <select name="accountId" class="w-full bg-bg-2">
+                <option value="1">account 1</option>
+                <option selected value="2">account 2</option>
+            </select>
+        </label>
+
+        <div class="sm:col-span-2 grid grid-cols-2 gap-4">
+            <close-modal-button>
+                <Button variant="outline" Icon={BanIcon} type="button" class="w-full block">
+                    Cancel
+                </Button>
+            </close-modal-button>
+            <LoadingButton 
+                state={{ initial : 'Save', loading : 'Saving...', error : ' Failed', success : 'Saved!' }}
+                variant="fill" 
+                Icon={SaveIcon} 
+                type="submit"
+                class="w-full"
+            >
+            </LoadingButton>
+        </div>
+
+    </form>
+</transaction-edit>
+
+
+<script>
+import { actions } from "astro:actions"
+import { el } from "../../../lib/el"
+
+class TransactionEdit extends HTMLElement {
+    
+    /**
+     * Edits a transaction and updates DOM
+     */
+    connectedCallback() {
+
+        /**
+         * Form submit handler
+         */
+        el<HTMLFormElement>('form', this, form => {
+            form.addEventListener('submit', async (e: Event) => {
+        
+                e.preventDefault()
+
+                const button = el<HTMLButtonElement>('loading-button', this)
+                const transaction = form.closest('transaction-item')
+                
+                if( !(form instanceof HTMLFormElement) || !transaction ) return 
+
+                button?.setAttribute('state', 'loading')
+
+                const updatedTransaction = this.getUpdatedTransaction(form)
+                const response = await actions.transaction.update(updatedTransaction)
+
+                if( response.error ) {
+                    button?.setAttribute('state', 'error')
+                    return 
+                }
+                
+                this.updateTransaction( transaction, updatedTransaction ) 
+                button?.setAttribute('state', 'success')
+            })
+        })
+    }
+
+
+    getUpdatedTransaction( form : HTMLFormElement ) {
+
+        const formData = new FormData(form)
+
+        return {
+            id : Number(formData.get('id')),
+            date : String(formData.get('date')),
+            description : String(formData.get('description')),
+            amount : Number(formData.get('amount')),
+            budgetId : Number(formData.get('budgetId')),
+            accountId : 1,
+        }
+    }
+
+
+    updateTransaction( 
+        transaction : Element | null, 
+        { amount, date, description, budgetId } : { [key : string] : string | number}
+    ) {
+
+        const select = el<HTMLSelectElement>('select[name="budgetId"]', this)
+        const budget = String( select?.options[select.selectedIndex].text )
+
+        const prevState = JSON.parse( transaction?.getAttribute('state') ?? '' )
+        const newState = {
+            ...prevState,
+            amount : String(amount),
+            date : String(date),
+            description : String(description),
+            budget : String(budget),
+            budgetId : String(budgetId)
+        }
+        transaction?.setAttribute('state', JSON.stringify(newState))
+    }
+}
+
+customElements.define('transaction-edit', TransactionEdit)
+</script>

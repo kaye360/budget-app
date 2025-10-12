@@ -31,8 +31,8 @@ const {
 </loading-button>
 
 <script>
+import { sleep } from "../../features/app/app.utils"
 import { el } from "../../lib/el"
-import { sleep } from "../../utils/app.utils"
 import type { LoadingButtonValidState } from "./LoadingButton"
 
 class LoadingButton extends HTMLElement {
