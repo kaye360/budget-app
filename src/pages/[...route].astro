@@ -8,8 +8,9 @@ import LogoutView from "../features/auth/LogoutView.astro"
 import LoginView from "../features/auth/LoginView.astro"
 import type { AstroComponentFactory } from "astro/runtime/server/index.js"
 import Error401View from "../features/static/Error401View.astro"
+import { isAuth } from "../features/auth/auth.utils"
 
-const auth = await Astro.session?.get('auth')
+const auth = await isAuth(Astro)
 
 type Route = keyof typeof routes
 
@@ -30,24 +31,15 @@ const routes = {
 } as const
 
 const publicRoutes: Route[] = [
-    '/index',
-    "/auth/logout",
-    "/auth/login"
+    "/index",
+    "/auth/login",
 ]
 
 const { route = 'index' } = Astro.params
-
-function isValidRoute(path: string): path is Route {
-    return path in routes
-}
-
-function isPublicRoute(path: Route) : path is Route {
-    return publicRoutes.includes(path)
-}
-
-
-
 const path = '/' + route as Route
+
+const isValidRoute = (path: string): path is Route => path in routes
+const isPublicRoute = (path: Route) => publicRoutes.includes(path)
 
 const View = ( () => {
     switch(true) {
@@ -67,7 +59,6 @@ const View = ( () => {
             return Error404View
     }
 })() as AstroComponentFactory
-
 ---
 
 <View />

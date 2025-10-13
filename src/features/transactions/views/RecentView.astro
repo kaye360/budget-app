@@ -9,18 +9,10 @@ import Transaction from "../components/Transaction.astro"
 import AppLayout from "../../../layouts/AppLayout.astro"
 import type { Transaction as TransactionType } from "../../../types/types"
 
-const auth = await Astro.session?.get('auth')
-
-if( !auth ) {
-	return Astro.redirect('/')
-}
-
 const [transactions, budgets] = await Promise.all([
 	Astro.callAction( actions.transaction.index, {filter : 'recent'} ),
 	Astro.callAction( actions.budget.index, {} )
 ])
-
-
 ---
 
 <AppLayout>

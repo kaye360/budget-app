@@ -1,11 +1,5 @@
 ---
 import AppLayout from "../../layouts/AppLayout.astro"
-
-const auth = await Astro.session?.get('auth')
-
-if( !auth ) {
-    return Astro.redirect('/')
-}
 ---
 
 <AppLayout>

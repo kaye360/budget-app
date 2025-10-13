@@ -8,12 +8,6 @@ import CreateTransactionButton from "../components/CreateTransactionButton.astro
 import FilterTransactions from "../components/FilterTransactions.astro";
 import Transaction from "../components/Transaction.astro";
 
-const auth = await Astro.session?.get('auth')
-
-if( !auth ) {
-	return Astro.redirect('/')
-}
-
 let { month = convertDate().to('YYYY-MM') } = Astro.params
 
 const [transactions, budgets] = await Promise.all([

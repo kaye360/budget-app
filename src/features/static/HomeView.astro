@@ -2,37 +2,37 @@
 import { LogInIcon } from "@lucide/astro"
 import Button from "../../components/Button/Button.astro";
 import StaticLayout from "../../layouts/StaticLayout.astro";
+import { getAuth } from "../auth/auth.utils";
 
-const auth = await Astro.session?.get('auth')
+const auth = await getAuth(Astro)
 ---
 
 <StaticLayout>
     { auth ? (
-            <a href="/dashboard" class="underline text-center">
-                Continue to dashboard as <strong>{auth.userName}</strong>
-            </a>
-        ) : (
-            <form 
-                method="post" 
-                action="/auth/login"
-                class="shrink-0 grid gap-4 px-4 mb-24 mx-auto w-full"
-            >
-                <span id="error-message" class="text-red"></span>
-        
-                <label>
-                    Username
-                    <input type="text" name="username" class="w-full p-2 !border-blue" />
-                </label>
-                <label>
-                    Password
-                    <input type="password" name="password" class="w-full p-2 !border-blue" />
-                </label>
-                <Button type="submit" Icon={LogInIcon} variant="fill" class="!p-4">
-                    Log In
-                </Button>
-            </form>
-            )
-    }
+        <a href="/dashboard" class="underline text-center">
+            Continue to dashboard as <strong>{auth.userName}</strong>
+        </a>
+    ) : (
+        <form 
+            method="post" 
+            action="/auth/login"
+            class="shrink-0 grid gap-4 px-4 mb-24 mx-auto w-full"
+        >
+            <span id="error-message" class="text-red"></span>
+    
+            <label>
+                Username
+                <input type="text" name="username" class="w-full p-2 !border-blue" />
+            </label>
+            <label>
+                Password
+                <input type="password" name="password" class="w-full p-2 !border-blue" />
+            </label>
+            <Button type="submit" Icon={LogInIcon} variant="fill" class="!p-4">
+                Log In
+            </Button>
+        </form>
+    )}
 </StaticLayout>
 
 <script>

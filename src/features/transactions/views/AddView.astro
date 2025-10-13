@@ -7,10 +7,6 @@ import CreateTransaction from "../components/CreateTransaction.astro";
 import CreateTransactionCount from "../components/CreateTransactionCount.astro";
 import LoadingButton from "../../../components/Button/LoadingButton.astro";
 
-const auth = await Astro.session?.get('auth')
-
-if( !auth ) return Astro.redirect('/')
-
 const budgets = await Astro.callAction( actions.budget.index, {} )
 ---
 

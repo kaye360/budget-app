@@ -6,8 +6,9 @@ import { convertDate } from "../../lib/convertDate";
 import Transaction from "../transactions/components/Transaction.astro";
 import type { Transaction as TransactionType } from "../../types/types"
 import MonthlySpendingSummary from "../trends/components/MonthlySpendingSummary.astro";
+import { getAuth } from "../auth/auth.utils";
 
-const auth = await Astro.session?.get('auth')
+const auth = await getAuth(Astro)
 
 const transactions = await Astro.callAction( 
 	actions.transaction.index, 
