@@ -2,9 +2,9 @@
 import { LogInIcon } from "@lucide/astro"
 import Button from "../../components/Button/Button.astro";
 import StaticLayout from "../../layouts/StaticLayout.astro";
-import { getAuth } from "../auth/auth.utils";
+import { getAuthIfExists } from "../auth/auth.utils";
 
-const auth = await getAuth(Astro)
+const auth = await getAuthIfExists(Astro)
 ---
 
 <StaticLayout>

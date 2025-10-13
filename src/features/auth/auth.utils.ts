@@ -13,6 +13,12 @@ export async function getAuth(Astro: APIContext) {
 }
 
 
+export async function getAuthIfExists(Astro: APIContext) {
+    const auth = await Astro.session?.get("auth")
+    return auth
+}
+
+
 export async function isAuth(Astro: APIContext) {
     const auth = await Astro.session?.get("auth");
     return !!auth

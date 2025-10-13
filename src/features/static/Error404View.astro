@@ -1,25 +1,11 @@
 ---
-import { BotIcon } from "@lucide/astro";
 import StaticLayout from "../../layouts/StaticLayout.astro";
 ---
 
 <StaticLayout>
-    <div class="flex-1 font-theme self-stretch grid place-items-center w-full">
-        <div class="text-center">
-            <BotIcon 
-                id="logo"
-                width="96" 
-                height="96" 
-                class="mx-auto mb-2" 
-                transition:name="top-logo" 
-            />
-            <span class="block text-2xl font-semibold tracking-wide">BudgetApp</span>
-            <span class="block font-semibold tracking-wide">Dead simple budgeting</span>
-            <p class="mt-8 text-xl">
-                Error 404 - Something went wrong<br />
-                <a href="/" class="underline">Back to Home</a>
-            </p>
-        </div>
-    </div>
+    <p class="mt-8 text-xl text-center">
+        Error 404 - Something went wrong<br />
+        <a href="/" class="underline">Back to Home</a>
+    </p>
 </StaticLayout>
 
