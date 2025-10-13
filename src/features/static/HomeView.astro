@@ -1,52 +1,38 @@
 ---
-import { LogInIcon, BotIcon } from "@lucide/astro"
+import { LogInIcon } from "@lucide/astro"
 import Button from "../../components/Button/Button.astro";
 import StaticLayout from "../../layouts/StaticLayout.astro";
 
 const auth = await Astro.session?.get('auth')
-
-if( auth ) {
-    Astro.redirect('/dashboard')
-}
 ---
 
 <StaticLayout>
-    <main class="flex flex-col h-screen max-w-[500px] w-full mx-auto">
-        <div class="flex-1 font-theme self-stretch grid place-items-center w-full">
-            <div class="text-center">
-                <BotIcon 
-                    id="logo"
-                    width="96" 
-                    height="96" 
-                    class="mx-auto mb-2" 
-                    transition:name="top-logo" 
-                />
-                <span class="block text-2xl font-semibold tracking-wide">BudgetApp</span>
-                <span class="block font-semibold tracking-wide">Dead simple budgeting</span>
-            </div>
-        </div>
-        <form 
-            method="post" 
-            action="/auth/login"
-            class="shrink-0 grid gap-4 px-4 mb-24 mx-auto w-full"
-        >
-            <span id="error-message" class="text-red"></span>
-            { auth &&
-                <a href="/dashboard" class="underline">Continue to dashboard</a>
-            }
-            <label>
-                Username
-                <input type="text" name="username" class="w-full p-2 !border-blue" />
-            </label>
-            <label>
-                Password
-                <input type="password" name="password" class="w-full p-2 !border-blue" />
-            </label>
-            <Button type="submit" Icon={LogInIcon} variant="fill" class="!p-4">
-                Log In
-            </Button>
-        </form>
-    </main>
+    { auth ? (
+            <a href="/dashboard" class="underline text-center">
+                Continue to dashboard as <strong>{auth.userName}</strong>
+            </a>
+        ) : (
+            <form 
+                method="post" 
+                action="/auth/login"
+                class="shrink-0 grid gap-4 px-4 mb-24 mx-auto w-full"
+            >
+                <span id="error-message" class="text-red"></span>
+        
+                <label>
+                    Username
+                    <input type="text" name="username" class="w-full p-2 !border-blue" />
+                </label>
+                <label>
+                    Password
+                    <input type="password" name="password" class="w-full p-2 !border-blue" />
+                </label>
+                <Button type="submit" Icon={LogInIcon} variant="fill" class="!p-4">
+                    Log In
+                </Button>
+            </form>
+            )
+    }
 </StaticLayout>
 
 <script>

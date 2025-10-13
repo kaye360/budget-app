@@ -3,6 +3,6 @@ declare namespace App {
         auth: {
             userId: number,
             userName : string
-        } | false
+        } | undefined
     }
 }

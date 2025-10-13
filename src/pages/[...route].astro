@@ -1,27 +1,73 @@
 ---
-import type { AstroComponentFactory } from "astro/runtime/server/index.js"
 import HomeView from "../features/static/HomeView.astro"
 import Error404View from "../features/static/Error404View.astro"
 import DashboardView from "../features/dashboard/DashboardView.astro"
 import * as Transactions from  '../features/transactions/views/'
+import ProfileView from "../features/profile/ProfileView.astro"
+import LogoutView from "../features/auth/LogoutView.astro"
+import LoginView from "../features/auth/LoginView.astro"
+import type { AstroComponentFactory } from "astro/runtime/server/index.js"
+import Error401View from "../features/static/Error401View.astro"
 
+const auth = await Astro.session?.get('auth')
 
+type Route = keyof typeof routes
 
-const routes: Record<string, AstroComponentFactory> = {
-    "index" : HomeView,
-    "dashboard" : DashboardView,
-    "transactions/add" : Transactions.AddView,
-    "transactions/budget" : Transactions.BudgetView,
-    "transactions/deleted" : Transactions.DeletedView,
-    "transactions/import" : Transactions.ImportView,
-    "transactions/month" : Transactions.MonthView,
-    "transactions/recent" : Transactions.RecentView,
-    "transactions/search" : Transactions.SearchView,
-    "transactions/uncategorized" : Transactions.UncategorizedView,
-}
+const routes = {
+    "/index" : HomeView,
+    "/dashboard" : DashboardView,
+    "/transactions/add" : Transactions.AddView,
+    "/transactions/budget" : Transactions.BudgetView,
+    "/transactions/deleted" : Transactions.DeletedView,
+    "/transactions/import" : Transactions.ImportView,
+    "/transactions/month" : Transactions.MonthView,
+    "/transactions/recent" : Transactions.RecentView,
+    "/transactions/search" : Transactions.SearchView,
+    "/transactions/uncategorized" : Transactions.UncategorizedView,
+    "/profile" : ProfileView,
+    "/auth/login" : LoginView,
+    "/auth/logout" : LogoutView,
+} as const
+
+const publicRoutes: Route[] = [
+    '/index',
+    "/auth/logout",
+    "/auth/login"
+]
 
 const { route = 'index' } = Astro.params
-const View = routes[route] ?? Error404View
+
+function isValidRoute(path: string): path is Route {
+    return path in routes
+}
+
+function isPublicRoute(path: Route) : path is Route {
+    return publicRoutes.includes(path)
+}
+
+
+
+const path = '/' + route as Route
+
+const View = ( () => {
+    switch(true) {
+    
+        case !isValidRoute(path):
+            Astro.response.status = 404
+            return Error404View
+        
+        case isPublicRoute(path) || !!auth:
+            return routes[path]
+    
+        case !isPublicRoute(path) && !auth:
+            Astro.response.status = 401
+            return Error401View
+
+        default: 
+            return Error404View
+    }
+})() as AstroComponentFactory
+
 ---
 
 <View />
