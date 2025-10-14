@@ -37,8 +37,9 @@ const publicRoutes: Route[] = [
 
 const { route = 'index' } = Astro.params
 const path = '/' + route as Route
+const routeMatches = (Object.keys(routes) as Route[]).filter( key => path.includes(key) )
 
-const isValidRoute = (path: string): path is Route => path in routes
+const isValidRoute = (path: string): path is Route => routeMatches.length > 0
 const isPublicRoute = (path: Route) => publicRoutes.includes(path)
 
 const View = ( () => {
@@ -49,8 +50,9 @@ const View = ( () => {
             return Error404View
         
         case isPublicRoute(path) || !!auth:
-            return routes[path]
-    
+            const matchedRoute = routeMatches.sort( (a,b) => b.length - a.length )[0]
+            return routes[matchedRoute]
+
         case !isPublicRoute(path) && !auth:
             Astro.response.status = 401
             return Error401View

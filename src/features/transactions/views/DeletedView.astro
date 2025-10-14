@@ -1,33 +1,21 @@
 ---
 import { actions } from "astro:actions";
-import AppLayout from "../../../layouts/AppLayout.astro";
-import H1 from "../../../components/H1.astro";
-import CreateTransactionButton from "../components/CreateTransactionButton.astro";
-import FilterTransactions from "../components/FilterTransactions.astro";
 import Transaction from "../components/Transaction.astro";
 import type { Transaction as TransactionType } from "../../../types/types"
+import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
+import TransactionList from "../components/TransactionList.astro";
 
 const transactions = await Astro.callAction( actions.transaction.index, {filter : 'deleted' } )
-
 ---
 
-<AppLayout>
-	
-	<FilterTransactions current="deleted" />
-
-	<div class="mb-2 flex items-center justify-between">
-		<H1>
-			Deleted Transactions
-		</H1>
-
-		<CreateTransactionButton />
-	</div>
-
-	<transaction-list class="grid">
+<TransactionListLayout
+	title="Deleted Transactions"
+	current="deleted"
+>
+	<TransactionList>
 		{ !transactions.error && transactions.data.map( (transaction: TransactionType) => (
 			<Transaction {transaction} budgets={[]} mode="restore" />
 		))}
-	</transaction-list>
-
-</Layout>
+	</TransactionList>
+</TransactionListLayout>
 

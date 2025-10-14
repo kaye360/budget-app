@@ -1,28 +1,20 @@
 ---
 import { BanknoteArrowUpIcon, ImportIcon } from "@lucide/astro";
 import { actions } from "astro:actions";
-import H1 from "../../../components/H1.astro";
-import AppLayout from "../../../layouts/AppLayout.astro";
 import CreateTransaction from "../components/CreateTransaction.astro";
 import CreateTransactionCount from "../components/CreateTransactionCount.astro";
 import LoadingButton from "../../../components/Button/LoadingButton.astro";
+import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
 
 const budgets = await Astro.callAction( actions.budget.index, {} )
 ---
 
-<AppLayout>
+<TransactionListLayout
+    title="Add Transaction"
+>
 
-    <div class="flex items-center justify-between mb-6">
-        <H1>
-            Add Transactions
-        </H1>
-        <div class="flex items-stretch gap-2">
-            <CreateTransactionCount />
-            <button class="flex items-center gap-1 border border-red/60 rounded-md px-2 py-1 cursor-pointer">
-                Import
-                <ImportIcon />
-            </button>
-        </div>
+    <div class="flex justify-end mb-6">
+        <CreateTransactionCount />
     </div>
 
     <form>

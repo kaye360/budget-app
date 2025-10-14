@@ -1,18 +1,11 @@
 ---
 import { ImportIcon } from "@lucide/astro";
-import AppLayout from "../../../layouts/AppLayout.astro";
 import LoadingButton from "../../../components/Button/LoadingButton.astro";
-import H1 from "../../../components/H1.astro";
 import ImportTransactionsDroppable from "../components/ImportTransactionsDroppable.astro";
+import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
 ---
 
-<AppLayout>
-
-    <div class="flex items-center justify-between mb-6">
-        <H1>
-            Import Transactions
-        </H1>
-    </div>
+<TransactionListLayout title="Import Transactions">
 
     <ImportTransactionsDroppable />
 
@@ -48,7 +41,7 @@ import ImportTransactionsDroppable from "../components/ImportTransactionsDroppab
         />
     </form>
 
-</Layout>
+</TransactionListLayout>
 
 <script>
 import { actions } from "astro:actions";

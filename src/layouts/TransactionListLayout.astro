@@ -1,0 +1,90 @@
+---
+import H1 from "../components/H1.astro";
+import CreateTransactionButton from "../features/transactions/components/CreateTransactionButton.astro";
+import ImportTransactionButton from "../features/transactions/components/ImportTransactionButton.astro";
+import AppLayout from "./AppLayout.astro";
+
+interface Props {
+    title : string
+    current? : 'recent' | 'month' | 'budget' | 'uncategorized' | 'deleted' | 'search'
+}
+
+const { title, current } = Astro.props
+---
+
+<AppLayout>
+    
+    { current &&
+        <filter-transactions class="flex items-center gap-x-2 gap-y-1 rounded mb-4 text-xs w-full overflow-x-auto mt-4 md:mt-0 py-2">
+            <a 
+                class:list={[
+                    "px-3 py-1 rounded-full border hover:bg-blue/20 hover:border-blue/80",
+                    current === 'recent' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
+                ]}
+                href="/transactions/recent"
+            >
+                Recent
+            </a>
+            <a 
+                class:list={[
+                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
+                    current === 'month' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
+                ]}
+                href="/transactions/month"
+            >
+                Month
+            </a>
+            <a 
+                class:list={[
+                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
+                    current === 'budget' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
+                ]}
+                href="/transactions/budget"
+            >
+                Budget
+            </a>
+            <a 
+                class:list={[
+                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
+                    current === 'uncategorized' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
+                ]}
+                href="/transactions/uncategorized"
+            >
+                Uncategorized
+            </a>
+            <a 
+                class:list={[
+                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
+                    current === 'deleted' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
+                ]}
+                href="/transactions/deleted"
+            >
+                Deleted
+            </a>
+            <a 
+                class:list={[
+                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
+                    current === 'search' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
+                ]}
+                href="/transactions/search"
+            >
+                Search
+            </a>
+
+        </filter-transactions>
+    }
+
+	<div class="mb-4 flex items-center justify-between flex-wrap gap-y-2">
+		<H1>
+			{title}
+		</H1>
+
+		<span class="flex items-center gap-4">
+			<CreateTransactionButton />
+			<ImportTransactionButton />
+		</span>
+	</div>
+
+    <slot />
+
+</AppLayout>

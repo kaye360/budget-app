@@ -4,8 +4,9 @@ import type { Transaction as TransactionType } from "../../../types/types"
 import AppLayout from "../../../layouts/AppLayout.astro"
 import H1 from "../../../components/H1.astro"
 import CreateTransactionButton from "../components/CreateTransactionButton.astro"
-import FilterTransactions from "../components/FilterTransactions.astro"
 import Transaction from "../components/Transaction.astro"
+import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
+import TransactionList from "../components/TransactionList.astro"
 
 const auth = await Astro.session?.get('auth')
 
@@ -15,10 +16,7 @@ if( !auth ) {
 
 const { budget } = Astro.params
 const budgets = await Astro.callAction( actions.budget.index, {} )
-const budgetName = budget 
-	? budgets.data?.find( b => b.id === Number(budget) )?.name
-	: 'Select a budget'
-	
+const budgetName = budgets.data?.find( b => b.id === Number(budget) )?.name
 
 let transactions: TransactionType[] = []
 if( budget ) {
@@ -33,16 +31,12 @@ if( budget ) {
 }
 ---
 
-<AppLayout>
-	
-	<FilterTransactions current="budget" />
+<TransactionListLayout
+	title={ budgetName || 'Select a Budget' }
+	current="budget"
+>
 
 	<div class="flex items-center justify-start gap-2 mb-4">
-
-		<H1>
-			{ budgetName }
-		</H1>
-
 		<select 
 			id="budget-selector"
 			name="budget-selector" 
@@ -56,18 +50,15 @@ if( budget ) {
 				</option>
 			))}
 		</select>
-
-		<CreateTransactionButton />
-	
 	</div>
 
-	<transaction-list class="grid w-full">
+	<TransactionList>
 		{ transactions.map( (transaction: TransactionType) => (
 			<Transaction {transaction} budgets={budgets.data} />
 		))}
-	</transaction-list>
+	</TransactionList>
 
-</Layout>
+</TransactionListLayout>
 
 
 <script>

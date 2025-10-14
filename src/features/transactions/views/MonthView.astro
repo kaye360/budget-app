@@ -5,8 +5,9 @@ import type { Transaction as TransactionType } from "../../../types/types";
 import AppLayout from "../../../layouts/AppLayout.astro";
 import H1 from "../../../components/H1.astro";
 import CreateTransactionButton from "../components/CreateTransactionButton.astro";
-import FilterTransactions from "../components/FilterTransactions.astro";
 import Transaction from "../components/Transaction.astro";
+import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
+import TransactionList from "../components/TransactionList.astro";
 
 let { month = convertDate().to('YYYY-MM') } = Astro.params
 
@@ -17,16 +18,11 @@ const [transactions, budgets] = await Promise.all([
 
 ---
 
-<AppLayout>
-	
-	<FilterTransactions current="month" />
-
-	<div class="flex items-center mb-4 gap-2">
-
-		<H1>
-			{ convertDate(month).to('MMMM-YYYY') }
-		</H1>
-
+<TransactionListLayout
+	title={convertDate(month).to('MMMM-YYYY')}
+	current="month"
+>
+	<div class="flex justify-right mb-4">
 		<select 
 			id="month-selector"
 			name="month-selector" 
@@ -40,17 +36,15 @@ const [transactions, budgets] = await Promise.all([
 				</option>
 			))}
 		</select>
-		
-		<CreateTransactionButton />
 	</div>
 
-	<transaction-list class="grid">
+	<TransactionList>
 		{ !transactions.error && transactions.data.list.map( (transaction: TransactionType) => (
 			<Transaction {transaction} budgets={budgets.data} />
 		))}
-	</transaction-list>
+	</TransactionList>
 
-</Layout>
+</TransactionListLayout>
 
 
 <script>
