@@ -1,24 +1,16 @@
 ---
 import { actions } from "astro:actions"
 import type { Transaction as TransactionType } from "../../../types/types"
-import AppLayout from "../../../layouts/AppLayout.astro"
-import H1 from "../../../components/H1.astro"
-import CreateTransactionButton from "../components/CreateTransactionButton.astro"
 import Transaction from "../components/Transaction.astro"
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
 import TransactionList from "../components/TransactionList.astro"
 
-const auth = await Astro.session?.get('auth')
-
-if( !auth ) {
-	return Astro.redirect('/')
-}
-
-const { budget } = Astro.params
+const budget = Astro.props.routeParam
 const budgets = await Astro.callAction( actions.budget.index, {} )
 const budgetName = budgets.data?.find( b => b.id === Number(budget) )?.name
 
 let transactions: TransactionType[] = []
+
 if( budget ) {
 	const transactionsResult = await Astro.callAction( actions.transaction.index, {
 		filter : 'budget', 

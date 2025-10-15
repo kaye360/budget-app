@@ -25,7 +25,7 @@ const {
 >
 
     <transaction-date  
-        class="text-sm text-accent-text md:w-auto" 
+        class="text-sm text-accent-text min-w-fit" 
         data-bind="dateHumanReadable"
     />
 
@@ -34,12 +34,12 @@ const {
         data-bind="description"
     />
 
-    <transaction-budget
-        class="bg-blue/20 px-2 py-1 text-xs font-medium rounded-sm tracking-wide capitalize flex items-center min-w-fit order-10 md:order-none" 
-        data-bind="budget"
-    />
-
+    
     { mode === 'detailed' &&
+        <transaction-budget
+            class="bg-blue/20 px-2 py-1 text-xs font-medium rounded-sm tracking-wide capitalize flex items-center min-w-fit order-10 md:order-none" 
+            data-bind="budget"
+        />
         <span class="bg-red/10 px-2 py-1 font-medium rounded-sm tracking-wide text-xs capitalize flex items-center gap-1 min-w-fit order-11 md:order-none">
             <transaction-account-name data-bind="accountName" />
             &#9679;

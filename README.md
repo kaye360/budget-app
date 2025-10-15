@@ -40,8 +40,7 @@ Use ``el.closest('transaction-item')`` and get the state from there in nested el
 
 
 ### Bugs
-- Route params not working
-- implement TransactionList
+- when adding multiple transactions, only the last one gets added
 
 ### Upcoming Features
 - import bulk transactions

@@ -22,6 +22,7 @@ const routes = {
     "/transactions/deleted" : Transactions.DeletedView,
     "/transactions/import" : Transactions.ImportView,
     "/transactions/month" : Transactions.MonthView,
+    "/transactions/month/:month" : Transactions.MonthView,
     "/transactions/recent" : Transactions.RecentView,
     "/transactions/search" : Transactions.SearchView,
     "/transactions/uncategorized" : Transactions.UncategorizedView,
@@ -35,6 +36,7 @@ const publicRoutes: Route[] = [
     "/auth/login",
 ]
 
+const props : { routeParam? : string } = { routeParam : undefined } 
 const { route = 'index' } = Astro.params
 const path = '/' + route as Route
 const routeMatches = (Object.keys(routes) as Route[]).filter( key => path.includes(key) )
@@ -50,7 +52,15 @@ const View = ( () => {
             return Error404View
         
         case isPublicRoute(path) || !!auth:
+
             const matchedRoute = routeMatches.sort( (a,b) => b.length - a.length )[0]
+            const pathArray = path.split('/')
+            const matchRouteArray = matchedRoute.split('/')
+
+            if( pathArray.length > matchRouteArray.length ) {
+                props.routeParam = pathArray.at(-1)
+            }
+
             return routes[matchedRoute]
 
         case !isPublicRoute(path) && !auth:
@@ -61,6 +71,7 @@ const View = ( () => {
             return Error404View
     }
 })() as AstroComponentFactory
+
 ---
 
-<View />
+<View {...props} />

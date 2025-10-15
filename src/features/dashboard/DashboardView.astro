@@ -7,6 +7,7 @@ import Transaction from "../transactions/components/Transaction.astro";
 import type { Transaction as TransactionType } from "../../types/types"
 import MonthlySpendingSummary from "../trends/components/MonthlySpendingSummary.astro";
 import { getAuth } from "../auth/auth.utils";
+import TransactionList from "../transactions/components/TransactionList.astro";
 
 const auth = await getAuth(Astro)
 
@@ -38,18 +39,20 @@ const transactions = await Astro.callAction(
 			</a>
 		</div>
 
-		<div class="bg-blue/5 rounded-sm p-4">
-			<h2 class="flex items-center gap-2 font-semibold tex-2xl mb-6">
+		<div class="bg-blue/5 rounded-sm p-4 grid gap-4">
+			<h2 class="flex items-center gap-2 font-semibold tex-2xl">
 				<ArrowLeftRightIcon />
 				Recent Transactions
 			</h2>
-			<transaction-list class="grid">
-				{ 
-					!transactions.error && transactions.data.list.map( (transaction : TransactionType ) =>
-						<Transaction {transaction} budgets={[]} mode="simple" />
-					)
-				}
-			</transaction-list>
+			<TransactionList>
+				{ !transactions.error && transactions.data.list.map( (transaction : TransactionType ) =>
+					<Transaction {transaction} budgets={[]} mode="simple" />
+				)}
+			</TransactionList>
+			<a href="/transactions/recent" class="flex items-center gap-2 justify-self-start">
+				View your transactions
+				<MoveRightIcon />
+			</a>
 		</div>
 
 

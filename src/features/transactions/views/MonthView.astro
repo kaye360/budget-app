@@ -2,14 +2,12 @@
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
 import type { Transaction as TransactionType } from "../../../types/types";
-import AppLayout from "../../../layouts/AppLayout.astro";
-import H1 from "../../../components/H1.astro";
-import CreateTransactionButton from "../components/CreateTransactionButton.astro";
 import Transaction from "../components/Transaction.astro";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
 import TransactionList from "../components/TransactionList.astro";
 
-let { month = convertDate().to('YYYY-MM') } = Astro.params
+const { routeParam } = Astro.props
+const month = routeParam ?? convertDate().to('YYYY-MM')
 
 const [transactions, budgets] = await Promise.all([
 	Astro.callAction( actions.transaction.index, {filter : 'month', filterValue : month} ),
