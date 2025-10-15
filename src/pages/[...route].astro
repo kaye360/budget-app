@@ -9,6 +9,7 @@ import LoginView from "../features/auth/LoginView.astro"
 import type { AstroComponentFactory } from "astro/runtime/server/index.js"
 import Error401View from "../features/static/Error401View.astro"
 import { isAuth } from "../features/auth/auth.utils"
+import BudgetsView from "../features/budgets/views/BudgetsView.astro"
 
 const auth = await isAuth(Astro)
 
@@ -26,6 +27,7 @@ const routes = {
     "/transactions/recent" : Transactions.RecentView,
     "/transactions/search" : Transactions.SearchView,
     "/transactions/uncategorized" : Transactions.UncategorizedView,
+    "/budgets" : BudgetsView,
     "/profile" : ProfileView,
     "/auth/login" : LoginView,
     "/auth/logout" : LogoutView,

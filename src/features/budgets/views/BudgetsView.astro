@@ -10,9 +10,9 @@ import AppLayout from "../../../layouts/AppLayout.astro";
 import { getAuth } from "../../auth/auth.utils"
 
 const auth = await getAuth(Astro)
-const { route } = Astro.params;
+const { routeParam } = Astro.params;
 
-const month = route ? route : convertDate().to('YYYY-MM')
+const month = routeParam ?? convertDate().to('YYYY-MM')
 
 const [transactions, budgets] = await Promise.all([
 	Astro.callAction( actions.transaction.index, { filter : 'month', filterValue : month } ),
