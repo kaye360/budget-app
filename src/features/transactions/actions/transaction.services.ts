@@ -20,6 +20,16 @@ type Params = z.infer<typeof TransactionValidator.index>
 
 export const getTransactionsBy : GetTransactions = {
 
+    all : async () => {
+        const { data : list, count } = await db.from('TransactionView')
+            .select('*', { count: 'exact'})
+            .order('date', { ascending : false })
+            .eq('userId', userId)
+            .eq('isDeleted', false)
+
+        return { list, count } 
+    },
+
     recent : async ({ page = 0, perPage = 50} : Params ) => {
 
         const start = page * perPage

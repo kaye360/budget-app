@@ -8,6 +8,7 @@ import CreateBudget from "../components/CreateBudget.astro";
 import SelectMonthlyBudget from "../components/SelectMonthlyBudget.astro";
 import AppLayout from "../../../layouts/AppLayout.astro";
 import { getAuth } from "../../auth/auth.utils"
+import H1 from "../../../components/H1.astro";
 
 const auth = await getAuth(Astro)
 const { routeParam } = Astro.params;
@@ -26,9 +27,9 @@ const budgetsWithTotalSpent = getBudgetsWithTotalSpent(budgets.data, transaction
 
 	<div class="flex items-center justify-between mb-4">
 
-		<h1 class="text-lg md:text-xl font-semibold font-theme min-w-max">
+		<H1>
 			{ convertDate(month).to('MMMM-YYYY') }
-		</h1>
+		</H1>
 
 		<SelectMonthlyBudget currentMonth={month} months={transactions.data.months} /> 
 		
