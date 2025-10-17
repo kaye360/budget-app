@@ -1,15 +1,18 @@
 ---
 import { actions } from "astro:actions"
 import MoreTransactionsButton from "../components/MoreTransactionsButton.astro"
-import Transaction from "../components/Transaction.astro"
+// import Transaction from "../components/Transaction.astro"
 import type { Transaction as TransactionType } from "../../../types/types"
-import TransactionList from "../components/TransactionList.astro"
+// import TransactionList from "../components/TransactionList.astro"
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
+import Transaction from "../components/Transaction"
+import TransactionList from "../components/TransactionList"
 
 const [transactions, budgets] = await Promise.all([
 	Astro.callAction( actions.transaction.index, {filter : 'recent'} ),
 	Astro.callAction( actions.budget.index, {} )
 ])
+console.log(budgets.data)
 ---
 
 <TransactionListLayout
@@ -17,14 +20,21 @@ const [transactions, budgets] = await Promise.all([
 	current="recent"
 >
 
-	<TransactionList>
+	<TransactionList 
+		initialTransactions={transactions.data.list} 
+		budgets={budgets.data ?? []}
+		actionButton="edit"
+		client:idle 
+	/>
+
+	<!-- <TransactionList>
 		{ !transactions.error && transactions.data.list.map( (transaction: TransactionType ) => (
 			<Transaction {transaction} budgets={budgets.data} />
 		))}
 		<template id="transaction-template">
 			<Transaction budgets={budgets.data}/>
 		</template>
-	</TransactionList>
+	</TransactionList> -->
 
 	<MoreTransactionsButton />
 

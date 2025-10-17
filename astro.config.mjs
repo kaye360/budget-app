@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import netlify from '@astrojs/netlify';
 
+import react from '@astrojs/react';
+
 // https://astro.build/config
 export default defineConfig({
   output : 'server',
@@ -16,11 +18,11 @@ export default defineConfig({
   devToolbar : { 
     enabled : false
   },
-  
+
   server : {
     host : true
   },
 
-  site : 'https://skl-budget.netlify.app'
-
+  site : 'https://skl-budget.netlify.app',
+  integrations: [react()]
 });

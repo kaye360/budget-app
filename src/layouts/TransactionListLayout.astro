@@ -13,6 +13,17 @@ const { title, current } = Astro.props
 ---
 
 <AppLayout>
+
+	<div class="mb-4 flex items-center justify-between flex-wrap gap-y-2">
+		<H1>
+			{title}
+		</H1>
+
+		<span class="flex items-center gap-4">
+			<CreateTransactionButton />
+			<ImportTransactionButton />
+		</span>
+	</div>
     
     { current &&
         <filter-transactions class="flex items-center gap-x-2 gap-y-1 rounded mb-4 text-xs w-full overflow-x-auto mt-4 md:mt-0 py-2">
@@ -73,17 +84,6 @@ const { title, current } = Astro.props
 
         </filter-transactions>
     }
-
-	<div class="mb-4 flex items-center justify-between flex-wrap gap-y-2">
-		<H1>
-			{title}
-		</H1>
-
-		<span class="flex items-center gap-4">
-			<CreateTransactionButton />
-			<ImportTransactionButton />
-		</span>
-	</div>
 
     <slot />
 
