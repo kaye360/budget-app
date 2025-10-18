@@ -163,8 +163,6 @@ export default function Transaction({transaction : initialTransaction, actionBut
                         )}
                     </button>
 
-
-
                     <button 
                         type="button"
                         className=" shrink-0 active:scale-90"
