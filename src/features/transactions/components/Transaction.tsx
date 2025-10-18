@@ -2,6 +2,7 @@ import { ArchiveRestoreIcon, CircleCheckIcon, EllipsisIcon, LoaderCircleIcon, Sa
 import type { Budget, Transaction as TransactionType} from "../../../types/types";
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { actions } from "astro:actions";
+import { convertDate } from "../../../lib/convertDate";
 
 interface Props {
     transaction : TransactionType
@@ -64,8 +65,6 @@ export default function Transaction({transaction : initialTransaction, actionBut
             className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 px-2 py-4 rounded-md ${isEditing && 'selected'}`}
         >
 
-            <input type="hidden" name="id" data-bind="id" />
-
             { isEditing ? (
                 <input 
                     type="date" 
@@ -75,7 +74,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
                 />
             ) : (
                 <span className="text-sm text-accent-text min-w-fit">
-                    {transaction.date}
+                    { convertDate(transaction.date).to('MMM-DD-YYYY')}
                 </span>
             )}
 

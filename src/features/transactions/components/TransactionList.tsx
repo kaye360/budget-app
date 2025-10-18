@@ -24,6 +24,10 @@ export default function TransactionList({initialTransactions, actionButton, budg
                     /> 
                 )}
             </div>
+
+            <button>
+                More Transactions
+            </button>
         </>
     )
 }

@@ -10,6 +10,8 @@ const [transactions, budgets] = await Promise.all([
     Astro.callAction(actions.budget.index, {}),
 ])
 
+// console.log(transactions.data.list)
+
 function calcMonthlyTotals(transactions: Transaction[]) {
 
     const totals: Record<
@@ -87,6 +89,7 @@ function calcMonthRange(start: string, end: string) {
 }
 
 const { totals, totalsArray } = calcMonthlyTotals(transactions.data.list)
+console.log(totals)
 const spendingUpperRange = calcUpperRange(totalsArray.map((t) => t.spending))
 const incomeUpperRange = calcUpperRange(totalsArray.map((t) => t.income))
 const netUpperRange = calcUpperRange(totalsArray.map((t) => t.net))
@@ -107,11 +110,11 @@ const range = calcMonthRange(startMonth, endMonth)
         <div class="flex gap-2 items-end h-[300px] overflow-x-auto ">
             { range.map((month) => (
                 <div class="flex flex-col items-center w-[70px]">
-                    <span>-{ totals[month].spending }</span>
+                    <span>-{ totals[month]?.spending ?? 0 }</span>
                     <div
                         class="bg-gradient-to-t from-red/30 to-red/20 w-[40px] border-b-2 border-red rounded-t"
                         style={`
-                            height : ${ totals[month].spending / spendingUpperRange * 225}px;
+                            height : ${ totals[month]?.spending ?? 0 / spendingUpperRange * 225}px;
                         `}
                     />
                     <span class="text-sm font-semibold">{convertDate(month).to("MMM-YYYY")}</span>
@@ -128,11 +131,11 @@ const range = calcMonthRange(startMonth, endMonth)
         <div class="flex gap-2 items-end h-[300px] overflow-x-auto">
             { range.map((month) => (
                 <div class="flex flex-col items-center w-[70px]">
-                    <span>+{ totals[month].income }</span>
+                    <span>+{ totals[month]?.income ?? 0 }</span>
                     <div
                         class="bg-gradient-to-t from-green/40 to-green/20 w-[40px] border-b-2 border-green rounded-t"
                         style={`
-                            height : ${ totals[month].income / incomeUpperRange * 225}px;
+                            height : ${ totals[month]?.income ?? 0 / incomeUpperRange * 225}px;
                         `}
                     />
                     <span class="text-sm font-semibold">{convertDate(month).to("MMM-YYYY")}</span>
@@ -151,24 +154,24 @@ const range = calcMonthRange(startMonth, endMonth)
                 <div class="relative h-full flex items-center hover:bg-blue/5">
                     <div class:list={[
                         "flex flex-col items-center w-[70px] ",
-                        totals[month].net > 0 && "-translate-y-1/2",
-                        totals[month].net < 0 && "translate-y-1/2",
+                        totals[month]?.net > 0 && "-translate-y-1/2",
+                        totals[month]?.net < 0 && "translate-y-1/2",
                     ]}>
-                        { totals[month].net > 0 && (
-                            <span>+{ totals[month].net }</span>
+                        { totals[month]?.net > 0 && (
+                            <span>+{ totals[month]?.net }</span>
                         )}
                         <div
                             class:list={[
                                 "bg-gradient-to-t w-[40px] rounded-t",
-                                totals[month].net > 0 && "from-green/40 to-green/20 border-b-2  border-green",
-                                totals[month].net < 0 && "from-red/30 to-red/20 border-t-2  border-red",
+                                totals[month]?.net > 0 && "from-green/40 to-green/20 border-b-2  border-green",
+                                totals[month]?.net < 0 && "from-red/30 to-red/20 border-t-2  border-red",
                             ]}
                             style={`
-                                height : ${ Math.abs(totals[month].net / netUpperRange * 150) }px;
+                                height : ${ Math.abs(totals[month]?.net / netUpperRange * 150) }px;
                             `}
                         />
-                        { totals[month].net < 0 && (
-                            <span>{totals[month].net}</span>
+                        { totals[month]?.net < 0 && (
+                            <span>{totals[month]?.net}</span>
                         )}
                     </div>
                     <span class="absolute bottom-0 text-sm font-semibold">{convertDate(month).to("MMM-YYYY")}</span>
