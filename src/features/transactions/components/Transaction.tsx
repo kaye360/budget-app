@@ -1,6 +1,7 @@
-import { ArchiveRestoreIcon, EllipsisIcon, SaveIcon, Trash2Icon } from "lucide-react";
+import { ArchiveRestoreIcon, CircleCheckIcon, EllipsisIcon, LoaderCircleIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
 import type { Budget, Transaction as TransactionType} from "../../../types/types";
-import { useRef, useState } from "react";
+import { useState, type FormEvent, type KeyboardEvent } from "react";
+import { actions } from "astro:actions";
 
 interface Props {
     transaction : TransactionType
@@ -8,14 +9,60 @@ interface Props {
     actionButton : 'edit' | 'restore'
 }
 
-
 export default function Transaction({transaction : initialTransaction, actionButton, budgets} : Props) {
 
     const [isEditing, setIsEditing] = useState<Boolean>(false)
+    const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
+    const [deleteStatus, setDeleteStatus] = useState<'initial' | 'deleting' | 'deleted'>('initial')
     const [transaction, setTransaction] = useState<TransactionType>(initialTransaction)
 
+    const handleSave = async (e : FormEvent) => {
+        e.preventDefault()
+
+        setSaveStatus('saving')
+        
+        const result = await actions.transaction.update({
+            id: Number(transaction.id),
+            date: String(transaction.date),
+            description: String(transaction.description),
+            amount: Number(transaction.amount),
+            budgetId: transaction.budgetId,
+            accountId: 1,
+        })
+
+        if( !result.error ) {
+            setSaveStatus('saved')
+            setTimeout( () => {
+                setSaveStatus('initial')
+                setIsEditing(false)
+            }, 3000)
+        }
+    }
+
+    const handleDelete = async (e : FormEvent) => {
+        e.preventDefault()
+        setDeleteStatus("deleting")
+        const result = await actions.transaction.destroy({id: Number(transaction.id)})
+        if( !result.error ) setDeleteStatus('deleted')
+    }
+
+    const handleEsc = (e: KeyboardEvent<HTMLFormElement>) => {
+        if( e.key === 'Escape' ) cancelChangesHandler()
+    }
+
+    const cancelChangesHandler = () => {
+        if( isEditing ) setTransaction(initialTransaction)
+        setIsEditing(false)
+    }
+
+    if( deleteStatus === 'deleted') return <></>
+
     return (
-        <form className="relative flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 px-2 py-4 rounded-md max-h-[500px]">
+        <form 
+            onSubmit={handleSave}
+            onKeyDown={handleEsc}
+            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 px-2 py-4 rounded-md ${isEditing && 'selected'}`}
+        >
 
             <input type="hidden" name="id" data-bind="id" />
 
@@ -54,13 +101,11 @@ export default function Transaction({transaction : initialTransaction, actionBut
                         budgetId : Number(e.target.value),
                         budget : e.target.options[e.target.selectedIndex].text
                     })}
+                    defaultValue={transaction.budgetId as number}
                 >
                     <option value="0">Uncategorized</option>
                     { budgets.map( budget => (
-                        <option 
-                            value={budget.id}
-                            selected={budget.id === transaction?.budgetId}
-                        >
+                        <option value={budget.id}key={budget.id}>
                             {budget.name}
                         </option>
                     ))}
@@ -73,10 +118,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
 
             { isEditing ? (
                 <select name="account" className="w-full bg-bg-2">
-                    <option 
-                        value={1}
-                        selected={true}
-                    >
+                    <option value={1}>
                         Everyday - Chequing 8754
                     </option>
                 </select>
@@ -105,22 +147,53 @@ export default function Transaction({transaction : initialTransaction, actionBut
 
             { isEditing && (
                 <>
-                    <SaveIcon className="w-[24px] h-[24px] shrink-0 ml-auto md:ml-0" />
-                    <Trash2Icon className="w-[24px] h-[24px] shrink-0" />
+                    <button 
+                        type="submit"
+                        className="shrink-0 ml-auto md:ml-0 active:scale-90"
+                        disabled={saveStatus !== 'initial'}
+                        title="Save Changes"
+                    >
+                        { saveStatus === 'initial' && (
+                            <SaveIcon className="w-[24px] h-[24px] hover:stroke-red cursor-pointer" />
+                        )}
+                        { saveStatus === 'saving' && (
+                            <LoaderCircleIcon className="w-[24px] h-[24px] animate-spin" />
+                        )}
+                        { saveStatus === 'saved' && (
+                            <CircleCheckIcon className="w-[24px] h-[24px]" />
+                        )}
+                    </button>
+
+
+
+                    <button 
+                        type="button"
+                        className=" shrink-0 active:scale-90"
+                        title="Hide Transaction"
+                        onClick={handleDelete}
+                    >
+                        <Trash2Icon className="w-[24px] h-[24px]  hover:stroke-red cursor-pointer" />
+                    </button>
                 </>
             )}
 
-
-            { actionButton === 'edit' &&
+            { actionButton === 'edit' && isEditing &&
                 <button 
                     type="button"
-                    className={`order-last group cursor-pointer transition-all active:scale-95 ${!isEditing && 'ml-auto md:ml-0'}`}
-                    onClick={ () => {
-                        // if( isEditing ) {
-                        //     setTransaction(initialTransaction)
-                        // } 
-                        setIsEditing(!isEditing )
-                    }}
+                    className="order-last group cursor-pointer transition-all active:scale-95"
+                    onClick={cancelChangesHandler}
+                    title="Cancel Editing"
+                >
+                    <XIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
+                </button>
+            }
+
+            { actionButton === 'edit' && !isEditing &&
+                <button 
+                    type="button"
+                    className="order-last group cursor-pointer transition-all active:scale-95 ml-auto md:ml-0"
+                    onClick={ () => setIsEditing(true) }
+                    title="Edit Transaction"
                 >
                     <EllipsisIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
                 </button>
@@ -131,6 +204,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
                     <button 
                         type="button"
                         className="ml-2 group cursor-pointer transition-all active:scale-95"
+                        title="Restore Transaction"
                     >
                         <ArchiveRestoreIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
                     </button>
