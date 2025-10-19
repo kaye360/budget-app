@@ -6,7 +6,7 @@ import TransactionList from "../components/TransactionList";
 import Transaction from "../components/Transaction";
 
 const [transactions, budgets] = await Promise.all([
-	Astro.callAction( actions.transaction.index, {filter : 'uncategorized'} ),
+	Astro.callAction( actions.transaction.index, {filter : 'deleted'} ),
 	Astro.callAction( actions.budget.index, {} ),
 ])
 ---

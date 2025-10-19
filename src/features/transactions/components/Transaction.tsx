@@ -1,6 +1,6 @@
 import { ArchiveRestoreIcon, CircleCheckIcon, EllipsisIcon, LoaderCircleIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
 import type { Budget, Transaction as TransactionType} from "../../../types/types";
-import { useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
 
@@ -17,6 +17,13 @@ export default function Transaction({transaction : initialTransaction, actionBut
     const [deleteStatus, setDeleteStatus] = useState<'initial' | 'deleting' | 'deleted'>('initial')
     const [restoreStatus, setRestoreStatus] = useState<'initial' | 'restoring' | 'restored'>('initial')
     const [transaction, setTransaction] = useState<TransactionType>(initialTransaction)
+    const budgetInputRef = useRef<HTMLSelectElement>(null)
+
+    useEffect( () => {
+        if( isEditing && budgetInputRef.current ) {
+            budgetInputRef.current.focus()
+        }
+    }, [isEditing] )
 
     const handleSave = async (e : FormEvent) => {
         e.preventDefault()
@@ -37,7 +44,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
             setTimeout( () => {
                 setSaveStatus('initial')
                 setIsEditing(false)
-            }, 1500)
+            }, 500)
         }
     }
 
@@ -74,7 +81,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
         <form 
             onSubmit={handleSave}
             onKeyDown={handleEsc}
-            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 px-2 py-4 rounded-md transition-opacity ${isEditing ? 'selected' : ''}`}
+            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 p-2 rounded-md transition-opacity  [&:has(:focus)]:bg-blue/10 ${isEditing ? 'selected' : ''}`}
         >
             { isEditing ? (
                 <input 
@@ -97,7 +104,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
                     onChange={ (e) => setTransaction({...transaction, description : e.target.value}) }
                 />
             ) : (
-                <div className="block font-semibold text-xl md:text-xl rounded w-full md:w-auto">
+                <div className="block font-semibold text-md md:text-md rounded w-full md:w-auto">
                     {transaction.description}
                 </div>
             )}
@@ -106,6 +113,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
                 <select 
                     name="budgetId" 
                     className="w-full bg-bg-2"
+                    ref={budgetInputRef}
                     onChange={ (e) => setTransaction({
                         ...transaction, 
                         budgetId : Number(e.target.value),
@@ -123,6 +131,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
             ) : (
                 <a 
                     href={`/transactions/budget/${transaction.budgetId}`}
+                    tabIndex={-1}
                     className="bg-blue/20 px-2 py-1 text-sm md:text-xs font-medium rounded-sm tracking-wide capitalize flex items-center min-w-fit order-10 md:order-none hover:underline"
                 >
                     {transaction.budget}
@@ -153,7 +162,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
                     onChange={ (e) => setTransaction({...transaction, amount : Number(e.target.value)}) }
                 />
             ) : (
-                <span className="ml-auto text-xl font-semibold font-theme w-full md:w-auto">
+                <span className="ml-auto text-md font-semibold font-theme w-full md:w-auto">
                     {transaction.amount}
                 </span>
             )}
