@@ -1,9 +1,9 @@
 ---
 import { actions } from "astro:actions";
 import type { Transaction as TransactionType } from "../../../types/types";
-import Transaction from "../components/Transaction.astro";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
-import TransactionList from "../components/TransactionList.astro";
+import TransactionList from "../components/TransactionList";
+import Transaction from "../components/Transaction";
 
 const [transactions, budgets] = await Promise.all([
 	Astro.callAction( actions.transaction.index, {filter : 'uncategorized'} ),
@@ -13,12 +13,12 @@ const [transactions, budgets] = await Promise.all([
 
 <TransactionListLayout
 	title="Uncategorized Transactions"
-	current="uncategorized"
+	active="uncategorized"
 >
 	
 	<TransactionList>
-		{ !transactions.error && transactions.data.map( (transaction: TransactionType) => (
-			<Transaction {transaction} budgets={budgets.data} />
+		{ transactions.data.map( (transaction: TransactionType) => (
+			<Transaction {transaction} budgets={budgets.data ?? []} actionButton="edit" client:idle />
 		))}
 	</TransactionList>
 

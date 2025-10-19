@@ -1,9 +1,9 @@
 ---
 import { actions } from "astro:actions"
 import type { Transaction as TransactionType } from "../../../types/types"
-import Transaction from "../components/Transaction.astro"
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
-import TransactionList from "../components/TransactionList.astro"
+import TransactionList from "../components/TransactionList"
+import Transaction from "../components/Transaction"
 
 const budget = Astro.props.routeParam
 const budgets = await Astro.callAction( actions.budget.index, {} )
@@ -21,11 +21,12 @@ if( budget ) {
 		transactions = transactionsResult.data as TransactionType[]
 	}
 }
+
 ---
 
 <TransactionListLayout
 	title={ budgetName || 'Select a Budget' }
-	current="budget"
+	active="budget"
 >
 
 	<div class="flex items-center justify-start gap-2 mb-4">
@@ -46,7 +47,7 @@ if( budget ) {
 
 	<TransactionList>
 		{ transactions.map( (transaction: TransactionType) => (
-			<Transaction {transaction} budgets={budgets.data} />
+			<Transaction {transaction} budgets={budgets.data ?? []} actionButton="edit" client:idle />
 		))}
 	</TransactionList>
 

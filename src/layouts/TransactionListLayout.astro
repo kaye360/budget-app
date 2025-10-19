@@ -2,14 +2,15 @@
 import H1 from "../components/H1.astro";
 import CreateTransactionButton from "../features/transactions/components/CreateTransactionButton.astro";
 import ImportTransactionButton from "../features/transactions/components/ImportTransactionButton.astro";
+import TransactionFilterLink from "../features/transactions/components/TransactionFilterLink.astro";
 import AppLayout from "./AppLayout.astro";
 
 interface Props {
     title : string
-    current? : 'recent' | 'month' | 'budget' | 'uncategorized' | 'deleted' | 'search'
+    active? : string
 }
 
-const { title, current } = Astro.props
+const { title, active } = Astro.props
 ---
 
 <AppLayout>
@@ -25,65 +26,47 @@ const { title, current } = Astro.props
 		</span>
 	</div>
     
-    { current &&
-        <filter-transactions class="flex items-center gap-x-2 gap-y-1 rounded mb-4 text-xs w-full overflow-x-auto mt-4 md:mt-0 py-2 scrollbar-hide">
-            <a 
-                class:list={[
-                    "px-3 py-1 rounded-full border hover:bg-blue/20 hover:border-blue/80",
-                    current === 'recent' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
-                ]}
-                href="/transactions/recent"
-            >
-                Recent
-            </a>
-            <a 
-                class:list={[
-                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
-                    current === 'month' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
-                ]}
-                href="/transactions/month"
-            >
-                Month
-            </a>
-            <a 
-                class:list={[
-                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
-                    current === 'budget' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
-                ]}
-                href="/transactions/budget"
-            >
-                Budget
-            </a>
-            <a 
-                class:list={[
-                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
-                    current === 'uncategorized' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
-                ]}
-                href="/transactions/uncategorized"
-            >
-                Uncategorized
-            </a>
-            <a 
-                class:list={[
-                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
-                    current === 'deleted' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
-                ]}
-                href="/transactions/deleted"
-            >
-                Deleted
-            </a>
-            <a 
-                class:list={[
-                    "px-3 py-1 rounded-full border font-semibold hover:bg-blue/20 hover:border-blue/80",
-                    current === 'search' ? 'bg-blue/40 border-blue/40 text-black font-semibold' : 'border-black'
-                ]}
-                href="/transactions/search"
-            >
-                Search
-            </a>
+    <filter-transactions class="flex items-center gap-x-2 gap-y-1 rounded mb-4 text-xs w-full overflow-x-auto mt-4 md:mt-0 py-2 scrollbar-hide relative">
 
-        </filter-transactions>
-    }
+        <TransactionFilterLink
+            isActive={active === 'recent'}
+            href="/transactions/recent"
+            title="Recent"
+        />
+        <TransactionFilterLink
+            isActive={active === 'month'}
+            href="/transactions/month"
+            title="Month"
+        />
+        <TransactionFilterLink
+            isActive={active === 'budget'}
+            href="/transactions/budget"
+            title="Budget"
+        />
+        <TransactionFilterLink
+            isActive={active === 'account'}
+            href="/transactions/account"
+            title="Account"
+        />
+        <TransactionFilterLink
+            isActive={active === 'uncategorized'}
+            href="/transactions/uncategorized"
+            title="Uncategorized"
+        />
+        <TransactionFilterLink
+            isActive={active === 'deleted'}
+            href="/transactions/deleted"
+            title="Deleted"
+        />
+        <TransactionFilterLink
+            isActive={active === 'search'}
+            href="/transactions/search"
+            title="Search"
+        />
+
+        <span class="md:hidden sticky z-50 top-0 right-0 bottom-0 w-[50px] h-[24px] shrink-0 scale-y-200 bg-gradient-to-r from-transparent to-bg-2" />
+        
+    </filter-transactions>
 
     <slot />
 

@@ -15,6 +15,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
     const [isEditing, setIsEditing] = useState<Boolean>(false)
     const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
     const [deleteStatus, setDeleteStatus] = useState<'initial' | 'deleting' | 'deleted'>('initial')
+    const [restoreStatus, setRestoreStatus] = useState<'initial' | 'restoring' | 'restored'>('initial')
     const [transaction, setTransaction] = useState<TransactionType>(initialTransaction)
 
     const handleSave = async (e : FormEvent) => {
@@ -36,15 +37,23 @@ export default function Transaction({transaction : initialTransaction, actionBut
             setTimeout( () => {
                 setSaveStatus('initial')
                 setIsEditing(false)
-            }, 3000)
+            }, 1500)
         }
     }
 
-    const handleDelete = async (e : FormEvent) => {
-        e.preventDefault()
+    const handleDelete = async () => {
         setDeleteStatus("deleting")
         const result = await actions.transaction.destroy({id: Number(transaction.id)})
         if( !result.error ) setDeleteStatus('deleted')
+    }
+
+    const handleRestore = async () => {
+        setRestoreStatus('restoring')
+        const result = await actions.transaction.update({
+            isDeleted : false,
+            id : Number(transaction.id)
+        })
+        if( !result.error ) setRestoreStatus('restored')
     }
 
     const handleEsc = (e: KeyboardEvent<HTMLFormElement>) => {
@@ -56,15 +65,17 @@ export default function Transaction({transaction : initialTransaction, actionBut
         setIsEditing(false)
     }
 
-    if( deleteStatus === 'deleted') return <></>
+    if( 
+        deleteStatus === 'deleted' ||
+        restoreStatus === 'restored'
+    ) return <></>
 
     return (
         <form 
             onSubmit={handleSave}
             onKeyDown={handleEsc}
-            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 px-2 py-4 rounded-md ${isEditing && 'selected'}`}
+            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 px-2 py-4 rounded-md transition-opacity ${isEditing ? 'selected' : ''}`}
         >
-
             { isEditing ? (
                 <input 
                     type="date" 
@@ -110,9 +121,12 @@ export default function Transaction({transaction : initialTransaction, actionBut
                     ))}
                 </select>
             ) : (
-                <div className="bg-blue/20 px-2 py-1 text-sm md:text-xs font-medium rounded-sm tracking-wide capitalize flex items-center min-w-fit order-10 md:order-none">
+                <a 
+                    href={`/transactions/budget/${transaction.budgetId}`}
+                    className="bg-blue/20 px-2 py-1 text-sm md:text-xs font-medium rounded-sm tracking-wide capitalize flex items-center min-w-fit order-10 md:order-none hover:underline"
+                >
                     {transaction.budget}
-                </div>
+                </a>
             )}
 
             { isEditing ? (
@@ -197,15 +211,14 @@ export default function Transaction({transaction : initialTransaction, actionBut
             }
 
             { actionButton === 'restore' && (
-                <div className="order-last">
-                    <button 
-                        type="button"
-                        className="ml-2 group cursor-pointer transition-all active:scale-95"
-                        title="Restore Transaction"
-                    >
-                        <ArchiveRestoreIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
-                    </button>
-                </div>
+                <button 
+                    type="button"
+                    className="ml-2 group cursor-pointer transition-all active:scale-95 order-last"
+                    title="Restore Transaction"
+                    onClick={handleRestore}
+                >
+                    <ArchiveRestoreIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
+                </button>
             )}
 
         </form>

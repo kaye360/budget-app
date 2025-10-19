@@ -1,21 +1,26 @@
 ---
 import { actions } from "astro:actions";
-import Transaction from "../components/Transaction.astro";
 import type { Transaction as TransactionType } from "../../../types/types"
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
-import TransactionList from "../components/TransactionList.astro";
+import TransactionList from "../components/TransactionList";
+import Transaction from "../components/Transaction";
 
-const transactions = await Astro.callAction( actions.transaction.index, {filter : 'deleted' } )
+const [transactions, budgets] = await Promise.all([
+	Astro.callAction( actions.transaction.index, {filter : 'uncategorized'} ),
+	Astro.callAction( actions.budget.index, {} ),
+])
 ---
 
 <TransactionListLayout
 	title="Deleted Transactions"
-	current="deleted"
+	active="deleted"
 >
+
 	<TransactionList>
-		{ !transactions.error && transactions.data.map( (transaction: TransactionType) => (
-			<Transaction {transaction} budgets={[]} mode="restore" />
+		{ transactions.data.map( (transaction: TransactionType) => (
+			<Transaction {transaction} budgets={budgets.data ?? []} actionButton="restore" client:idle/>
 		))}
 	</TransactionList>
+
 </TransactionListLayout>
 

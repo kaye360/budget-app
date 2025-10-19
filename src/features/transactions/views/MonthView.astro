@@ -2,9 +2,9 @@
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
 import type { Transaction as TransactionType } from "../../../types/types";
-import Transaction from "../components/Transaction.astro";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
-import TransactionList from "../components/TransactionList.astro";
+import TransactionList from "../components/TransactionList";
+import Transaction from "../components/Transaction";
 
 const { routeParam } = Astro.props
 const month = routeParam ?? convertDate().to('YYYY-MM')
@@ -18,7 +18,7 @@ const [transactions, budgets] = await Promise.all([
 
 <TransactionListLayout
 	title={convertDate(month).to('MMMM-YYYY')}
-	current="month"
+	active="month"
 >
 	<div class="flex justify-right mb-4">
 		<select 
@@ -37,10 +37,11 @@ const [transactions, budgets] = await Promise.all([
 	</div>
 
 	<TransactionList>
-		{ !transactions.error && transactions.data.list.map( (transaction: TransactionType) => (
-			<Transaction {transaction} budgets={budgets.data} />
+		{ transactions.data.list.map( (transaction: TransactionType) => (
+			<Transaction {transaction} budgets={budgets.data ?? []} actionButton="edit" client:idle />
 		))}
 	</TransactionList>
+
 
 </TransactionListLayout>
 

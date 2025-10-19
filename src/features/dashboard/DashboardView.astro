@@ -3,11 +3,11 @@ import { ArrowLeftRightIcon, BotIcon, ChartColumnIncreasingIcon, MoveRightIcon }
 import { actions } from "astro:actions";
 import AppLayout from "../../layouts/AppLayout.astro";
 import { convertDate } from "../../lib/convertDate";
-import Transaction from "../transactions/components/Transaction.astro";
 import type { Transaction as TransactionType } from "../../types/types"
 import MonthlySpendingSummary from "../trends/components/MonthlySpendingSummary.astro";
 import { getAuth } from "../auth/auth.utils";
-import TransactionList from "../transactions/components/TransactionList.astro";
+import TransactionLite from "../transactions/components/TransactionLite";
+import TransactionList from "../transactions/components/TransactionList";
 
 const auth = await getAuth(Astro)
 
@@ -46,7 +46,7 @@ const transactions = await Astro.callAction(
 			</h2>
 			<TransactionList>
 				{ !transactions.error && transactions.data.list.map( (transaction : TransactionType ) =>
-					<Transaction {transaction} budgets={[]} mode="simple" />
+					<TransactionLite {transaction} />
 				)}
 			</TransactionList>
 			<a href="/transactions/recent" class="flex items-center gap-2 justify-self-start">
