@@ -1,6 +1,6 @@
 ---
 import NavLink from "./NavLink.astro"
-import { LayoutDashboardIcon, ArrowLeftRight, ChartColumnIncreasingIcon, BanknoteArrowUpIcon, CircleUserRoundIcon, ChartPieIcon, BotIcon } from "@lucide/astro"
+import { LayoutDashboardIcon, ArrowLeftRight, ChartColumnIncreasingIcon, BanknoteArrowUpIcon, CircleUserRoundIcon, ChartPieIcon, BotIcon, TrendingUpDown } from "@lucide/astro"
 
 const auth = await Astro.session?.get('auth')
 
@@ -9,6 +9,7 @@ const navLinks = [
     { href : '/transactions/recent', title : 'Transactions',   Icon : ArrowLeftRight},
     { href : '/budgets', title : 'Budgets',   Icon : ChartPieIcon},
     { href : '/trends', title : 'Trends',   Icon : ChartColumnIncreasingIcon},
+    { href : '/forecast', title : 'Forecast',   Icon : TrendingUpDown},
     { href : '/profile', title : 'Profile',        Icon : CircleUserRoundIcon},
 ]
 ---
@@ -22,8 +23,8 @@ const navLinks = [
             transition:name="nav"
             class:list={[
                 "bg-bg-1/50 backdrop-blur-lg rounded-sm shadow-md shadow-blue/20",
-                "flex w-[95vw] justify-evenly md:w-full mx-auto ",
-                "md:flex items-center md:gap-4 justify-between md:justify-start"
+                "w-[97vw] px-2 md:w-full mx-auto ",
+                "flex items-center gap-2 justify-between md:justify-start"
             ]}
         >
             <a href="/dashboard" class="hidden md:block md:ml-4 md:mr-auto">

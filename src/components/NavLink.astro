@@ -13,7 +13,7 @@ const { href, title, Icon, isActive } = Astro.props
 <a 
     href={href} 
     class:list={[
-        "relative flex flex-col md:flex-row md:gap-2 items-center p-4 md:p-3 hover:text-red hover:scale-105 active:scale-95 active:text-red transition-all duration-75",
+        "relative flex flex-col md:flex-row md:gap-2 items-center px-2 py-4 md:p-3 hover:text-red hover:scale-105 active:scale-95 active:text-red transition-all duration-75",
         href === "/transactions/add" && "bg-black/70 scale-105"
     ]}
 >

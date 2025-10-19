@@ -11,6 +11,7 @@ import Error401View from "../features/static/Error401View.astro"
 import { isAuth } from "../features/auth/auth.utils"
 import BudgetsView from "../features/budgets/views/BudgetsView.astro"
 import TrendsView from "../features/trends/views/TrendsView.astro"
+import ForecastView from "../features/forecast/ForecastView.astro"
 
 const auth = await isAuth(Astro)
 
@@ -30,6 +31,7 @@ const routes = {
     "/transactions/uncategorized" : Transactions.UncategorizedView,
     "/budgets" : BudgetsView,
     "/trends" : TrendsView,
+    "/forecast" : ForecastView,
     "/profile" : ProfileView,
     "/auth/login" : LoginView,
     "/auth/logout" : LogoutView,
