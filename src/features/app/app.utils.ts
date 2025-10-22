@@ -47,7 +47,7 @@ export function toOnlyDigits(value: string | number): number {
 
 
 /**
- * Convert all values in an object to string typ
+ * Convert all values in an object to string type
  */
 export function objectValuesToString(obj: Record<string, any>): Record<string, string> {
 	return Object.fromEntries(

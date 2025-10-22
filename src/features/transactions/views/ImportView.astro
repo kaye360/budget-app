@@ -22,8 +22,11 @@ import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
         <label class="lg:max-w-1/2">
             Bank Account:
             <select name="account">
-                <option value="rbc">RBC</option>
-                <option value="cibc">CIBC</option>
+                <option value="1">Everyday</option>
+                <option value="2">Line of Credit</option>
+                <option value="3">RBC Visa</option>
+                <option value="4">CIBC Mastercard</option>
+                <option value="5">Bills</option>
             </select>
         </label>
 
@@ -46,27 +49,41 @@ import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
 <script>
 import { actions } from "astro:actions";
 import { el } from "../../../lib/el";
-import { csvToTransactions } from "../utils/csvToTransactions";
-import { formDataToCsv } from "../utils/formDataToCsv";
+import { getFormData } from "../../app/form.utils";
+import { getAccountCsvPattern, transformCsvRowsToTransactions, transformCsvToArray } from "../utils/importTransactions";
+import { sleep } from "../../app/app.utils";
+import { LoadingButton } from "../../../components/Button/LoadingButton";
 
 el<HTMLFormElement>('#import-transactions-form', document, form => {
     form.addEventListener('submit', async (e: Event) => {
         e.preventDefault()
 
-        const loadingButton = el('loading-button')
-        loadingButton?.setAttribute('state', 'loading')
+        const loadingButton = new LoadingButton('loading-button')
+        loadingButton.setState('loading')
 
-        const { transactions, account } = formDataToCsv(form)
-        const createTransactions = csvToTransactions(transactions, account)
+        const { 
+            transactions: transactionsCsv, 
+            account : accountId 
+        } = getFormData(form)
 
-        const { error } = await actions.transaction.store(createTransactions)
-
-        if( error ) {
-            loadingButton?.setAttribute('state', 'error')
-            throw new Error(error.message)
+        if( typeof accountId !== 'string' || typeof transactionsCsv !== 'string' ) {
+            throw new Error('Invalid account or transactionsCsv type')
         }
 
-        loadingButton?.setAttribute('state', 'success')
+        try {
+            const accountCsvPattern = getAccountCsvPattern(accountId)
+            const csvRows = transformCsvToArray(transactionsCsv)
+            const transactions = transformCsvRowsToTransactions(csvRows, accountCsvPattern, accountId)
+            const { error } = await actions.transaction.store(transactions)
+            if( error ) {
+                throw new Error(error.message)
+            }
+            loadingButton.setState('success')
+        } catch( e ) {
+            loadingButton.setState('error')
+            await sleep(3000)
+            loadingButton.setState('initial')
+        }
     })
 })
 

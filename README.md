@@ -12,7 +12,6 @@ Made with Astro
 - when adding multiple budgets,the form needs to be reset
 
 ### Upcoming Features
-- Hightlight currently focused edit button transaction
 - make budgets a react component similar to transactions
 - add and implement Accounts
 - implement proper auth

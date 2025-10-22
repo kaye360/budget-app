@@ -81,7 +81,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
         <form 
             onSubmit={handleSave}
             onKeyDown={handleEsc}
-            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 p-2 rounded-md transition-opacity  [&:has(:focus)]:bg-blue/10 ${isEditing ? 'selected' : ''}`}
+            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 p-2 rounded-md transition-opacity border border-transparent [&:has(:focus)]:!bg-blue/30 [&:has(:focus)]:!border-blue/40 ${isEditing ? 'selected' : ''}`}
         >
             { isEditing ? (
                 <input 
@@ -146,6 +146,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
                 </select>
             ) : (
                 <span className="bg-red/10 px-2 py-1 font-medium rounded-sm tracking-wide text-sm md:text-xs capitalize flex items-center gap-1 min-w-fit order-11 md:order-none">
+                    { transaction.accountId }
                     <span>Everyday</span>
                     &#9679;
                     <span>Chequing</span>

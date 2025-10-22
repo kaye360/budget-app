@@ -1,14 +1,18 @@
 import type { Transaction } from "../../../types/types"
 
-/*
- * 
- * @function groupTransactionsByBudget
- * Take a list of transactions and group them by budget
+/**
+ * Groups an array of transactions by their `budgetId`.
+ *
+ * Each transaction with a numeric `budgetId` will be added to an object
+ * keyed by that `budgetId`. Transactions without a numeric `budgetId`
+ * are ignored.
+ *
+ * @param {Transaction[]} transactions - The array of transactions to group.
  * 
  */
-export function groupTransactionsByBudget(transactions : Transaction[]) {
+export function groupTransactionsByBudget(transactions : Transaction[]) : Record<number, Transaction[]> {
 
-    const transactionsGrouped: {[key: number] : Transaction[] } = {}
+    const transactionsGrouped: Record<number, Transaction[]> = {}
 
     transactions.forEach( transaction => {
 
