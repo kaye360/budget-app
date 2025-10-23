@@ -1,5 +1,5 @@
 import type { Budget, Transaction } from "../../types/types"
-import { groupTransactionsByBudget } from "../transactions/utils/groupTransactionsByBudget"
+import { groupTransactionsByBudget } from "../transactions/utils/groupTransactionsByBudget.utils"
 
 
 /**

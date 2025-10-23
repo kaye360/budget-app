@@ -6,9 +6,9 @@ import { z } from "astro/zod"
 const transactionSchema = z.object({
     date: z.string().length(10),
     description: z.string().min(1),
-    amount: z.number(),
-    budgetId: z.number().nullable().optional(),
-    accountId: z.number(),
+    amount: z.coerce.number(),
+    budgetId: z.coerce.number().nullable().optional(),
+    accountId: z.coerce.number(),
     isDeleted : z.boolean(),
     userId : z.number(),
     source : z.string(),

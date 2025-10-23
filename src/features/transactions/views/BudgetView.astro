@@ -12,13 +12,13 @@ const budgetName = budgets.data?.find( b => b.id === Number(budget) )?.name
 let transactions: TransactionType[] = []
 
 if( budget ) {
-	const transactionsResult = await Astro.callAction( actions.transaction.index, {
+	const { data, error } = await Astro.callAction( actions.transaction.index, {
 		filter : 'budget', 
 		filterValue : budget, 
 	})
 
-	if( !transactionsResult.error ) {
-		transactions = transactionsResult.data as TransactionType[]
+	if( !error ) {
+		transactions = data as TransactionType[]
 	}
 }
 
@@ -59,6 +59,10 @@ import { el } from "../../../lib/el"
 
 document.addEventListener('DOMContentLoaded', () => {
 
+	/**
+	 * Select onChange handler
+	 * Navigate to new transaction budget page
+	 */
 	el<HTMLSelectElement>('#budget-selector', document, select => {
 		select.addEventListener('change', e => {
 

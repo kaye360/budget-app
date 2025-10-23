@@ -45,11 +45,11 @@ export default function InfiniteTransactionList({initialTransactions, actionButt
             threshold: 0
         })
 
-        const btn = buttonRef.current
-        if (btn) observer.observe(btn)
-        return () => {
-            if (btn) observer.unobserve(btn)
-        }
+        const btn = buttonRef.current as HTMLButtonElement
+        observer.observe(btn)
+
+        return () => observer.unobserve(btn)
+
     }, [buttonRef, page])
 
     return(

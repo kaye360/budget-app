@@ -39,7 +39,7 @@ export function toOnlyDigits(value: string | number): number {
 		.toString()
 		.replace(/[^0-9.]/g, '')         // keep digits and dots
 		.replace(/^\.*/g, '')            // remove leading dots
-		.replace(/(\..*?)\..*/g, '$1');  // keep only the first decimal
+		.replace(/(\..*?)\..*/g, '$1')   // keep only the first decimal
 
 	return Number(cleaned);
 }

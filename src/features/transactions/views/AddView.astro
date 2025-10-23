@@ -1,5 +1,5 @@
 ---
-import { BanknoteArrowUpIcon, ImportIcon } from "@lucide/astro";
+import { BanknoteArrowUpIcon } from "@lucide/astro";
 import { actions } from "astro:actions";
 import CreateTransaction from "../components/CreateTransaction.astro";
 import CreateTransactionCount from "../components/CreateTransactionCount.astro";
@@ -53,16 +53,18 @@ import { actions } from "astro:actions"
 import { el } from "../../../lib/el"
 import { LoadingButton } from '../../../components/Button/LoadingButton'
 import { TransactionValidator } from "../actions/transaction.validator"
-import { formDataToCreateTransactions } from "../utils/formDataToCreateTransaction"
+import { formDataToCreateTransactions } from "../utils/createTransactions.utils"
 import { sleep } from "../../app/app.utils"
+import { getFormData } from "../../app/form.utils"
 
 el<HTMLFormElement>('form', document, form => {
     form.addEventListener('submit', async ( e: SubmitEvent ) => {
         e.preventDefault()
 
-        const loadingButton = new LoadingButton('loading-button', {initialState : 'loading'})
+        const loadingButton = new LoadingButton('loading-button')
 
-        const transactions = formDataToCreateTransactions(new FormData(form))
+        const formData = getFormData(form)
+        const transactions = formDataToCreateTransactions(formData)
         const validated = TransactionValidator.store.parse(transactions)
         const { error } = await actions.transaction.store(validated)
 
