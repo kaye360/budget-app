@@ -6,7 +6,7 @@
  * 
  */
 
-type Context = Document | Element | DocumentFragment | Node
+export type Context = Document | Element | DocumentFragment | Node
 
 export function el<T extends Element>(
     selector: string,

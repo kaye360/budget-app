@@ -45,6 +45,8 @@ import LoadingButton from "../../../components/Button/LoadingButton.astro";
 import { actions } from "astro:actions"
 import { el } from "../../../lib/el"
 import { sleep } from "../../app/app.utils"
+import { LoadingButton } from "../../../components/Button/LoadingButton"
+import { getFormData } from "../../app/form.utils"
 
 const createButton = el<HTMLButtonElement>('budget-create button', this)
 const dialog = el<HTMLDialogElement>('budget-create dialog', this)
@@ -54,27 +56,28 @@ if( createButton && dialog ) {
 }
 
 el<HTMLFormElement>('#add-budget-form', document, form => {
+
+    const button = new LoadingButton('loading-button', {context : form} )
+
     form.addEventListener('submit', async (e: Event) => {
 
         e.preventDefault()
 
-        const button = el<HTMLButtonElement>('loading-button', form)
-        
-        button?.setAttribute('state', 'loading')
+        button.setState('loading')
 
-        const formData = new FormData(form)
+        const { name, amount } = getFormData(form)
 
-        const response = await actions.budget.store({
-            name : String( formData.get('name') ),
-            amount : Number(formData.get('amount'))
-        })
-
-        if( response.error ) {
-            button?.setAttribute('state', 'error')
-            return 
+        if( typeof name !== 'string' || typeof amount !== 'string' ) {
+            throw new Error('Invalid name or amount type')
         }
 
-        button?.setAttribute('state', 'success')
+        const response = await actions.budget.store({ name, amount })
+
+        if( response.error ) {
+            button.setState('error')
+        }
+
+        button?.setState('success')
         await sleep(1000)
         dialog?.close()
 
@@ -85,10 +88,14 @@ el<HTMLFormElement>('#add-budget-form', document, form => {
         const budgetItem = el('budget-item', fragment)
 
         if(!budgetItem) {
-            console.warn('Invalid Budget template')
-            return
+            throw new Error('Invalid Budget template')
         }
 
+
+        if( !response.data ) {
+            return
+        }
+        
         const state = {
             name : response.data[0].name,
             amount : response.data[0].amount,
@@ -97,7 +104,6 @@ el<HTMLFormElement>('#add-budget-form', document, form => {
         }
 
         budgetItem.setAttribute('state', JSON.stringify(state))
-        
         budgetList?.append(budgetItem)
     })
 })

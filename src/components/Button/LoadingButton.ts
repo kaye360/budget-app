@@ -1,4 +1,4 @@
-import { el } from "../../lib/el"
+import { el, type Context } from "../../lib/el"
 
 export type LoadingButtonValidState = 'initial' | 'loading' | 'error' | 'success'
 
@@ -9,20 +9,22 @@ export class LoadingButton {
     constructor(
         selector : string,
         options : {
-            initialState : LoadingButtonValidState
+            initialState? : LoadingButtonValidState
+            context? : Context
         } = {
-            initialState : 'initial'
+            initialState : 'initial',
+            context : document
         }
     ) {
 
-        const selectedEl = el<HTMLButtonElement>(selector)
+        const selectedEl = el<HTMLButtonElement>(selector, options.context)
 
         if( !selectedEl ) {
             throw new Error('Invalid Loading button selector')
         }
 
         this.button = selectedEl
-        this.button.setAttribute('state', options.initialState)
+        this.button.setAttribute('state', options.initialState || 'initial')
     }
 
     setState( state : LoadingButtonValidState ) {

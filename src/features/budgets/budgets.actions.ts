@@ -27,8 +27,9 @@ export const budget = {
 
     store : defineAction({
         input : z.object({
-            name: z.string(),
-            amount : z.number()
+            name: z.coerce.string(),
+            // Accept a string or number but coerce to number
+            amount: z.union([z.string(), z.number()]).transform(value => Number(value))
         }),
         handler : async ({name, amount}) => {
 

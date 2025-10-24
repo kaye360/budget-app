@@ -20,6 +20,8 @@ import LoadingButton from "../../../components/Button/LoadingButton.astro";
 <script>
 import { actions } from "astro:actions"
 import { el } from "../../../lib/el"
+import { LoadingButton } from "../../../components/Button/LoadingButton"
+import { sleep } from "../../app/app.utils"
 
 class BudgetDelete extends HTMLElement {
     
@@ -31,34 +33,34 @@ class BudgetDelete extends HTMLElement {
      */
     connectedCallback() {
         el<HTMLFormElement>('button', this, button => {
+
+            const loadingButton = new LoadingButton('loading-button', { context : this })
+
             button.addEventListener('click', async () => {
                 
                 const budgetItem = this.closest('budget-item')
                 const budget = JSON.parse(budgetItem?.getAttribute('state') || '')
-                const loadingButton = el<HTMLButtonElement>('loading-button', this )
-                
-                if( !loadingButton || !budget ) {
-                    console.warn('Invalid budget or loadingButton')
-                    return
+
+                if( !budget ) {
+                    throw new Error ('Invalid budget')
                 }
 
-                loadingButton.setAttribute('state', 'loading')
+                loadingButton.setState('loading')
 
                 const response = await actions.budget.destroy({id : budget.id})
-
+                
                 if( response.error ) {
-                    loadingButton.setAttribute('state', 'error')
+                    loadingButton.setState('error')
                     return 
                 }
                 
-                loadingButton.setAttribute('state', 'success')
+                loadingButton.setState('success')
+                await sleep(2000)
                 this.closest('dialog')?.close()
                 budgetItem?.remove()
             })
         })
     }
-
-
 }
 
 customElements.define('budget-delete', BudgetDelete)

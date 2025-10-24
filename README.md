@@ -2,7 +2,6 @@
 Made with Astro
 
 ## Todo
-- Make larger util functions into their own files
 - Implement LoadingButton classs
 - Make auth more secure
 
