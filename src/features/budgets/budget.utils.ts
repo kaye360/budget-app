@@ -1,5 +1,6 @@
-import type { Budget, Transaction } from "../../types/types"
+import type { Transaction } from "../transactions/schema/transaction.schema"
 import { groupTransactionsByBudget } from "../transactions/utils/groupTransactionsByBudget.utils"
+import type { Budget } from "./schema/budget.schema"
 
 
 /**
@@ -9,7 +10,7 @@ import { groupTransactionsByBudget } from "../transactions/utils/groupTransactio
  * 
  */
 
-interface BudgetWithTotalSpent extends Budget {
+export interface BudgetWithTotalSpent extends Budget {
 	totalSpent : number,
 	percentSpent : number
 }

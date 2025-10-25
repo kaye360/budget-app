@@ -54,7 +54,6 @@ export const transaction = {
                 .update({
                     ...input,
                     userId : 1,
-                    source : 'manual'
                 })
                 .eq('id', input.id)
 

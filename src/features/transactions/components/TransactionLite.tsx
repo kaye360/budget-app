@@ -1,4 +1,4 @@
-import type {Transaction as TransactionType} from "../../../types/types";
+import type {Transaction as TransactionType} from "../../../types/_types";
 import { convertDate } from "../../../lib/convertDate";
 
 interface Props {

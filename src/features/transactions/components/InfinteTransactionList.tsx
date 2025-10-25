@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react"
-import type { Budget, Transaction as TransactionType } from "../../../types/types"
 import Transaction from "./Transaction"
 import { actions } from "astro:actions"
 import TransactionList from "./TransactionList"
+import type { Transaction as TransactionSchema } from "../schema/transaction.schema"
+import type { Budget } from "../../budgets/schema/budget.schema"
 
 interface Props {
-    initialTransactions : TransactionType[]
+    initialTransactions : TransactionSchema[]
     budgets : Budget[]
     actionButton : 'edit' | 'restore'
 }

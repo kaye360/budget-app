@@ -1,5 +1,5 @@
 import { convertDate } from "../../../lib/convertDate"
-import type { CreateTransaction } from "../../../types/types"
+import type { CreateTransaction } from "../../../types/_types"
 
 /**
  * Retrieves the CSV column pattern for a given account ID.
@@ -100,7 +100,6 @@ export function transformCsvRowsToTransactions(
             budgetId : null,
             isDeleted : false, 
             userId : 1,
-            source : 'import'
         }
 
         return transaction

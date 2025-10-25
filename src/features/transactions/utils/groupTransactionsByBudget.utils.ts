@@ -1,4 +1,4 @@
-import type { Transaction } from "../../../types/types"
+import type { Transaction } from "../schema/transaction.schema"
 
 /**
  * Groups an array of transactions by their `budgetId`.

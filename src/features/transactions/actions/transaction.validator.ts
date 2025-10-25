@@ -1,22 +1,9 @@
 import { z } from "astro/zod"
-
-/**
- * Base Transaction Schema
- */
-const transactionSchema = z.object({
-    date: z.string().length(10),
-    description: z.string().min(1),
-    amount: z.coerce.number(),
-    budgetId: z.coerce.number().nullable().optional(),
-    accountId: z.coerce.number(),
-    isDeleted : z.boolean(),
-    userId : z.number(),
-    source : z.string(),
-})
+import { CreateTransaction, Transaction } from "../schema/transaction.schema"
 
 
 /**
- * Action input validators for Transactions
+ * Validation schemas for Transaction-related Astro Actions
  */
 export const TransactionValidator =  {
 
@@ -28,16 +15,13 @@ export const TransactionValidator =  {
     }),
 
     store : z.union([
-        transactionSchema,
-        z.array(transactionSchema)
+        CreateTransaction,
+        z.array(CreateTransaction)
     ]).transform( t => Array.isArray(t) ? t : [t]),
 
-    update : transactionSchema.partial().extend({
-        id : z.number()
-    }),
+    update : Transaction.partial().extend({ id : z.number() }),
 
     destroy : z.object({
         id : z.number()
     })
-
 }

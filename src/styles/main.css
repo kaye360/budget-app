@@ -53,6 +53,10 @@ html.dark {
         @apply cursor-pointer;
     }
 
+    button {
+        @apply cursor-pointer active:scale-90 ;
+    }
+
     a {
         @apply hover:underline hover:text-red;
     }

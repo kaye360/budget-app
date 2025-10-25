@@ -1,11 +1,13 @@
 import { ArchiveRestoreIcon, CircleCheckIcon, EllipsisIcon, LoaderCircleIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
-import type { Budget, Transaction as TransactionType} from "../../../types/types";
+import type { Budget } from "../../../types/_types";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
+import { sleep } from "../../app/app.utils";
+import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 
 interface Props {
-    transaction : TransactionType
+    transaction : TransactionSchema
     budgets : Budget[]
     actionButton : 'edit' | 'restore'
 }
@@ -16,7 +18,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
     const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
     const [deleteStatus, setDeleteStatus] = useState<'initial' | 'deleting' | 'deleted'>('initial')
     const [restoreStatus, setRestoreStatus] = useState<'initial' | 'restoring' | 'restored'>('initial')
-    const [transaction, setTransaction] = useState<TransactionType>(initialTransaction)
+    const [transaction, setTransaction] = useState<TransactionSchema>(initialTransaction)
     const budgetInputRef = useRef<HTMLSelectElement>(null)
 
     useEffect( () => {
@@ -30,37 +32,29 @@ export default function Transaction({transaction : initialTransaction, actionBut
 
         setSaveStatus('saving')
         
-        const result = await actions.transaction.update({
-            id: Number(transaction.id),
-            date: String(transaction.date),
-            description: String(transaction.description),
-            amount: Number(transaction.amount),
-            budgetId: transaction.budgetId,
-            accountId: 1,
-        })
+        const response = await actions.transaction.update({...transaction})
 
-        if( !result.error ) {
+        if( !response.error ) {
             setSaveStatus('saved')
-            setTimeout( () => {
-                setSaveStatus('initial')
-                setIsEditing(false)
-            }, 500)
+            await sleep(500)
+            setSaveStatus('initial')
+            setIsEditing(false)
         }
     }
 
     const handleDelete = async () => {
         setDeleteStatus("deleting")
-        const result = await actions.transaction.destroy({id: Number(transaction.id)})
-        if( !result.error ) setDeleteStatus('deleted')
+        const response = await actions.transaction.destroy({id: Number(transaction.id)})
+        if( !response.error ) setDeleteStatus('deleted')
     }
 
     const handleRestore = async () => {
         setRestoreStatus('restoring')
-        const result = await actions.transaction.update({
+        const response = await actions.transaction.update({
             isDeleted : false,
-            id : Number(transaction.id)
+            id : transaction.id
         })
-        if( !result.error ) setRestoreStatus('restored')
+        if( !response.error ) setRestoreStatus('restored')
     }
 
     const handleEsc = (e: KeyboardEvent<HTMLFormElement>) => {

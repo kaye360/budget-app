@@ -2,9 +2,8 @@
 Made with Astro
 
 ## Todo
-- Implement LoadingButton classs
 - Make auth more secure
-
+- look into all the nullable props in Transaction Type. Remove nullables from zod if possible. look into infering zod schema
 
 ### Bugs
 - when adding multiple transactions, only the last one gets added
