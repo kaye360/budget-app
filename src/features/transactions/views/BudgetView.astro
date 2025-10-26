@@ -1,15 +1,15 @@
 ---
 import { actions } from "astro:actions"
-import type { Transaction as TransactionType } from "../../../types/_types"
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
 import TransactionList from "../components/TransactionList"
+import type { Transaction as TransactionSchema } from "../schema/transaction.schema"
 import Transaction from "../components/Transaction"
 
 const budget = Astro.props.routeParam
 const budgets = await Astro.callAction( actions.budget.index, {} )
 const budgetName = budgets.data?.find( b => b.id === Number(budget) )?.name
 
-let transactions: TransactionType[] = []
+let transactions: TransactionSchema[] = []
 
 if( budget ) {
 	const { data, error } = await Astro.callAction( actions.transaction.index, {
@@ -18,7 +18,7 @@ if( budget ) {
 	})
 
 	if( !error ) {
-		transactions = data as TransactionType[]
+		transactions = data as TransactionSchema[]
 	}
 }
 
@@ -46,7 +46,7 @@ if( budget ) {
 	</div>
 
 	<TransactionList>
-		{ transactions.map( (transaction: TransactionType) => (
+		{ transactions.map( (transaction: TransactionSchema) => (
 			<Transaction {transaction} budgets={budgets.data ?? []} actionButton="edit" client:idle />
 		))}
 	</TransactionList>

@@ -1,8 +1,8 @@
-import type {Transaction as TransactionType} from "../../../types/_types";
 import { convertDate } from "../../../lib/convertDate";
+import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 
 interface Props {
-    transaction : TransactionType
+    transaction : TransactionSchema
 }
 
 export default function Transaction({transaction} : Props) {

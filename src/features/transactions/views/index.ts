@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 export { default as AddView } from './AddView.astro'
 export { default as BudgetView } from './BudgetView.astro'
 export { default as DeletedView } from './DeletedView.astro'

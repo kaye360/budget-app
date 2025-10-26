@@ -1,8 +1,8 @@
 ---
 import { actions } from "astro:actions";
-import type { Transaction as TransactionType } from "../../../types/_types";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
 import TransactionList from "../components/TransactionList";
+import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 import Transaction from "../components/Transaction";
 
 const [transactions, budgets] = await Promise.all([
@@ -17,7 +17,7 @@ const [transactions, budgets] = await Promise.all([
 >
 	
 	<TransactionList>
-		{ transactions.data.map( (transaction: TransactionType) => (
+		{ transactions.data.map( (transaction: TransactionSchema) => (
 			<Transaction {transaction} budgets={budgets.data ?? []} actionButton="edit" client:idle />
 		))}
 	</TransactionList>

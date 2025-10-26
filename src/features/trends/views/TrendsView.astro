@@ -2,12 +2,12 @@
 import { actions } from "astro:actions"
 import H1 from "../../../components/H1.astro"
 import AppLayout from "../../../layouts/AppLayout.astro"
-import type { Transaction } from "../../../types/_types"
 import { convertDate } from "../../../lib/convertDate"
 import GraphBar from "../components/GraphBar.astro"
 import GraphTitle from "../components/GraphTitle.astro"
 import GraphBarList from "../components/GraphBarList.astro"
 import GraphWrapper from "../components/GraphWrapper.astro"
+import type { Transaction } from "../../transactions/schema/transaction.schema"
 
 const [transactions, budgets] = await Promise.all([
     Astro.callAction(actions.transaction.index, { filter: "all" }),

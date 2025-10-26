@@ -1,5 +1,5 @@
 import { convertDate } from "../../../lib/convertDate"
-import type { CreateTransaction } from "../../../types/_types"
+import type { CreateTransaction } from "../schema/transaction.schema"
 
 /**
  * Retrieves the CSV column pattern for a given account ID.

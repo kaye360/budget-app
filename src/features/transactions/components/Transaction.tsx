@@ -1,10 +1,10 @@
 import { ArchiveRestoreIcon, CircleCheckIcon, EllipsisIcon, LoaderCircleIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
-import type { Budget } from "../../../types/_types";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
 import { sleep } from "../../app/app.utils";
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
+import type { Budget } from "../../budgets/schema/budget.schema";
 
 interface Props {
     transaction : TransactionSchema

@@ -1,9 +1,9 @@
 ---
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
-import type { Transaction as TransactionType } from "../../../types/_types";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
 import TransactionList from "../components/TransactionList";
+import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 import Transaction from "../components/Transaction";
 
 const { routeParam } = Astro.props
@@ -13,7 +13,6 @@ const [transactions, budgets] = await Promise.all([
 	Astro.callAction( actions.transaction.index, {filter : 'month', filterValue : month} ),
 	Astro.callAction( actions.budget.index, {} )
 ])
-
 ---
 
 <TransactionListLayout
@@ -37,35 +36,29 @@ const [transactions, budgets] = await Promise.all([
 	</div>
 
 	<TransactionList>
-		{ transactions.data.list.map( (transaction: TransactionType) => (
+		{ transactions.data.list.map( (transaction: TransactionSchema) => (
 			<Transaction {transaction} budgets={budgets.data ?? []} actionButton="edit" client:idle />
 		))}
 	</TransactionList>
 
-
 </TransactionListLayout>
-
 
 <script>
 import { el } from "../../../lib/el"
 
+el<HTMLSelectElement>('#month-selector', document, select => {
+	select.addEventListener('change', e => {
 
-document.addEventListener('DOMContentLoaded', () => {
+		if( !(e.target instanceof HTMLSelectElement) ) {
+			return
+		}
 
-	el<HTMLSelectElement>('#month-selector', document, select => {
-		select.addEventListener('change', e => {
+		if( e.target.dataset.month === e.target.value ) {
+			return
+		}
 
-			if( !(e.target instanceof HTMLSelectElement) ) {
-				return
-			}
-
-			if( e.target.dataset.month === e.target.value ) {
-				return
-			}
-
-			window.location.href = `/transactions/month/${e.target.value}`
-		})
+		window.location.href = `/transactions/month/${e.target.value}`
 	})
-
 })
+
 </script>
