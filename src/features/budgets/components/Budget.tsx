@@ -1,18 +1,18 @@
 import { CircleCheckIcon, EllipsisVerticalIcon, LoaderCircleIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react"
-import type { BudgetWithTotalSpent } from "../budget.utils"
 import { useState, type FormEvent, type KeyboardEvent } from "react"
 import { actions } from "astro:actions"
 import { sleep } from "../../app/app.utils"
+import type { Budget } from "../schema/budget.schema"
 
 interface Props {
-    budget : BudgetWithTotalSpent
+    budget : Budget
 }
 
 export default function Budget({
     budget : initialBudget
 } : Props) {
 
-    const [budget, setBudget] = useState<BudgetWithTotalSpent>(initialBudget)
+    const [budget, setBudget] = useState<Budget>(initialBudget)
     const [isEditing, setIsEditing] = useState(false)
     const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
     const [deleteStatus, setDeleteStatus] = useState<'initial' | 'deleting' | 'deleted'>('initial')
@@ -84,7 +84,7 @@ export default function Budget({
 
             <span className="text-2xl ml-auto min-w-fit flex gap-2">
                 <span className="min-w-fit">
-                    {Math.round(budget.totalSpent)}
+                    {Math.round(budget.totalSpent ?? 0)}
                 </span>
                 <span>
                     /
