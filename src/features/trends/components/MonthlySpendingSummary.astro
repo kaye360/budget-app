@@ -33,7 +33,6 @@ const {
 <script>
 import { actions } from "astro:actions";
 import { el, } from "../../../lib/el";
-import type { MonthlySpendingSummaryAPIResponse } from "../../../types/types";
 
 
 class MonthlySpendingSummary extends HTMLElement {
@@ -41,22 +40,18 @@ class MonthlySpendingSummary extends HTMLElement {
     private budgetList : HTMLElement | null = null
     private month : string | null = null
 
-    /**
-     * If there is a list of budgets:
-     * Observe budget-list with Mutation Observer and update spending
-     * summary when DOM elements change
-     * 
-     * Else, just get the spending summary data directly and don't
-     * worry about any DOM elements changing as we won't need to 
-     * update the spending summary data. Home page for example.
-     */
     async connectedCallback() {
-        this.budgetList = el('budget-list')
+        this.budgetList = el('#budget-list')
         this.month = this.getAttribute('month')
 
-        this.budgetList
-            ? this.observeBudgetList()
-            : this.getAndRenderSpendingData()
+        /**
+         * Observe changes to budgetList if it exists as we want to update the total of all budgets if 1 is changed. If no budgetList, then just render the component without and observer
+         */
+        if( this.budgetList ) {
+            this.observeBudgetList()
+        }
+
+        this.updateSpendingSummary()
     }
 
     /**
@@ -65,7 +60,7 @@ class MonthlySpendingSummary extends HTMLElement {
     observeBudgetList() {
 
         const observer = new MutationObserver( async () => {
-            this.getAndRenderSpendingData()            
+            this.updateSpendingSummary()            
         })
         
         observer.observe( this.budgetList as Node, {
@@ -78,44 +73,25 @@ class MonthlySpendingSummary extends HTMLElement {
     /**
      * Fetch and Render monthly spending data
      */
-    async getAndRenderSpendingData() {
-            const totals = await this.getMonthlySpendingSummary(this.month)
-            
-            if( totals ) {
-                this.renderSpendingData(totals)
-            }
-    }
+    async updateSpendingSummary() {
+        const response = await actions.summary.getMonthlySpending({date : this.month})
 
-    /**
-     * Fetch Monthly Spending Summary data
-     */
-    async getMonthlySpendingSummary( month : string | null ) {
-
-        // const res = await fetchData<MonthlySpendingSummaryAPIResponse>(`/api/summaries/monthly-spending/${month}`)
-        const res = await actions.summary.getMonthlySpending({date : month})
-            
-        if( res.data?.spent && res.data?.budgets ) {
-            return res.data
+        if( !response.data ) {
+            return
         }
 
-        return null
+        el('monthly-spending-total', this, el => {
+            el.textContent = String(`${response.data.spent} / ${response.data.budgets}`)
+        })
+
+        el<HTMLSpanElement>('span.progress-bar', this, el => {
+            const percent = Math.min(
+                Math.round( response.data.spent / response.data.budgets * 100 ),
+                100
+            )
+            el.style.width = `${percent}%` 
+        })
     }
-
-    /**
-     * Render current component data
-     */
-    renderSpendingData( totals : MonthlySpendingSummaryAPIResponse ) {
-
-        const percent = Math.min(
-            Math.round( totals.spent / totals.budgets * 100 ),
-            100
-        )
-
-        el('monthly-spending-total', this, el => el.textContent = String(`${totals.spent} / ${totals.budgets}`))
-        el<HTMLSpanElement>('span.progress-bar', this, el => el.style.width = `${percent}%` )
-
-    }
-
 }
 
 customElements.define('monthly-spending-summary', MonthlySpendingSummary)

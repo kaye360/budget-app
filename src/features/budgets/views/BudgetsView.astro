@@ -2,7 +2,7 @@
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
 import MonthlySpendingSummary from "../../trends/components/MonthlySpendingSummary.astro";
-import { getBudgetsWithTotalSpent } from "../budget.utils";
+import { calcBudgetSpendingTotals } from "../budget.utils";
 import CreateBudget from "../components/CreateBudget.astro";
 import SelectMonthlyBudget from "../components/SelectMonthlyBudget.astro";
 import AppLayout from "../../../layouts/AppLayout.astro";
@@ -18,7 +18,7 @@ const [transactions, budgets] = await Promise.all([
 	Astro.callAction( actions.budget.index, {} )
 ])
 
-const budgetsWithTotalSpent = getBudgetsWithTotalSpent(budgets.data, transactions.data.list)
+const budgetsWithSpendingTotals = calcBudgetSpendingTotals(budgets.data, transactions.data.list)
 
 ---
 <AppLayout>
@@ -37,7 +37,7 @@ const budgetsWithTotalSpent = getBudgetsWithTotalSpent(budgets.data, transaction
 
 	<section-divider class="block my-6 border-b border-slate-300 animate-progress-bar" />
 
-	<BudgetList budgets={budgetsWithTotalSpent} client:idle />
+	<BudgetList budgets={budgetsWithSpendingTotals} client:idle />
 
 	<CreateBudget />
 

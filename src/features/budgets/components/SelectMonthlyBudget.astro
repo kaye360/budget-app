@@ -29,15 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	el<HTMLSelectElement>('#month-selector', document, select => {
 		select.addEventListener('change', e => {
 
-			if( !(e.target instanceof HTMLSelectElement) ) {
+			if( 
+                !(e.target instanceof HTMLSelectElement) ||
+                e.target.dataset.month === e.target.value 
+            ) {
 				return
 			}
 
-			if( e.target.dataset.month === e.target.value ) {
-				return
-			}
-
-			window.location.href = `/budgets/${e.target.value}`
+			window.location.href = `/budgets/month/${e.target.value}`
 		})
 	})
 

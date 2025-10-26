@@ -77,7 +77,7 @@ export default function Budget({
                     onChange={ e => setBudget({...budget, name : e.target.value})}
                 />
             ) : (
-                <a href={`/budget/${budget.id}`} className="hover:underline">
+                <a href={`/budgets/budget/${budget.id}`} className="hover:underline">
                     {budget.name}
                 </a>
             )}

@@ -5,20 +5,15 @@ import type { Budget } from "./schema/budget.schema"
 
 /**
  * 
- * @function getBudgetsWithTotalSpent
- * Return a list of budgets with totals spent and percent spent for each budget
+ * @function calcBudgetSpendingTotals
+ * Calculates the total spending and percentage of spending for each budget.
+ * Returns a new Budget[] with  returned budget including totalSpent and percentSpent
  * 
  */
-
-export interface BudgetWithTotalSpent extends Budget {
-	totalSpent : number,
-	percentSpent : number
-}
-
-export function getBudgetsWithTotalSpent( 
+export function calcBudgetSpendingTotals( 
     budgets : Budget[] | undefined, 
     transactions : Transaction[] | undefined
-) : BudgetWithTotalSpent[] {
+) : Budget[] {
 
 	if( !transactions || !budgets ) {
 		return []
@@ -53,27 +48,3 @@ export function getBudgetsWithTotalSpent(
 }
 
 
-
-/**
- * 
- */
-export function getAllBudgetTotalSpent( budgets : BudgetWithTotalSpent[] ) {
-	const totals = budgets.reduce(
-		(acc, item) => {
-			acc.totalAmount += item.amount
-			acc.totalSpent += item.totalSpent
-			return acc
-		},
-		{ totalAmount: 0, totalSpent: 0, percentSpent : 0 }
-	)
-
-	totals.percentSpent = totals.totalAmount
-		? Math.round((totals.totalSpent / totals.totalAmount) * 100)
-		: 0
-
-	return {
-		totalAmount : Math.round(totals.totalAmount),
-		totalSpent : Math.round(totals.totalSpent),
-		percentSpent : Math.min( Math.round(totals.percentSpent), 100)
-	}
-}
