@@ -1,0 +1,53 @@
+---
+import { AlertCircleIcon } from "@lucide/astro";
+---
+<error-toast class="fixed -bottom-96 left-0 right-0 z-50 pointer-events-none transition-all duration-500">
+    <div class="relative border-l-2 border-pink-700 bg-pink-50 w-[90%] max-w-[500px] mx-auto px-10 py-4 shadow shadow-pink-300">
+        <span class="flex items-center gap-2 text-lg font-semibold ">
+            <AlertCircleIcon />
+            Something went wrong.
+        </span>
+        <error-message />
+        <error-progress class="absolute left-0 bottom-0 h-0.5 w-[0%] bg-pink-300 transition-all duration-[4500ms] ease-linear" />
+    </div>
+</error-toast>
+
+<script>
+import { sleep } from "../features/app/app.utils"
+import { el } from "../lib/el"
+
+window.addEventListener('error', async (e) => {
+
+    const errorToast = el('error-toast', document, toast => {
+        toast.classList.remove('-bottom-96')
+        toast.classList.add('bottom-24','md:bottom-4')
+    })
+
+    if( !errorToast ) {
+        throw new Error('Invalid error toast selector')
+    }
+
+    el('error-message', errorToast , message => {
+        message.textContent = e.message
+    })
+
+    // Start Progress Bar
+    await sleep(500)
+    const errorProgress = el('error-progress', errorToast, progress => {
+        progress.classList.remove('w-[0%]')
+        progress.classList.add('w-full')
+    })
+
+    // Reset and hide error toast
+    await sleep(5000)
+    errorToast.classList.add('-bottom-96')
+    errorToast.classList.remove('bottom-24', 'md:bottom-4')
+    errorProgress?.classList.remove('w-full', 'duration-[4500ms]')
+    errorProgress?.classList.add('w-[0%]')
+    
+    // Reset progress bar animation duration
+    await sleep(200)
+    errorProgress?.classList.add('duration-[4500ms]')
+})
+
+</script>
