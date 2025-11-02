@@ -6,15 +6,27 @@ import { convertDate } from "../../lib/convertDate";
 import MonthlySpendingSummary from "../trends/components/MonthlySpendingSummary.astro";
 import { getAuth } from "../auth/auth.utils";
 import TransactionLite from "../transactions/components/TransactionLite";
-import TransactionList from "../transactions/components/TransactionList";
 import type { Transaction } from "../transactions/schema/transaction.schema";
+import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../trends/utils/trendGraph.utils";
+import IncomeGraph from "../trends/components/IncomeGraph.astro";
+import NetGraph from "../trends/components/NetGraph.astro";
+import SpendingGraph from "../trends/components/SpendingGraph.astro";
 
 const auth = await getAuth(Astro)
 
-const transactions = await Astro.callAction( 
-	actions.transaction.index, 
-	{ filter : 'recent', perPage : 5 } 
-)
+const [recentTransactions, transactions] = await Promise.all([
+	Astro.callAction( actions.transaction.index, {filter : 'recent', perPage : 5} ),
+	Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
+		start : convertDate().prevMonth(4).to('YYYY-MM'),
+		end : convertDate().to('YYYY-MM')
+	}} ),
+])
+
+const spendingTotals = calcSpendingTotals(transactions.data)
+const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
+const incomeUpperRange = calcUpperRange(spendingTotals, 'income')
+const netUpperRange = calcUpperRange(spendingTotals, 'net')
+const monthRange = calcMonthRange(spendingTotals)
 
 ---
 <AppLayout>
@@ -45,7 +57,7 @@ const transactions = await Astro.callAction(
 				Recent Transactions
 			</h2>
 			<div class="grid gap-2">
-				{ !transactions.error && transactions.data.list.map( 
+				{ !transactions.error && recentTransactions.data.list.map( 
 					(transaction : Transaction ) => <TransactionLite {transaction} />
 				)}
 			</div>
@@ -55,9 +67,27 @@ const transactions = await Astro.callAction(
 			</a>
 		</div>
 
+		<div class="grid gap-x-4 gap-y-0 md:grid-cols-2">
+			<SpendingGraph
+				monthRange={monthRange}
+				spendingTotals={spendingTotals}
+				upperRange={spendingUpperRange}
+			/>
+	
+			<IncomeGraph 
+				monthRange={monthRange}
+				spendingTotals={spendingTotals}
+				upperRange={incomeUpperRange}
+			/>
+	
+			<NetGraph 
+				monthRange={monthRange}
+				spendingTotals={spendingTotals}
+				upperRange={netUpperRange}
+			/>
+		</div>
 
-		<div class="bg-blue/10 rounded-sm p-4 min-h-32">Debt</div>
-		<div class="bg-blue/10 rounded-sm p-4 min-h-32">Income</div>
+
 		<div class="bg-blue/10 rounded-sm p-4 min-h-32">
 			Upcoming Bills
 		</div>

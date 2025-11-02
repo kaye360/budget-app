@@ -1,0 +1,49 @@
+---
+import { convertDate } from "../../../lib/convertDate";
+import type { calcSpendingTotals } from "../utils/trendGraph.utils";
+import GraphBarList from "./GraphBarList.astro";
+import GraphTitle from "./GraphTitle.astro";
+import GraphWrapper from "./GraphWrapper.astro";
+
+interface Props {
+    monthRange : string[]
+    spendingTotals : ReturnType<typeof calcSpendingTotals>
+    upperRange : number
+}
+
+const { monthRange, spendingTotals, upperRange } = Astro.props
+---
+
+<GraphWrapper>
+    <GraphTitle title="Net over time" />
+
+    <GraphBarList class="h-[450px]">
+        { monthRange.map((month) => (
+            <div class="relative h-full flex items-center shrink-0">
+                <div class:list={[
+                    "flex flex-col items-center w-[70px] ",
+                    spendingTotals[month]?.net > 0 && "-translate-y-1/2",
+                    spendingTotals[month]?.net < 0 && "translate-y-1/2",
+                ]}>
+                    { spendingTotals[month]?.net > 0 && (
+                        <span>+{ spendingTotals[month]?.net }</span>
+                    )}
+                    <div
+                        class:list={[
+                            "bg-gradient-to-t w-[40px] rounded-t",
+                            spendingTotals[month]?.net > 0 && "from-green/40 to-green/20 border-b-2  border-green",
+                            spendingTotals[month]?.net < 0 && "from-red/30 to-red/20 border-t-2  border-red",
+                        ]}
+                        style={`
+                            height : ${ Math.abs(spendingTotals[month]?.net / upperRange * 150) }px;
+                        `}
+                    />
+                    { spendingTotals[month]?.net < 0 && (
+                        <span>{spendingTotals[month]?.net}</span>
+                    )}
+                </div>
+                <span class="absolute bottom-0 text-sm font-semibold">{convertDate(month).to("MMM-YYYY")}</span>
+            </div>
+        ))}
+    </GraphBarList>
+</GraphWrapper>

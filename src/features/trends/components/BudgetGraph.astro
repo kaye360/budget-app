@@ -2,6 +2,7 @@
 import { convertDate } from "../../../lib/convertDate"
 import type { Transaction } from "../../transactions/schema/transaction.schema"
 import { calcMonthRange, calcSpendingTotals, calcUpperRange } from "../utils/trendGraph.utils"
+import GraphWrapper from "./GraphWrapper.astro"
 
 interface Props {
     transactions : Transaction[]
@@ -14,7 +15,7 @@ const upperRange = calcUpperRange(spendingTotals)
 const monthRange = calcMonthRange(spendingTotals)
 ---
 
-<div class="p-4 rounded-xl my-4 border border-blue/60 select-none">
+<GraphWrapper>
     <h3 class="text-lg font-semibold mb-4">{budgetName}</h2>
     <div class="flex gap-2 items-stretch h-[300px] overflow-x-auto ">
         { monthRange.map( month => {
@@ -45,4 +46,4 @@ const monthRange = calcMonthRange(spendingTotals)
             )
         } )}
     </div>
-</div>
+</GraphWrapper>

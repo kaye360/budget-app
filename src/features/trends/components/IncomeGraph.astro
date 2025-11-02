@@ -1,0 +1,30 @@
+---
+import { convertDate } from "../../../lib/convertDate";
+import type { calcSpendingTotals } from "../utils/trendGraph.utils";
+import GraphBar from "./GraphBar.astro";
+import GraphBarList from "./GraphBarList.astro";
+import GraphTitle from "./GraphTitle.astro";
+import GraphWrapper from "./GraphWrapper.astro";
+
+interface Props {
+    monthRange : string[]
+    spendingTotals : ReturnType<typeof calcSpendingTotals>
+    upperRange : number
+}
+
+const { monthRange, spendingTotals, upperRange } = Astro.props
+---
+
+<GraphWrapper>
+    <GraphTitle title="Income over time" />
+    <GraphBarList>
+        { monthRange.map((month) => (
+            <GraphBar
+                title={convertDate(month).to("MMM-YYYY")}
+                amount={`+${ spendingTotals[month]?.income ?? 0 }`}
+                type="income"
+                heightRatio={(spendingTotals[month]?.income ?? 0) / upperRange * 225}
+            />
+        ))}
+    </GraphBarList>
+</GraphWrapper>

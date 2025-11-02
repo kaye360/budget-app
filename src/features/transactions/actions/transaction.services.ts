@@ -1,4 +1,4 @@
-import { z } from "astro:schema";
+import { object, z } from "astro:schema";
 import { db } from "../../../lib/db";
 import { convertDate } from "../../../lib/convertDate";
 import type { TransactionValidator } from "./transaction.validator";
@@ -9,16 +9,9 @@ import type { TransactionValidator } from "./transaction.validator";
  */
 const userId = 1
 
-/**
- * Transaction.get handlers
- */
-type GetTransactions = {
-    [key : string] : Function
-}
-
 type Params = z.infer<typeof TransactionValidator.index>
 
-export const getTransactionsBy : GetTransactions = {
+export const getTransactionsBy : Record<string, Function> = {
 
     all : async () => {
         const { data : list, count } = await db.from('TransactionView')
@@ -82,6 +75,35 @@ export const getTransactionsBy : GetTransactions = {
             }))
 
         return { list, months }
+    },
+
+    monthRange : async({filterValue} : Params) => {
+
+        if( typeof filterValue !== 'object' || !filterValue ) {
+            return { error : 'Invalid monthRange input value'}
+        }
+
+        const { start, end } = filterValue
+
+        if( !start || !end ) {
+            return { error : "Invalid start or end date"}
+        }
+
+        const startDate = `${start}-01`; // first day of July
+        const [year, month] = end.split("-").map(Number);
+        const nextMonth = month === 12 ? 1 : month + 1;
+        const nextYear = month === 12 ? year + 1 : year;
+        const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
+
+        const { data } = await db.from('TransactionView')
+            .select('*')
+            .order('date', { ascending : false })
+            .eq('userId', userId)
+            .eq('isDeleted', false)
+            .gte('date', startDate)
+            .lte('date', endDate)
+
+        return data ?? []
     },
 
     budget : async({ filterValue: budgetId} : Params) => {

@@ -2,14 +2,13 @@
 import { actions } from "astro:actions"
 import H1 from "../../../components/H1.astro"
 import AppLayout from "../../../layouts/AppLayout.astro"
-import { convertDate } from "../../../lib/convertDate"
-import GraphBar from "../components/GraphBar.astro"
 import GraphTitle from "../components/GraphTitle.astro"
-import GraphBarList from "../components/GraphBarList.astro"
-import GraphWrapper from "../components/GraphWrapper.astro"
 import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../utils/trendGraph.utils"
 import BudgetGraph from "../components/BudgetGraph.astro"
 import type { Transaction } from "../../transactions/schema/transaction.schema"
+import SpendingGraph from "../components/SpendingGraph.astro"
+import IncomeGraph from "../components/IncomeGraph.astro"
+import NetGraph from "../components/NetGraph.astro"
 
 const [transactions, budgets] = await Promise.all([
     Astro.callAction(actions.transaction.index, { filter: "all" }),
@@ -27,67 +26,23 @@ const monthRange = calcMonthRange(spendingTotals)
 
     <H1> Trends </H1>
 
-    <GraphWrapper>
-        <GraphTitle title="Spending over time" />
-        <GraphBarList>
-            { monthRange.map((month) => (
-                <GraphBar 
-                    title={convertDate(month).to("MMM-YYYY")}
-                    amount={`-${ spendingTotals[month]?.spending ?? 0 }`}
-                    type="spending" 
-                    heightRatio={(spendingTotals[month]?.spending ?? 0) / spendingUpperRange * 225} 
-                />
-            ))}
-        </GraphBarList>
-    </GraphWrapper>
+    <SpendingGraph
+        monthRange={monthRange}
+        spendingTotals={spendingTotals}
+        upperRange={spendingUpperRange}
+     />
 
-    <GraphWrapper>
-        <GraphTitle title="Income over time" />
-        <GraphBarList>
-            { monthRange.map((month) => (
-                <GraphBar
-                    title={convertDate(month).to("MMM-YYYY")}
-                    amount={`+${ spendingTotals[month]?.income ?? 0 }`}
-                    type="income"
-                    heightRatio={(spendingTotals[month]?.income ?? 0) / incomeUpperRange * 225}
-                />
-            ))}
-        </GraphBarList>
-    </GraphWrapper>
+    <IncomeGraph 
+        monthRange={monthRange}
+        spendingTotals={spendingTotals}
+        upperRange={incomeUpperRange}
+    />
 
-    <GraphWrapper>
-        <GraphTitle title="Net over time" />
-
-        <GraphBarList class="h-[450px]">
-            { monthRange.map((month) => (
-                <div class="relative h-full flex items-center shrink-0">
-                    <div class:list={[
-                        "flex flex-col items-center w-[70px] ",
-                        spendingTotals[month]?.net > 0 && "-translate-y-1/2",
-                        spendingTotals[month]?.net < 0 && "translate-y-1/2",
-                    ]}>
-                        { spendingTotals[month]?.net > 0 && (
-                            <span>+{ spendingTotals[month]?.net }</span>
-                        )}
-                        <div
-                            class:list={[
-                                "bg-gradient-to-t w-[40px] rounded-t",
-                                spendingTotals[month]?.net > 0 && "from-green/40 to-green/20 border-b-2  border-green",
-                                spendingTotals[month]?.net < 0 && "from-red/30 to-red/20 border-t-2  border-red",
-                            ]}
-                            style={`
-                                height : ${ Math.abs(spendingTotals[month]?.net / netUpperRange * 150) }px;
-                            `}
-                        />
-                        { spendingTotals[month]?.net < 0 && (
-                            <span>{spendingTotals[month]?.net}</span>
-                        )}
-                    </div>
-                    <span class="absolute bottom-0 text-sm font-semibold">{convertDate(month).to("MMM-YYYY")}</span>
-                </div>
-            ))}
-        </GraphBarList>
-    </div>
+    <NetGraph 
+        monthRange={monthRange}
+        spendingTotals={spendingTotals}
+        upperRange={netUpperRange}
+    />
 
     <!-- Make this interactive -->
     <div class="grid gap-4 mt-12 ">
