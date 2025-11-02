@@ -44,16 +44,54 @@ const monthRange = calcMonthRange(spendingTotals)
         upperRange={netUpperRange}
     />
 
-    <!-- Make this interactive -->
-    <div class="grid gap-4 mt-12 ">
+    <div 
+        id="budget-select"
+        class="grid gap-4 mt-12"
+    >
 
-        <GraphTitle title="Budgets Trends over time" />
+        <div class="flex justify-between">
+            <GraphTitle title="Budgets Trends over time" />
+            <select class="max-w-fit">
+                <option>Select a budget</option>
+                {budgets.data?.map( budget => (
+                    <option value={budget.id}>{budget.name}</option>
+                ))}
+            </select>
+        </div>
 
         { budgets.data?.map( budget => (
-            <BudgetGraph 
-                budgetName={budget.name}
-                transactions={transactions.data.list.filter( (t: Transaction) => t.budget === budget.name )}
-            />
+            <div data-budget-id={budget.id} class="hidden" >
+                <BudgetGraph 
+                    budgetName={budget.name}
+                    transactions={transactions.data.list.filter( (t: Transaction) => t.budget === budget.name )}
+                />
+            </div>
         ))}
+        
     </div>
+    
 </AppLayout>
+
+<script>
+import { el, els } from "../../../lib/el";
+
+el<HTMLSelectElement>('#budget-select', document, select => {
+    
+    const graphs = els<HTMLDivElement>('[data-budget-id]')
+
+    select.addEventListener('change', e => {
+
+        const target = e.target
+
+        if( !(target instanceof HTMLSelectElement )  ) {
+            throw new Error('Invalid BudgetSelect Element')
+        }
+
+        graphs.forEach( graph => {
+            const isSelected  = target.value === graph.dataset.budgetId
+            graph.classList.toggle('hidden', !isSelected)
+        })
+    })
+})
+
+</script>
