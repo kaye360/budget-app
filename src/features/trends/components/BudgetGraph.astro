@@ -1,0 +1,48 @@
+---
+import { convertDate } from "../../../lib/convertDate"
+import type { Transaction } from "../../transactions/schema/transaction.schema"
+import { calcMonthRange, calcSpendingTotals, calcUpperRange } from "../utils/trendGraph.utils"
+
+interface Props {
+    transactions : Transaction[]
+    budgetName : string
+}
+
+const { transactions, budgetName } = Astro.props
+const spendingTotals = calcSpendingTotals(transactions)
+const upperRange = calcUpperRange(spendingTotals)
+const monthRange = calcMonthRange(spendingTotals)
+---
+
+<div class="p-4 rounded-xl my-4 border border-blue/60 select-none">
+    <h3 class="text-lg font-semibold mb-4">{budgetName}</h2>
+    <div class="flex gap-2 items-stretch h-[300px] overflow-x-auto ">
+        { monthRange.map( month => {
+            const amount = spendingTotals[month]?.budgets[budgetName]
+            const heightRatio = Math.abs(amount / upperRange * 100)
+            return(
+                <div class="relative h-full flex items-center shrink-0">
+                    <div class:list={[
+                        "flex flex-col items-center w-[70px] ",
+                        amount > 0 && "-translate-y-1/2",
+                        amount < 0 && "translate-y-1/2",
+                    ]}>
+                        { amount > 0 && <span>+{ amount }</span> }
+                        <div
+                            class:list={[
+                                "bg-gradient-to-t w-[40px] rounded-t",
+                                amount > 0 && "from-green/40 to-green/20 border-b-2  border-green",
+                                amount < 0 && "from-red/30 to-red/20 border-t-2  border-red",
+                            ]}
+                            style={`height : ${heightRatio}px`}
+                        />
+                        { amount < 0 && <span>{amount}</span> }
+                    </div>
+                    <span class="absolute bottom-0 text-sm font-semibold">
+                        {convertDate(month).to("MMM-YYYY")}
+                    </span>
+                </div>
+            )
+        } )}
+    </div>
+</div>

@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react"
-import Transaction from "./Transaction"
+import { type Props as TransactionProps } from "./Transaction"
 import { actions } from "astro:actions"
 import TransactionList from "./TransactionList"
-import type { Transaction as TransactionSchema } from "../schema/transaction.schema"
-import type { Budget } from "../../budgets/schema/budget.schema"
+
+
 
 interface Props {
-    initialTransactions : TransactionSchema[]
-    budgets : Budget[]
-    actionButton : 'edit' | 'restore'
+    initialTransactions : TransactionProps['transaction'][]
+    budgets : TransactionProps['budgets']
+    actionButton : TransactionProps['actionButton']
 }
 
 export default function InfiniteTransactionList({initialTransactions, actionButton, budgets} : Props) {
@@ -55,16 +55,11 @@ export default function InfiniteTransactionList({initialTransactions, actionButt
 
     return(
         <>
-            <TransactionList>
-                { transactions.map( transaction => 
-                    <Transaction 
-                        transaction={transaction} 
-                        budgets={budgets}
-                        actionButton={actionButton}
-                        key={transaction.id}
-                    /> 
-                )}
-            </TransactionList>
+            <TransactionList
+                transactions={transactions}
+                budgets={budgets}
+                actionButton={actionButton}
+            />
 
             { !isAtEnd && (
                 <button 

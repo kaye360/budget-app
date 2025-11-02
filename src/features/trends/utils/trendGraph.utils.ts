@@ -1,7 +1,11 @@
 import { convertDate } from "../../../lib/convertDate"
 import type { Transaction } from "../../transactions/schema/transaction.schema"
 
-export function calcMonthlyTotals(transactions: Transaction[]) {
+/**
+ * @function calcSpendingTotals
+ * Calculate monthly spending, income, and net totals from a list of transactions.
+ */
+export function calcSpendingTotals(transactions: Transaction[]) {
 
     const totals: Record<
         string,
@@ -45,21 +49,57 @@ export function calcMonthlyTotals(transactions: Transaction[]) {
         totals[month].budgets[budget] = (totals[month].budgets[budget] ?? 0) + amount
     })
 
-    const totalsArray = Object.entries(totals)
-        .map(([month, { spending, income, net }]) => ({ month, spending, income, net }))
-        .sort((a, b) => (a.month < b.month ? 1 : -1))
-
-    return { totalsArray, totals }
+    return totals
 }
 
-export function calcUpperRange(totals: number[]) {
-    const highestSpending = String(Math.max(...totals.map((t) => Math.abs(t))))
+
+function totalsToArray( 
+    totals : ReturnType<typeof calcSpendingTotals>,
+) {
+    let totalsArr =  Object.entries(totals)
+        .map(([month, { spending, income, net, budgets }]) => ({ month, spending, income, net, budgets }))
+        .sort((a, b) => (a.month < b.month ? 1 : -1))
+
+    return totalsArr
+}
+
+function getGraphStartAndEndMonths( totals: ReturnType<typeof calcSpendingTotals> ) {
+    const totalsArray = totalsToArray(totals)
+    const start = totalsArray.map((t) => t.month).sort().at(0) as string
+    const end = totalsArray.map((t) => t.month).sort().at(-1) as string
+    return { start, end }
+}
+
+export function calcUpperRange(
+    totals: ReturnType<typeof calcSpendingTotals>,
+    filter : Exclude<keyof (typeof totals)[string], 'budgets'> = 'net'
+) {
+
+    const totalsArr = totalsToArray(totals).map((t) => t[filter])
+
+    if( totalsArr.length === 0 ) {
+        return 0
+    }
+
+    const highestSpending = String(Math.max(...totalsArr.map((t) => Math.abs(t))))
     const leadingDigits = Number(highestSpending.slice(0, 2)) + 1
-    const zeros = "0".repeat(highestSpending.length - 2)
+
+    const numberOfZeros = highestSpending.length - 2 >= 0
+        ? highestSpending.length - 2
+        : 0
+
+    const zeros = "0".repeat(numberOfZeros)
     return Number(leadingDigits + zeros)
 }
 
-export function calcMonthRange(start: string, end: string) {
+export function calcMonthRange(totals: ReturnType<typeof calcSpendingTotals>) {
+
+    const { start, end } = getGraphStartAndEndMonths(totals)
+
+    if( !start || !end ) {
+        return []
+    }
+
     const range = []
     const [startYear, startMonth] = start.split("-").map(Number)
     const [endYear, endMonth] = end.split("-").map(Number)

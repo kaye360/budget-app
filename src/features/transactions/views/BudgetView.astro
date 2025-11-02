@@ -45,11 +45,11 @@ if( budget ) {
 		</select>
 	</div>
 
-	<TransactionList>
-		{ transactions.map( (transaction: TransactionSchema) => (
-			<Transaction {transaction} budgets={budgets.data ?? []} actionButton="edit" client:idle />
-		))}
-	</TransactionList>
+	<TransactionList
+		transactions={transactions}
+		budgets={budgets.data ?? []}
+		client:idle
+	/>
 
 </TransactionListLayout>
 

@@ -7,21 +7,20 @@ import GraphBar from "../components/GraphBar.astro"
 import GraphTitle from "../components/GraphTitle.astro"
 import GraphBarList from "../components/GraphBarList.astro"
 import GraphWrapper from "../components/GraphWrapper.astro"
-import { calcMonthlyTotals, calcUpperRange, calcMonthRange } from "../utils/trendGraph.utils"
+import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../utils/trendGraph.utils"
+import BudgetGraph from "../components/BudgetGraph.astro"
+import type { Transaction } from "../../transactions/schema/transaction.schema"
 
 const [transactions, budgets] = await Promise.all([
     Astro.callAction(actions.transaction.index, { filter: "all" }),
     Astro.callAction(actions.budget.index, {}),
 ])
 
-
-const { totals, totalsArray } = calcMonthlyTotals(transactions.data.list)
-const spendingUpperRange = calcUpperRange(totalsArray.map((t) => t.spending))
-const incomeUpperRange = calcUpperRange(totalsArray.map((t) => t.income))
-const netUpperRange = calcUpperRange(totalsArray.map((t) => t.net))
-const startMonth = totalsArray.map((t) => t.month).sort().at(0) as string
-const endMonth = totalsArray.map((t) => t.month).sort().at(-1) as string
-const monthRange = calcMonthRange(startMonth, endMonth)
+const spendingTotals = calcSpendingTotals(transactions.data.list)
+const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
+const incomeUpperRange = calcUpperRange(spendingTotals, 'income')
+const netUpperRange = calcUpperRange(spendingTotals, 'net')
+const monthRange = calcMonthRange(spendingTotals)
 ---
 
 <AppLayout>
@@ -34,9 +33,9 @@ const monthRange = calcMonthRange(startMonth, endMonth)
             { monthRange.map((month) => (
                 <GraphBar 
                     title={convertDate(month).to("MMM-YYYY")}
-                    amount={`-${ totals[month]?.spending ?? 0 }`}
+                    amount={`-${ spendingTotals[month]?.spending ?? 0 }`}
                     type="spending" 
-                    heightRatio={(totals[month]?.spending ?? 0) / spendingUpperRange * 225} 
+                    heightRatio={(spendingTotals[month]?.spending ?? 0) / spendingUpperRange * 225} 
                 />
             ))}
         </GraphBarList>
@@ -48,9 +47,9 @@ const monthRange = calcMonthRange(startMonth, endMonth)
             { monthRange.map((month) => (
                 <GraphBar
                     title={convertDate(month).to("MMM-YYYY")}
-                    amount={`+${ totals[month]?.income ?? 0 }`}
+                    amount={`+${ spendingTotals[month]?.income ?? 0 }`}
                     type="income"
-                    heightRatio={(totals[month]?.income ?? 0) / incomeUpperRange * 225}
+                    heightRatio={(spendingTotals[month]?.income ?? 0) / incomeUpperRange * 225}
                 />
             ))}
         </GraphBarList>
@@ -64,24 +63,24 @@ const monthRange = calcMonthRange(startMonth, endMonth)
                 <div class="relative h-full flex items-center shrink-0">
                     <div class:list={[
                         "flex flex-col items-center w-[70px] ",
-                        totals[month]?.net > 0 && "-translate-y-1/2",
-                        totals[month]?.net < 0 && "translate-y-1/2",
+                        spendingTotals[month]?.net > 0 && "-translate-y-1/2",
+                        spendingTotals[month]?.net < 0 && "translate-y-1/2",
                     ]}>
-                        { totals[month]?.net > 0 && (
-                            <span>+{ totals[month]?.net }</span>
+                        { spendingTotals[month]?.net > 0 && (
+                            <span>+{ spendingTotals[month]?.net }</span>
                         )}
                         <div
                             class:list={[
                                 "bg-gradient-to-t w-[40px] rounded-t",
-                                totals[month]?.net > 0 && "from-green/40 to-green/20 border-b-2  border-green",
-                                totals[month]?.net < 0 && "from-red/30 to-red/20 border-t-2  border-red",
+                                spendingTotals[month]?.net > 0 && "from-green/40 to-green/20 border-b-2  border-green",
+                                spendingTotals[month]?.net < 0 && "from-red/30 to-red/20 border-t-2  border-red",
                             ]}
                             style={`
-                                height : ${ Math.abs(totals[month]?.net / netUpperRange * 150) }px;
+                                height : ${ Math.abs(spendingTotals[month]?.net / netUpperRange * 150) }px;
                             `}
                         />
-                        { totals[month]?.net < 0 && (
-                            <span>{totals[month]?.net}</span>
+                        { spendingTotals[month]?.net < 0 && (
+                            <span>{spendingTotals[month]?.net}</span>
                         )}
                     </div>
                     <span class="absolute bottom-0 text-sm font-semibold">{convertDate(month).to("MMM-YYYY")}</span>
@@ -90,43 +89,16 @@ const monthRange = calcMonthRange(startMonth, endMonth)
         </GraphBarList>
     </div>
 
+    <!-- Make this interactive -->
     <div class="grid gap-4 mt-12 ">
 
         <GraphTitle title="Budgets Trends over time" />
 
         { budgets.data?.map( budget => (
-            <div class="bg-white p-4 rounded-xl">
-                <h3 class="text-lg font-semibold mb-4">{budget.name}</h2>
-                <div class="flex gap-2 items-stretch h-[300px] overflow-x-auto ">
-                    { monthRange.map( month => {
-                        const amount = totals[month]?.budgets[budget.name]
-                        const heightRatio = Math.abs(amount / netUpperRange * 150)
-                        return(
-                            <div class="relative h-full flex items-center shrink-0">
-                                <div class:list={[
-                                    "flex flex-col items-center w-[70px] ",
-                                    amount > 0 && "-translate-y-1/2",
-                                    amount < 0 && "translate-y-1/2",
-                                ]}>
-                                    { amount > 0 && <span>+{ amount }</span> }
-                                    <div
-                                        class:list={[
-                                            "bg-gradient-to-t w-[40px] rounded-t",
-                                            amount > 0 && "from-green/40 to-green/20 border-b-2  border-green",
-                                            amount < 0 && "from-red/30 to-red/20 border-t-2  border-red",
-                                        ]}
-                                        style={`height : ${heightRatio}px`}
-                                    />
-                                    { amount < 0 && <span>{amount}</span> }
-                                </div>
-                                <span class="absolute bottom-0 text-sm font-semibold">
-                                    {convertDate(month).to("MMM-YYYY")}
-                                </span>
-                            </div>
-                        )
-                    } )}
-                </div>
-            </div>
+            <BudgetGraph 
+                budgetName={budget.name}
+                transactions={transactions.data.list.filter( (t: Transaction) => t.budget === budget.name )}
+            />
         ))}
     </div>
 </AppLayout>

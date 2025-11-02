@@ -35,11 +35,11 @@ const [transactions, budgets] = await Promise.all([
 		</select>
 	</div>
 
-	<TransactionList>
-		{ transactions.data.list.map( (transaction: TransactionSchema) => (
-			<Transaction {transaction} budgets={budgets.data ?? []} actionButton="edit" client:idle />
-		))}
-	</TransactionList>
+	<TransactionList
+		transactions={transactions.data.list}
+		budgets={budgets.data || []}
+		client:idle
+	/>
 
 </TransactionListLayout>
 

@@ -1,20 +1,18 @@
 ---
 import { actions } from "astro:actions";
-import H1 from "../../../components/H1.astro";
 import AppLayout from "../../../layouts/AppLayout.astro";
 import type { Transaction as TransactionSchema } from "../../transactions/schema/transaction.schema";
 import TransactionList from "../../transactions/components/TransactionList";
 import Transaction from "../../transactions/components/Transaction";
 import type { Budget } from "../schema/budget.schema";
-import { convertDate } from "../../../lib/convertDate";
-import { calcMonthlyTotals, calcUpperRange, calcMonthRange } from "../../trends/utils/trendGraph.utils";
 import { MoveLeftIcon } from "@lucide/astro";
+import BudgetGraph from "../../trends/components/BudgetGraph.astro";
 
 const { routeParam } = Astro.props
 
 const budgets = await Astro.callAction( actions.budget.index, {})
 const budget = budgets.data?.filter( budget => budget.id === Number(routeParam))[0]
-const budgetName = budget?.name as string
+const budgetName = budget?.name ?? '' as string
 
 let transactions : TransactionSchema[] = []
 
@@ -28,26 +26,16 @@ if( budget ) {
 		transactions = data as TransactionSchema[]
 	}
 }
-
-const { totals, totalsArray } = calcMonthlyTotals(transactions)
-const upperRange = calcUpperRange(totalsArray.map((t) => t.net))
-const startMonth = totalsArray.map((t) => t.month).sort().at(0) as string
-const endMonth = totalsArray.map((t) => t.month).sort().at(-1) as string
-const monthRange = calcMonthRange(startMonth, endMonth)
 ---
 
 <AppLayout>
+    
 	<div class="flex justify-between items-start">
 
-        <div>
-            <a href="/budgets" class="flex items-center gap-1">
-                <MoveLeftIcon size={16} />
-                Back to Budgets
-            </a>
-            <H1>
-                {budget?.name || `Invalid Budget ID : ${routeParam}`}
-            </H1>
-        </div>
+        <a href="/budgets" class="flex items-center gap-1">
+            <MoveLeftIcon size={16} />
+            Back to Budgets
+        </a>
 
         <select class="max-w-fit">
             <option>Select a Budget</option>
@@ -58,46 +46,16 @@ const monthRange = calcMonthRange(startMonth, endMonth)
 		
 	</div>
 
+    <BudgetGraph 
+        budgetName={budgetName}
+        transactions={transactions}
+    />
 
-    <div class="flex gap-2 items-stretch h-[300px] overflow-x-auto rounded-xl my-4 p-2 border border-blue/60">
-        { monthRange.map( month => {
-            const amount = totals[month]?.budgets[budgetName]
-            const heightRatio = Math.abs(amount / upperRange * 100)
-            return(
-                <div class="relative h-full flex items-center shrink-0">
-                    <div class:list={[
-                        "flex flex-col items-center w-[70px] ",
-                        amount > 0 && "-translate-y-1/2",
-                        amount < 0 && "translate-y-1/2",
-                    ]}>
-                        { amount > 0 && <span>+{ amount }</span> }
-                        <div
-                            class:list={[
-                                "bg-gradient-to-t w-[40px] rounded-t",
-                                amount > 0 && "from-green/40 to-green/20 border-b-2  border-green",
-                                amount < 0 && "from-red/30 to-red/20 border-t-2  border-red",
-                            ]}
-                            style={`height : ${heightRatio}px`}
-                        />
-                        { amount < 0 && <span>{amount}</span> }
-                    </div>
-                    <span class="absolute bottom-0 text-sm font-semibold">
-                        {convertDate(month).to("MMM-YYYY")}
-                    </span>
-                </div>
-            )
-        } )}
-    </div>
-
-    <TransactionList>
-        { transactions.map( transaction =>  
-            <Transaction 
-                transaction={transaction} 
-                budgets={budgets.data as Budget[]} 
-                actionButton="edit"
-            /> 
-        )}
-    </TransactionList>
+    <TransactionList
+        transactions={transactions} 
+        budgets={budgets.data ?? []} 
+        actionButton="edit"
+    />
 
 </AppLayout>
 

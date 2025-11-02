@@ -6,7 +6,7 @@ import { sleep } from "../../app/app.utils";
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 import type { Budget } from "../../budgets/schema/budget.schema";
 
-interface Props {
+export interface Props {
     transaction : TransactionSchema
     budgets : Budget[]
     actionButton : 'edit' | 'restore'

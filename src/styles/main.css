@@ -175,6 +175,7 @@ html.dark {
         @apply left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
     }
 
+
 }
 
 @layer utilities {
@@ -187,6 +188,26 @@ html.dark {
     .scrollbar-hide {
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;     /* Firefox */
+    }
+
+    .graph-scrollbar {
+        /* Chrome, Edge, Safari */
+        &::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            @apply bg-blue;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            @apply bg-blue rounded-full hover:bg-orange;
+        }
+
+        /* Firefox */
+        scrollbar-width: thin;
+        /* scrollbar-color: #3b82f6 #e5e7eb; thumb track */
     }
 
 }
