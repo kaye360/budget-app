@@ -20,7 +20,11 @@ export function formDataToCreateTransactions(
         const value = String(formData[key])
 
         if( !transactions[index] ) {
-            transactions[index] = { isDeleted : false, userId : 1, source : "manual" }
+            transactions[index] = { 
+                isDeleted : false, 
+                userId : 1, 
+                type : 'spending' 
+            }
         }
 
         transactions[index][col] = value

@@ -163,6 +163,31 @@ export default function Transaction({transaction : initialTransaction, actionBut
             )}
 
             { isEditing && (
+                <div className="border border-red/60 rounded min-w-max text-sm font-medium h-full">
+                    <button 
+                        type="button"
+                        className={`
+                            px-2 h-full 
+                            ${transaction.type === 'income' ? 'bg-red/60 text-white' : ''}
+                        `}
+                        onClick={ () => setTransaction({...transaction, type : 'income'}) }
+                    >
+                        Income
+                    </button>
+                    <button 
+                        type="button"
+                        className={`
+                            px-2 h-full 
+                            ${transaction.type === 'spending' ? 'bg-red/60 text-white' : ''}
+                        `}
+                        onClick={ () => setTransaction({...transaction, type : 'spending'}) }
+                    >
+                        Spending
+                    </button>
+                </div>
+            )}
+
+            { isEditing && (
                 <>
                     <button 
                         type="submit"

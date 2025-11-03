@@ -100,6 +100,7 @@ export function transformCsvRowsToTransactions(
             budgetId : null,
             isDeleted : false, 
             userId : 1,
+            type : 'spending'
         }
 
         return transaction

@@ -93,6 +93,7 @@ export type Database = {
           description: string
           id: number
           isDeleted: boolean
+          type: string
           userId: number
         }
         Insert: {
@@ -103,6 +104,7 @@ export type Database = {
           description: string
           id?: number
           isDeleted: boolean
+          type?: string
           userId: number
         }
         Update: {
@@ -113,6 +115,7 @@ export type Database = {
           description?: string
           id?: number
           isDeleted?: boolean
+          type?: string
           userId?: number
         }
         Relationships: [
@@ -144,6 +147,7 @@ export type Database = {
           description: string | null
           id: number | null
           isDeleted: boolean | null
+          type: string | null
           userId: number | null
         }
         Relationships: [

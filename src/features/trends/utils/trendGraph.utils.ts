@@ -36,10 +36,10 @@ export function calcSpendingTotals(transactions: Transaction[]) {
         }
 
         // Add income, spending, and net
-        if (amount > 0) {
+        if ( transaction.type === 'income' ) {
             totals[month].income += absAmount
         }
-        if (amount < 0) {
+        if ( transaction.type === 'spending' ) {
             totals[month].spending += absAmount
         }
         totals[month].net += amount

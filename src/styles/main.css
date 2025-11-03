@@ -42,7 +42,7 @@ html.dark {
 @layer base {
 
     input, select, textarea {
-        @apply border border-red/60 rounded-md px-2 py-0.5 w-full text-sm;
+        @apply border border-red/40 rounded-md px-2 py-0.5 w-full text-sm;
     }
 
     select {

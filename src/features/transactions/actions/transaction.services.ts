@@ -1,4 +1,4 @@
-import { object, z } from "astro:schema";
+import { z } from "astro:schema";
 import { db } from "../../../lib/db";
 import { convertDate } from "../../../lib/convertDate";
 import type { TransactionValidator } from "./transaction.validator";

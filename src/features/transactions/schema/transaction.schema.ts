@@ -12,6 +12,7 @@ export const Transaction = z.object({
     description: z.coerce.string(),
     isDeleted: z.coerce.boolean(),
     userId: z.coerce.number(),
+    type : z.enum(["spending", "income"]),
     id : z.coerce.number()
 })
 
