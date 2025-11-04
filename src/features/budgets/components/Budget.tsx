@@ -148,7 +148,10 @@ export default function Budget({
 
             <span 
                 className="absolute left-0 top-0 bottom-0 -z-10 rounded-sm block animate-progress-bar origin-left border progress-bar"
-                style={{width : `${budget.percentSpent}%`}}
+                style={ budget.percentSpent
+                    ? { width : `${budget.percentSpent}%`}
+                    : { width : '0%' }
+                }
             />
         </form>
     )
