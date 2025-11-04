@@ -1,7 +1,6 @@
 ---
+import { CirclePlusIcon, ImportIcon } from "@lucide/astro";
 import H1 from "../components/H1.astro";
-import CreateTransactionButton from "../features/transactions/components/CreateTransactionButton.astro";
-import ImportTransactionButton from "../features/transactions/components/ImportTransactionButton.astro";
 import SearchTransactionsForm from "../features/transactions/components/SearchTransactionsForm.astro";
 import TransactionFilterLink from "../features/transactions/components/TransactionFilterLink.astro";
 import AppLayout from "./AppLayout.astro";
@@ -21,13 +20,25 @@ const { title, active } = Astro.props
 			{title}
 		</H1>
 
-		<span class="flex items-center gap-4">
-			<CreateTransactionButton />
-			<ImportTransactionButton />
+		<span class="flex items-center gap-3">
+			<a 
+                class="flex items-center gap-0.5 text-base text-red hover:text-blue min-w-fit"
+                href="/transactions/add"
+            >
+                <CirclePlusIcon size={20} />
+                Add
+            </a>
+			<a 
+                class="flex items-center gap-0.5 text-base text-red hover:text-blue min-w-fit"
+                href="/transactions/import"
+            >
+                <ImportIcon size={22} />
+                Import
+            </a>
 		</span>
 	</div>
     
-    <filter-transactions class="flex items-center gap-x-3 gap-y-1 rounded mb-4 text-xs w-full overflow-x-auto py-2 scrollbar-hide relative">
+    <filter-transactions class="flex items-center gap-x-3 gap-y-1 rounded text-xs w-full overflow-x-auto py-2 scrollbar-hide relative">
 
         <TransactionFilterLink
             isActive={active === 'recent'}

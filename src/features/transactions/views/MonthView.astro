@@ -18,21 +18,19 @@ const [transactions, budgets] = await Promise.all([
 	title={convertDate(month).to('MMMM-YYYY')}
 	active="month"
 >
-	<div class="flex justify-right mb-4">
-		<select 
-			id="month-selector"
-			name="month-selector" 
-			class="w-fit ml-auto"
-			data-month={month}
-		>
-			<option>Select month to view</option>
-			{ !transactions.error && transactions.data.months.map( (month: { month: string, title: string }) => (
-				<option value={month.month}>
-					{month.title}
-				</option>
-			))}
-		</select>
-	</div>
+	<select 
+		id="month-selector"
+		name="month-selector" 
+		class="w-full md:w-fit ml-auto mb-4"
+		data-month={month}
+	>
+		<option>Select month to view</option>
+		{ !transactions.error && transactions.data.months.map( (month: { month: string, title: string }) => (
+			<option value={month.month}>
+				{month.title}
+			</option>
+		))}
+	</select>
 
 	<TransactionList
 		transactions={transactions.data.list}

@@ -3,7 +3,6 @@ Made with Astro
 
 ## Todo
 - Make auth more secure
-- make graph components
 
 ### Bugs
 - when adding multiple transactions, only the last one gets added

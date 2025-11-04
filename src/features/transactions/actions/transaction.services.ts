@@ -108,13 +108,19 @@ export const getTransactionsBy : Record<string, Function> = {
 
     budget : async ({ filterValue: budgetId} : Params) => {
 
-        const { data } = await db.from('TransactionView')
+        let query =  db.from('TransactionView')
             .select('*')
-            .order('date', { ascending : false })
+            .order('date', { ascending: false })
             .eq('userId', userId)
             .eq('isDeleted', false)
-            .eq('budgetId', Number(budgetId))
 
+        if (budgetId === 'null') {
+            query = query.is('budgetId', null)
+        } else if (budgetId) {
+            query = query.eq('budgetId', Number(budgetId))
+        }
+
+        const { data } = await query
         return data
     },
 
@@ -144,6 +150,7 @@ export const getTransactionsBy : Record<string, Function> = {
             .select('*')
             .order('date', { ascending : false })
             .eq('userId', userId)
+            .eq('isDeleted', false)
             .ilike('description', `%${query}%`)
         
         return data

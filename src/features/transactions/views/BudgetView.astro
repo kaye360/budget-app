@@ -3,7 +3,6 @@ import { actions } from "astro:actions"
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
 import TransactionList from "../components/TransactionList"
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema"
-import Transaction from "../components/Transaction"
 
 const budget = Astro.props.routeParam
 const budgets = await Astro.callAction( actions.budget.index, {} )
@@ -21,7 +20,6 @@ if( budget ) {
 		transactions = data as TransactionSchema[]
 	}
 }
-
 ---
 
 <TransactionListLayout
@@ -29,21 +27,20 @@ if( budget ) {
 	active="budget"
 >
 
-	<div class="flex items-center justify-start gap-2 mb-4">
-		<select 
-			id="budget-selector"
-			name="budget-selector" 
-			class="max-w-fit ml-auto"
-			data-budget={budget}
-		>
-			<option>Select budget to view</option>
-			{ budgets.data?.map( budget => (
-				<option value={budget.id}>
-					{budget.name}
-				</option>
-			))}
-		</select>
-	</div>
+	<select 
+		id="budget-selector"
+		name="budget-selector" 
+		class="w-full md:max-w-fit mb-4"
+		data-budget={budget}
+	>
+		<option>Select budget to view</option>
+		<option value="null">Uncategorized</option>
+		{ budgets.data?.map( budget => (
+			<option value={budget.id}>
+				{budget.name}
+			</option>
+		))}
+	</select>
 
 	<TransactionList
 		transactions={transactions}
