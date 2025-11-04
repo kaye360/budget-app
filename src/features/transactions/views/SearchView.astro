@@ -1,11 +1,39 @@
 ---
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
+import { actions } from "astro:actions";
+import TransactionList from "../components/TransactionList";
+
+const url = new URL(Astro.request.url);
+const searchParams = url.searchParams;
+const query = searchParams.get("q");
+
+let transactions
+let budgets
+
+if( query ) {
+	[transactions, budgets] = await Promise.all([
+		Astro.callAction(actions.transaction.index, { filter: "search", filterValue : query }),
+		Astro.callAction(actions.budget.index, {}),
+	])
+}
 ---
 
 <TransactionListLayout
 	title="Search Transactions"
 	active="search"
 >
-	Search...
+
+	{ query && transactions?.data && budgets?.data && (
+		<div class="my-4">
+			Search results for : <strong>"{query}"</strong>
+		</div>
+		<TransactionList 
+			transactions={transactions.data}
+			budgets={budgets.data}
+			actionButton="edit"
+			client:idle
+		/>
+	)}
+	
 </TransactionListLayout>
 

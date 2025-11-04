@@ -1,4 +1,4 @@
-import { ArchiveRestoreIcon, CircleCheckIcon, EllipsisIcon, LoaderCircleIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
+import { ArchiveRestoreIcon, BanknoteArrowDownIcon, BanknoteArrowUpIcon, CircleCheckIcon, EllipsisIcon, LoaderCircleIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
@@ -157,13 +157,20 @@ export default function Transaction({transaction : initialTransaction, actionBut
                     onChange={ (e) => setTransaction({...transaction, amount : Number(e.target.value)}) }
                 />
             ) : (
-                <span className="ml-auto text-md font-semibold font-theme w-full md:w-auto">
+                <span className="ml-auto flex items-center gap-1 text-md font-semibold font-theme w-full md:w-auto">
                     {transaction.amount}
+                    { transaction.type === 'spending' && (
+                        <BanknoteArrowDownIcon className="stroke-red" size={16} />
+                    )}
+                    { transaction.type === 'income' && (
+                        <BanknoteArrowUpIcon className="stroke-green-500" size={16} />
+                    )}
+
                 </span>
             )}
 
             { isEditing && (
-                <div className="border border-red/60 rounded min-w-max text-sm font-medium h-full">
+                <div className="border border-red/60 rounded min-w-max text-sm font-medium md:h-full">
                     <button 
                         type="button"
                         className={`

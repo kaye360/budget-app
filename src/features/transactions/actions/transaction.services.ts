@@ -77,7 +77,7 @@ export const getTransactionsBy : Record<string, Function> = {
         return { list, months }
     },
 
-    monthRange : async({filterValue} : Params) => {
+    monthRange : async ({filterValue} : Params) => {
 
         if( typeof filterValue !== 'object' || !filterValue ) {
             return { error : 'Invalid monthRange input value'}
@@ -106,7 +106,7 @@ export const getTransactionsBy : Record<string, Function> = {
         return data ?? []
     },
 
-    budget : async({ filterValue: budgetId} : Params) => {
+    budget : async ({ filterValue: budgetId} : Params) => {
 
         const { data } = await db.from('TransactionView')
             .select('*')
@@ -118,7 +118,7 @@ export const getTransactionsBy : Record<string, Function> = {
         return data
     },
 
-    deleted : async() => {
+    deleted : async () => {
 
         const { data } = await db.from('TransactionView')
             .select('*')
@@ -129,12 +129,22 @@ export const getTransactionsBy : Record<string, Function> = {
         return data
     },
 
-    uncategorized : async() => {
+    uncategorized : async () => {
         const { data } = await db.from('TransactionView')
             .select('*')
             .order('date', { ascending : false })
             .eq('userId', userId)
             .eq('budget', 'Uncategorized')
+        
+        return data
+    },
+
+    search : async ({ filterValue : query} : Params) => {
+        const { data } = await db.from('TransactionView')
+            .select('*')
+            .order('date', { ascending : false })
+            .eq('userId', userId)
+            .ilike('description', `%${query}%`)
         
         return data
     }

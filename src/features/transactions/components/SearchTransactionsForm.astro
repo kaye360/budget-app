@@ -1,0 +1,16 @@
+---
+import { SearchIcon } from "@lucide/astro";
+---
+
+<form 
+    method="get"
+    action="/transactions/search"
+    class="flex min-w-[300px] md:w-full gap-1"
+>
+    <input type="text" name="q" />
+
+    <button class="bg-red/50 hover:bg-red rounded p-1">
+        <SearchIcon />
+    </button>
+
+</form>

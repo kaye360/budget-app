@@ -2,6 +2,7 @@
 import H1 from "../components/H1.astro";
 import CreateTransactionButton from "../features/transactions/components/CreateTransactionButton.astro";
 import ImportTransactionButton from "../features/transactions/components/ImportTransactionButton.astro";
+import SearchTransactionsForm from "../features/transactions/components/SearchTransactionsForm.astro";
 import TransactionFilterLink from "../features/transactions/components/TransactionFilterLink.astro";
 import AppLayout from "./AppLayout.astro";
 
@@ -15,7 +16,7 @@ const { title, active } = Astro.props
 
 <AppLayout>
 
-	<div class="flex items-center justify-between flex-wrap gap-y-2">
+	<div class="flex items-center justify-between flex-wrap">
 		<H1>
 			{title}
 		</H1>
@@ -26,7 +27,7 @@ const { title, active } = Astro.props
 		</span>
 	</div>
     
-    <filter-transactions class="flex items-center gap-x-2 gap-y-1 rounded mb-4 text-xs w-full overflow-x-auto mt-4 md:mt-0 py-2 scrollbar-hide relative">
+    <filter-transactions class="flex items-center gap-x-3 gap-y-1 rounded mb-4 text-xs w-full overflow-x-auto py-2 scrollbar-hide relative">
 
         <TransactionFilterLink
             isActive={active === 'recent'}
@@ -58,13 +59,7 @@ const { title, active } = Astro.props
             href="/transactions/deleted"
             title="Deleted"
         />
-        <TransactionFilterLink
-            isActive={active === 'search'}
-            href="/transactions/search"
-            title="Search"
-        />
-
-        <span class="md:hidden sticky z-50 top-0 right-0 bottom-0 w-[50px] h-[24px] shrink-0 scale-y-200 bg-gradient-to-r from-transparent to-bg-2" />
+        <SearchTransactionsForm />
         
     </filter-transactions>
 
