@@ -2,7 +2,7 @@ import { ArchiveRestoreIcon, BanknoteArrowDownIcon, BanknoteArrowUpIcon, CircleC
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
-import { sleep } from "../../app/app.utils";
+import { sleep, toCurrency } from "../../app/app.utils";
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 import type { Budget } from "../../budgets/schema/budget.schema";
 
@@ -27,43 +27,47 @@ export default function Transaction({transaction : initialTransaction, actionBut
         }
     }, [isEditing] )
 
-    const handleSave = async (e : FormEvent) => {
-        e.preventDefault()
+    const handlers = {
 
-        setSaveStatus('saving')
-        
-        const response = await actions.transaction.update({...transaction})
-
-        if( !response.error ) {
-            setSaveStatus('saved')
-            await sleep(500)
-            setSaveStatus('initial')
+        handleSave : async (e : FormEvent) => {
+            e.preventDefault()
+    
+            setSaveStatus('saving')
+            
+            const response = await actions.transaction.update({...transaction})
+    
+            if( !response.error ) {
+                setSaveStatus('saved')
+                await sleep(500)
+                setSaveStatus('initial')
+                setIsEditing(false)
+            }
+        },
+    
+        handleDelete : async () => {
+            setDeleteStatus("deleting")
+            const response = await actions.transaction.destroy({id: Number(transaction.id)})
+            if( !response.error ) setDeleteStatus('deleted')
+        },
+    
+        handleRestore : async () => {
+            setRestoreStatus('restoring')
+            const response = await actions.transaction.update({
+                isDeleted : false,
+                id : transaction.id
+            })
+            if( !response.error ) setRestoreStatus('restored')
+        },
+    
+        handleEsc : (e: KeyboardEvent<HTMLFormElement>) => {
+            if( e.key === 'Escape' ) handlers.cancelChangesHandler()
+        },
+    
+        cancelChangesHandler : () => {
+            if( isEditing ) setTransaction(initialTransaction)
             setIsEditing(false)
         }
-    }
-
-    const handleDelete = async () => {
-        setDeleteStatus("deleting")
-        const response = await actions.transaction.destroy({id: Number(transaction.id)})
-        if( !response.error ) setDeleteStatus('deleted')
-    }
-
-    const handleRestore = async () => {
-        setRestoreStatus('restoring')
-        const response = await actions.transaction.update({
-            isDeleted : false,
-            id : transaction.id
-        })
-        if( !response.error ) setRestoreStatus('restored')
-    }
-
-    const handleEsc = (e: KeyboardEvent<HTMLFormElement>) => {
-        if( e.key === 'Escape' ) cancelChangesHandler()
-    }
-
-    const cancelChangesHandler = () => {
-        if( isEditing ) setTransaction(initialTransaction)
-        setIsEditing(false)
+        
     }
 
     if( 
@@ -73,8 +77,8 @@ export default function Transaction({transaction : initialTransaction, actionBut
 
     return (
         <form 
-            onSubmit={handleSave}
-            onKeyDown={handleEsc}
+            onSubmit={handlers.handleSave}
+            onKeyDown={handlers.handleEsc}
             className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 p-2 rounded-md transition-opacity border border-transparent [&:has(:focus)]:!bg-blue/30 [&:has(:focus)]:!border-blue/40 ${isEditing ? 'selected' : ''}`}
         >
             { isEditing ? (
@@ -152,20 +156,19 @@ export default function Transaction({transaction : initialTransaction, actionBut
                 <input 
                     type="text" 
                     name="amount" 
-                    defaultValue={transaction.amount ?? 0} 
+                    defaultValue={transaction.amount} 
                     className="w-24 shrink-0" 
                     onChange={ (e) => setTransaction({...transaction, amount : Number(e.target.value)}) }
                 />
             ) : (
                 <span className="ml-auto flex items-center gap-1 text-md font-semibold font-theme w-full md:w-auto">
-                    {transaction.amount}
+                    { toCurrency(transaction.amount) }
                     { transaction.type === 'spending' && (
                         <BanknoteArrowDownIcon className="stroke-red" size={16} />
                     )}
                     { transaction.type === 'income' && (
                         <BanknoteArrowUpIcon className="stroke-green-500" size={16} />
                     )}
-
                 </span>
             )}
 
@@ -217,7 +220,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
                         type="button"
                         className=" shrink-0 active:scale-90"
                         title="Hide Transaction"
-                        onClick={handleDelete}
+                        onClick={handlers.handleDelete}
                     >
                         <Trash2Icon className="w-[24px] h-[24px]  hover:stroke-red cursor-pointer" />
                     </button>
@@ -228,7 +231,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
                 <button 
                     type="button"
                     className="order-last group cursor-pointer transition-all active:scale-95"
-                    onClick={cancelChangesHandler}
+                    onClick={handlers.cancelChangesHandler}
                     title="Cancel Editing"
                 >
                     <XIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
@@ -251,7 +254,7 @@ export default function Transaction({transaction : initialTransaction, actionBut
                     type="button"
                     className="ml-2 group cursor-pointer transition-all active:scale-95 order-last"
                     title="Restore Transaction"
-                    onClick={handleRestore}
+                    onClick={handlers.handleRestore}
                 >
                     <ArchiveRestoreIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
                 </button>

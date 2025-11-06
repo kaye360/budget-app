@@ -17,9 +17,9 @@ export default function Budget({
     const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
     const [deleteStatus, setDeleteStatus] = useState<'initial' | 'deleting' | 'deleted'>('initial')
 
-    const handle = {
+    const handlers = {
 
-        delete : async () => {
+        handleDelete : async () => {
             setDeleteStatus('deleting')
             const response = await actions.budget.destroy({id : budget.id})
             if( !response.error ) {
@@ -27,16 +27,16 @@ export default function Budget({
             }
         },
 
-        cancel : () => {
+        handleCancel : () => {
             if( isEditing ) setBudget(initialBudget)
             setIsEditing(false)
         },
 
-        esc : (e: KeyboardEvent<HTMLFormElement>) => {
-            if( e.key === 'Escape' ) handle.cancel()
+        handleEsc : (e: KeyboardEvent<HTMLFormElement>) => {
+            if( e.key === 'Escape' ) handlers.handleCancel()
         },
 
-        save : async (e: FormEvent) => {
+        handleSave : async (e: FormEvent) => {
             e.preventDefault()
             setSaveStatus('saving')
             const response = await actions.budget.update({...budget})
@@ -56,18 +56,9 @@ export default function Budget({
 
     return (
         <form
-            onSubmit={handle.save}
-            onKeyDown={handle.esc}
-            // Apply darker bg and border styles to progress bar children 
-            className={`
-                relative rounded-sm flex items-center gap-2 justify-between px-4 py-2 font-semibold
-                nth-[5n+1]:bg-blue/10 [&:nth-child(5n+1)_span.progress-bar]:bg-blue/20 [&:nth-child(5n+1)_span.progress-bar]:border-blue/50
-                nth-[5n+2]:bg-green/10 [&:nth-child(5n+2)_span.progress-bar]:bg-green/20 [&:nth-child(5n+2)_span.progress-bar]:border-green/50
-                nth-[5n+3]:bg-purple/10 [&:nth-child(5n+3)_span.progress-bar]:bg-purple/20 [&:nth-child(5n+3)_span.progress-bar]:border-purple/50
-                nth-[5n+4]:bg-red/10 [&:nth-child(5n+4)_span.progress-bar]:bg-red/20 [&:nth-child(5n+4)_span.progress-bar]:border-red/50
-                nth-[5n]:bg-orange/10 [&:nth-child(5n)_span.progress-bar]:bg-orange/20 [&:nth-child(5n)_span.progress-bar]:border-orange/50
-                ${isEditing ? 'selected' : ''}
-            `}
+            onSubmit={handlers.handleSave}
+            onKeyDown={handlers.handleEsc}
+            className={` relative rounded-sm flex items-center gap-2 justify-between px-4 py-2 font-semibold budget-progress-bar ${isEditing ? 'selected' : ''} `}
         >
             { isEditing ? (
                 <input 
@@ -133,13 +124,14 @@ export default function Budget({
                         type="button"
                         className=" shrink-0 active:scale-90"
                         title="Hide Transaction"
-                        onClick={handle.delete}
+                        onClick={handlers.handleDelete}
                     >
                         <Trash2Icon className="w-[24px] h-[24px]  hover:stroke-red cursor-pointer" />
                     </button>
                     <button 
                         type="button"
                         onClick={ () => setIsEditing(false) }
+                        title="Cancel edit"
                     >
                         <XIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors hover" />
                     </button>
