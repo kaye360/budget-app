@@ -52,15 +52,17 @@ const monthRange = calcMonthRange(spendingTotals)
         <div class="flex justify-between">
             <GraphTitle title="Budgets Trends over time" />
             <select class="max-w-fit">
-                <option>Select a budget</option>
                 {budgets.data?.map( budget => (
                     <option value={budget.id}>{budget.name}</option>
                 ))}
             </select>
         </div>
 
-        { budgets.data?.map( budget => (
-            <div data-budget-id={budget.id} class="hidden" >
+        { budgets.data?.map( (budget, i) => (
+            <div 
+                data-budget-id={budget.id} 
+                class={ i !== 0 ? 'hidden' : '' }
+            >
                 <BudgetGraph 
                     budgetName={budget.name}
                     transactions={transactions.data.list.filter( (t: Transaction) => t.budget === budget.name )}

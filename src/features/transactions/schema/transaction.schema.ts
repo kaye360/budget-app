@@ -4,8 +4,11 @@ import { z } from "astro/zod"
  * Transaction Schema based on TransactionView
  */
 export const Transaction = z.object({
-    accountId: z.coerce.number(),
+    accountId: z.coerce.number().nullable(),
+
     amount: z.coerce.number(),
+    accountName : z.coerce.string(),
+    accountNumber : z.coerce.number(),
     budget: z.coerce.string(),
     budgetId: z.coerce.number().nullable(),
     date: z.coerce.string(),
@@ -21,7 +24,9 @@ export const Transaction = z.object({
  */
 export const CreateTransaction = Transaction.omit({ 
     id : true,
-    budget : true
+    budget : true,
+    accountName : true,
+    accountNumber : true
 })
 
 /**
@@ -30,7 +35,11 @@ export const CreateTransaction = Transaction.omit({
  * Any other properties will be automatically stripped away - eg from TransactionView
  */
 export const UpdateTransaction = Transaction
-    .omit({ budget : true })
+    .omit({ 
+        budget : true,
+        accountName : true,
+        accountNumber : true,
+    })
     .partial()
     .extend({ id : z.coerce.number() })
     .strip()

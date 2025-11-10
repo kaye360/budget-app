@@ -4,10 +4,12 @@ import type { Transaction as TransactionSchema} from "../schema/transaction.sche
 export default function TransactionList({
     transactions,
     budgets = [],
+    accounts = [],
     actionButton = 'edit'
 } : {
     transactions : TransactionProps['transaction'][]
-    budgets : TransactionProps['budgets']
+    budgets : TransactionProps['budgets'],
+    accounts : TransactionProps['accounts'],
     actionButton? : TransactionProps['actionButton']
 }) {
     return(
@@ -21,6 +23,7 @@ export default function TransactionList({
 			    <Transaction 
                     transaction={transaction} 
                     budgets={budgets} 
+                    accounts={accounts}
                     actionButton={actionButton} 
                     key={transaction.id}
                 />

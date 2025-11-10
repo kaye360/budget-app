@@ -44,21 +44,18 @@ export type Database = {
           id: number
           name: string
           number: number
-          type: string
           userId: number
         }
         Insert: {
           id?: number
           name: string
           number: number
-          type: string
           userId: number
         }
         Update: {
           id?: number
           name?: string
           number?: number
-          type?: string
           userId?: number
         }
         Relationships: []
@@ -86,7 +83,7 @@ export type Database = {
       }
       Transactions: {
         Row: {
-          accountId: number
+          accountId: number | null
           amount: number
           budgetId: number | null
           date: string
@@ -97,7 +94,7 @@ export type Database = {
           userId: number
         }
         Insert: {
-          accountId: number
+          accountId?: number | null
           amount: number
           budgetId?: number | null
           date: string
@@ -108,7 +105,7 @@ export type Database = {
           userId: number
         }
         Update: {
-          accountId?: number
+          accountId?: number | null
           amount?: number
           budgetId?: number | null
           date?: string
@@ -140,6 +137,8 @@ export type Database = {
       TransactionView: {
         Row: {
           accountId: number | null
+          accountName: string | null
+          accountNumber: number | null
           amount: number | null
           budget: string | null
           budgetId: number | null

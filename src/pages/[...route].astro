@@ -3,7 +3,6 @@ import HomeView from "../features/static/HomeView.astro"
 import Error404View from "../features/static/Error404View.astro"
 import DashboardView from "../features/dashboard/DashboardView.astro"
 import * as Transactions from  '../features/transactions/views/'
-import ProfileView from "../features/profile/ProfileView.astro"
 import LogoutView from "../features/auth/LogoutView.astro"
 import LoginView from "../features/auth/LoginView.astro"
 import type { AstroComponentFactory } from "astro/runtime/server/index.js"
@@ -13,6 +12,7 @@ import BudgetsView from "../features/budgets/views/BudgetsView.astro"
 import TrendsView from "../features/trends/views/TrendsView.astro"
 import ForecastView from "../features/forecast/ForecastView.astro"
 import BudgetView from "../features/budgets/views/BudgetView.astro"
+import SettingsView from "../features/settings/SettingsView.astro"
 
 const auth = await isAuth(Astro)
 
@@ -35,7 +35,7 @@ const routes = {
     "/budgets/budget" : BudgetView,
     "/trends" : TrendsView,
     "/forecast" : ForecastView,
-    "/profile" : ProfileView,
+    "/settings" : SettingsView,
     "/auth/login" : LoginView,
     "/auth/logout" : LogoutView,
     "/404" : Error404View

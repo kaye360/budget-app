@@ -7,11 +7,17 @@ import TransactionList from "./TransactionList"
 
 interface Props {
     initialTransactions : TransactionProps['transaction'][]
-    budgets : TransactionProps['budgets']
+    budgets : TransactionProps['budgets'],
+    accounts : TransactionProps['accounts'],
     actionButton : TransactionProps['actionButton']
 }
 
-export default function InfiniteTransactionList({initialTransactions, actionButton, budgets} : Props) {
+export default function InfiniteTransactionList({
+    initialTransactions, 
+    actionButton, 
+    budgets,
+    accounts
+} : Props) {
 
     const [transactions, setTransactions] = useState(initialTransactions)
     const [page, setPage] = useState(1)
@@ -58,6 +64,7 @@ export default function InfiniteTransactionList({initialTransactions, actionButt
             <TransactionList
                 transactions={transactions}
                 budgets={budgets}
+                accounts={accounts}
                 actionButton={actionButton}
             />
 

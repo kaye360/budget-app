@@ -8,6 +8,7 @@ import { db } from "../../lib/db"
 const userId = 1
 
 export const budget = {
+    
     index : defineAction({
         handler : async () => {
 
@@ -17,13 +18,12 @@ export const budget = {
                 .eq('userId', userId)
 
             if( error ) {
-                throw new Error( error .message )
+                throw new Error( error.message )
             }
 
             return data 
         }
     }),
-
 
     store : defineAction({
         input : z.object({
@@ -44,7 +44,6 @@ export const budget = {
             return data
         }
     }),
-
 
     update : defineAction({
         input : z.object({

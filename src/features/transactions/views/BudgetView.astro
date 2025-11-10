@@ -3,21 +3,27 @@ import { actions } from "astro:actions"
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
 import TransactionList from "../components/TransactionList"
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema"
+import type { Account } from "../../settings/accounts.schema"
 
 const budget = Astro.props.routeParam
 const budgets = await Astro.callAction( actions.budget.index, {} )
 const budgetName = budgets.data?.find( b => b.id === Number(budget) )?.name
 
 let transactions: TransactionSchema[] = []
+let accounts : Account[] = []
 
 if( budget ) {
-	const { data, error } = await Astro.callAction( actions.transaction.index, {
+
+	const transactionResponse = await Astro.callAction( actions.transaction.index, {
 		filter : 'budget', 
 		filterValue : budget, 
 	})
 
-	if( !error ) {
-		transactions = data as TransactionSchema[]
+	const accountResponse = await Astro.callAction( actions.accounts.index, {} )
+
+	if( !transactionResponse.error && !accountResponse.error ) {
+		transactions = transactionResponse.data as TransactionSchema[]
+		accounts = accountResponse.data
 	}
 }
 ---
@@ -45,6 +51,7 @@ if( budget ) {
 	<TransactionList
 		transactions={transactions}
 		budgets={budgets.data ?? []}
+		accounts={accounts}
 		client:idle
 	/>
 

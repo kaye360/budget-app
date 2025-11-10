@@ -7,6 +7,7 @@ import Transaction from "../../transactions/components/Transaction";
 import type { Budget } from "../schema/budget.schema";
 import { MoveLeftIcon } from "@lucide/astro";
 import BudgetGraph from "../../trends/components/BudgetGraph.astro";
+import H1 from "../../../components/H1.astro";
 
 const { routeParam } = Astro.props
 
@@ -26,6 +27,8 @@ if( budget ) {
 		transactions = data as TransactionSchema[]
 	}
 }
+
+const hasTransactions = transactions.length > 0
 ---
 
 <AppLayout>
@@ -46,16 +49,27 @@ if( budget ) {
 		
 	</div>
 
-    <BudgetGraph 
-        budgetName={budgetName}
-        transactions={transactions}
-    />
+    { hasTransactions && (
+        <BudgetGraph 
+            budgetName={budgetName}
+            transactions={transactions}
+        />
+        <TransactionList
+            transactions={transactions} 
+            budgets={budgets.data ?? []} 
+            actionButton="edit"
+        />
+    )}
 
-    <TransactionList
-        transactions={transactions} 
-        budgets={budgets.data ?? []} 
-        actionButton="edit"
-    />
+    { !hasTransactions &&  (
+        <div>
+            <H1>{budgetName}</H1>
+            <p class="text-md">
+                No budget data to show. <a href="/transactions/add" class="underline">Add</a> or <a href="/transactions/import" class="underline">import</a> some transactions.
+            </p>
+        </div>
+    )}
+
 
 </AppLayout>
 

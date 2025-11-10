@@ -1,6 +1,6 @@
 ---
 import NavLink from "./NavLink.astro"
-import { LayoutDashboardIcon, ArrowLeftRight, ChartColumnIncreasingIcon, BanknoteArrowUpIcon, CircleUserRoundIcon, ChartPieIcon, BotIcon, TrendingUpDown } from "@lucide/astro"
+import { LayoutDashboardIcon, ArrowLeftRight, ChartColumnIncreasingIcon, ChartPieIcon, BotIcon, TrendingUpDown, UserCog } from "@lucide/astro"
 
 const auth = await Astro.session?.get('auth')
 
@@ -10,7 +10,7 @@ const navLinks = [
     { href : '/budgets', title : 'Budgets',   Icon : ChartPieIcon},
     { href : '/trends', title : 'Trends',   Icon : ChartColumnIncreasingIcon},
     { href : '/forecast', title : 'Forecast',   Icon : TrendingUpDown},
-    { href : '/profile', title : 'Profile',        Icon : CircleUserRoundIcon},
+    { href : '/settings', title : 'Settings',        Icon : UserCog},
 ]
 ---
 { auth && 

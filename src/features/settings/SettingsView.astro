@@ -1,0 +1,25 @@
+---
+import { actions } from "astro:actions"
+import H1 from "../../components/H1.astro"
+import AppLayout from "../../layouts/AppLayout.astro"
+import Divider from "../../components/Divider.astro"
+import AccountsList from "./AccountsList"
+
+const accounts = await Astro.callAction( actions.accounts.index, {} )
+---
+
+<AppLayout>
+    <H1>Settings</H1>
+
+    { accounts?.data && 
+        <AccountsList accounts={accounts.data} client:idle />
+    }
+
+    <Divider />
+
+    <h2 class="font-semibold">
+        Log out
+    </h2>
+    
+    <a href="/auth/logout">Log out</a>
+</Layout>

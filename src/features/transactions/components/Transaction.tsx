@@ -5,20 +5,28 @@ import { convertDate } from "../../../lib/convertDate";
 import { sleep, toCurrency } from "../../app/app.utils";
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 import type { Budget } from "../../budgets/schema/budget.schema";
+import type { Account } from "../../settings/accounts.schema";
 
 export interface Props {
     transaction : TransactionSchema
-    budgets : Budget[]
+    budgets : Budget[],
+    accounts : Account[],
     actionButton : 'edit' | 'restore'
 }
 
-export default function Transaction({transaction : initialTransaction, actionButton, budgets} : Props) {
+export default function Transaction({
+    transaction : initialTransaction, 
+    actionButton, 
+    budgets,
+    accounts
+} : Props) {
 
     const [isEditing, setIsEditing] = useState<Boolean>(false)
     const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
     const [deleteStatus, setDeleteStatus] = useState<'initial' | 'deleting' | 'deleted'>('initial')
     const [restoreStatus, setRestoreStatus] = useState<'initial' | 'restoring' | 'restored'>('initial')
     const [transaction, setTransaction] = useState<TransactionSchema>(initialTransaction)
+
     const budgetInputRef = useRef<HTMLSelectElement>(null)
 
     useEffect( () => {
@@ -137,18 +145,28 @@ export default function Transaction({transaction : initialTransaction, actionBut
             )}
 
             { isEditing ? (
-                <select name="account" className="w-full bg-bg-2">
-                    <option value={1}>
-                        Everyday - Chequing 8754
-                    </option>
+                <select 
+                    name="account" 
+                    className="w-full bg-bg-2" 
+                    defaultValue={transaction.accountId ?? ''}
+                    onChange={ (e) => setTransaction({
+                        ...transaction, 
+                        accountId : Number(e.target.value),
+                        accountName : e.target.options[e.target.selectedIndex].text
+                    })}
+                >
+                    { accounts.map( account => (
+                        <option value={account.id}>
+                            {account.name} - {account.number}
+                        </option>
+                    )) }
                 </select>
             ) : (
                 <span className="bg-red/10 px-2 py-1 font-medium rounded-sm tracking-wide text-sm md:text-xs capitalize flex items-center gap-1 min-w-fit order-11 md:order-none">
-                    { transaction.accountId }
-                    <span>Everyday</span>
-                    &#9679;
-                    <span>Chequing</span>
-                    <span>7854</span>
+                    { !transaction.accountId
+                        ? 'No Account'
+                        : `${ transaction.accountName } ● ${ transaction.accountNumber}`
+                    }
                 </span>
             )}
 

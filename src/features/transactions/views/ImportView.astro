@@ -3,6 +3,12 @@ import { ImportIcon } from "@lucide/astro";
 import LoadingButton from "../../../components/Button/LoadingButton.astro";
 import ImportTransactionsDroppable from "../components/ImportTransactionsDroppable.astro";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
+import { actions } from "astro:actions";
+
+const response = await Astro.callAction( actions.accounts.index, {} )
+
+const accounts = response.data ?? []
+
 ---
 
 <TransactionListLayout title="Import Transactions">
@@ -21,12 +27,15 @@ import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
 
         <label class="lg:max-w-1/2">
             Bank Account:
-            <select name="account">
-                <option value="1">Everyday</option>
-                <option value="2">Line of Credit</option>
-                <option value="3">RBC Visa</option>
-                <option value="4">CIBC Mastercard</option>
-                <option value="5">Bills</option>
+            <select 
+                name="account" 
+                class="w-full bg-bg-2" 
+            >
+                { accounts.map( account => (
+                    <option value={account.id}>
+                        {account.name} - {account.number}
+                    </option>
+                )) }
             </select>
         </label>
 

@@ -7,9 +7,10 @@ import TransactionList from "../components/TransactionList";
 const { routeParam } = Astro.props
 const month = routeParam ?? convertDate().to('YYYY-MM')
 
-const [transactions, budgets] = await Promise.all([
+const [transactions, budgets, accounts] = await Promise.all([
 	Astro.callAction( actions.transaction.index, {filter : 'month', filterValue : month} ),
-	Astro.callAction( actions.budget.index, {} )
+	Astro.callAction( actions.budget.index, {} ),
+	Astro.callAction( actions.accounts.index, {} ),
 ])
 
 ---
@@ -35,6 +36,7 @@ const [transactions, budgets] = await Promise.all([
 	<TransactionList
 		transactions={transactions.data.list}
 		budgets={budgets.data || []}
+		accounts={accounts.data || []}
 		client:idle
 	/>
 

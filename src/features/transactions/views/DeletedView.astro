@@ -3,9 +3,10 @@ import { actions } from "astro:actions";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
 import TransactionList from "../components/TransactionList";
 
-const [transactions, budgets] = await Promise.all([
+const [transactions, budgets, accounts] = await Promise.all([
 	Astro.callAction( actions.transaction.index, {filter : 'deleted'} ),
 	Astro.callAction( actions.budget.index, {} ),
+	Astro.callAction( actions.accounts.index, {} )
 ])
 ---
 
@@ -17,6 +18,7 @@ const [transactions, budgets] = await Promise.all([
 	<TransactionList
 		transactions={transactions.data}
 		budgets={budgets.data ?? []} 
+		accounts={accounts.data ?? []}
 		actionButton="restore" 
 		client:idle
 	/>

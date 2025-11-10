@@ -3,7 +3,10 @@ Made with Astro
 
 ## Todo
 - Make auth more secure
-- empty /budgets/budget/:budgetId page
+- save status, delete status, cancel, etc components
+- implement badge icons
+- test importing and adding transactions after recent changes
+- transactions/account pages
 
 ### Bugs
 - when adding multiple transactions, only the last one gets added
