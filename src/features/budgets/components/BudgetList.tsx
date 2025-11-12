@@ -6,6 +6,7 @@ import { actions } from "astro:actions"
 import { getFormData } from "../../app/form.utils"
 import { sleep } from "../../app/app.utils"
 import { el } from "../../../lib/el"
+import { LoadingButton, useLoadingButtonStatus } from "../../../components/Button/LoadingButton.tsx"
 
 interface Props {
     budgets : BudgetSchema[]
@@ -16,23 +17,22 @@ export default function BudgetList({
 } : Props) {
 
     const [budgets, setBudgets] = useState<Props['budgets']>(initialBudgets.toSorted())
-    const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
+    const saveStatus = useLoadingButtonStatus()
 
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setSaveStatus('saving')
+        saveStatus.setAsLoading()
 
         const budget = getFormData(e.currentTarget)
         const validated = CreateBudget.parse(budget)
         const response = await actions.budget.store(validated)
 
         if( response.error ) {
+            saveStatus.setAsInitial()
             throw new Error(response.error.message)
         }
 
-        setSaveStatus('saved')
-        await sleep(1000)
-        setSaveStatus('initial')
+        saveStatus.setAsComplete()
 
         const newBudget = {
             id : response.data[0].id,
@@ -74,11 +74,12 @@ export default function BudgetList({
                     <input type="text" name="name" required placeholder="Name" />
                     <input type="number" name="amount" required placeholder="Amount"/>
 
-                    <button>
-                        {saveStatus === 'initial' && <SaveIcon /> }
-                        {saveStatus === 'saving' && <LoaderCircleIcon className="animate-spin" /> }
-                        {saveStatus === 'saved' && <CircleCheckIcon /> }
-                    </button>
+                    <LoadingButton 
+                        type="submit"
+                        state={saveStatus}
+                        icon={ChartPieIcon}
+                        badge="add"
+                    />
                 </form>
             </div>
         </>

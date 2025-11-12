@@ -18,36 +18,35 @@ import { el } from "../lib/el"
 
 window.addEventListener('error', async (e) => {
 
-    const errorToast = el('error-toast', document, toast => {
-        toast.classList.remove('-bottom-96')
-        toast.classList.add('bottom-24','md:bottom-4')
-    })
-
-    if( !errorToast ) {
-        throw new Error('Invalid error toast selector')
+    const errorToast = el('error-toast') as HTMLElement
+    const errorMessage = el('error-message', errorToast) as HTMLElement
+    const errorProgress = el('error-progress', errorToast) as HTMLElement
+    
+    if( !errorToast || !errorMessage || !errorProgress ) {
+        throw new Error('Invalid error toast, message, or progress selector')
     }
 
-    el('error-message', errorToast , message => {
-        message.textContent = e.message
-    })
+    // Show Error toast
+    errorToast.classList.remove('-bottom-96')
+    errorToast.classList.add('bottom-24','md:bottom-4')
+    errorMessage.textContent = e.message
 
     // Start Progress Bar
     await sleep(500)
-    const errorProgress = el('error-progress', errorToast, progress => {
-        progress.classList.remove('w-[0%]')
-        progress.classList.add('w-full')
-    })
+    errorProgress.classList.remove('w-[0%]')
+    errorProgress.classList.add('w-full')
 
     // Reset and hide error toast
     await sleep(5000)
     errorToast.classList.add('-bottom-96')
     errorToast.classList.remove('bottom-24', 'md:bottom-4')
-    errorProgress?.classList.remove('w-full', 'duration-[4500ms]')
-    errorProgress?.classList.add('w-[0%]')
+    errorProgress.classList.remove('w-full', 'duration-[4500ms]')
+    errorProgress.classList.add('w-[0%]')
+    errorMessage.textContent = ''
     
     // Reset progress bar animation duration
     await sleep(200)
-    errorProgress?.classList.add('duration-[4500ms]')
+    errorProgress.classList.add('duration-[4500ms]')
 })
 
 </script>

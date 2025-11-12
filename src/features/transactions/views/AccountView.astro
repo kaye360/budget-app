@@ -1,0 +1,89 @@
+---
+import { actions } from "astro:actions";
+import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
+import type { Budget } from "../../budgets/schema/budget.schema";
+import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
+import TransactionList from "../components/TransactionList";
+
+const accountId = Astro.props.routeParam
+const accounts = await Astro.callAction( actions.accounts.index, {} )
+const account = accounts.data?.find( a => a.id === Number(accountId))
+
+let transactions: TransactionSchema[] = []
+let budgets : Budget[] = []
+
+if( accountId ) {
+
+	const transactionResponse = await Astro.callAction( actions.transaction.index, {
+		filter : 'account', 
+		filterValue : accountId, 
+	})
+
+	const budgetResponse = await Astro.callAction( actions.budget.index, {} )
+
+	if( !transactionResponse.error && !budgetResponse.error ) {
+		transactions = transactionResponse.data as TransactionSchema[]
+		budgets = budgetResponse.data
+	}
+}
+
+const title = account ? `${account.name} ● ${account.number}` : 'Select an Account'
+---
+
+<TransactionListLayout 
+    title={title}
+    active="account"
+>
+
+	<select 
+		id="account-selector"
+		name="account-selector" 
+		class="w-full md:max-w-fit mb-4"
+		data-account={accountId}
+	>
+		<option>Select account to view</option>
+		<option value="null">Uncategorized</option>
+		{ accounts.data?.map( account => (
+			<option value={account.id}>
+				{account.name}
+			</option>
+		))}
+	</select>
+
+    <TransactionList
+		transactions={transactions}
+		accounts={accounts.data ?? []}
+		budgets={budgets}
+		client:idle
+	/>
+
+</AppLayout>
+
+
+<script>
+import { el } from "../../../lib/el"
+
+document.addEventListener('DOMContentLoaded', () => {
+
+	/**
+	 * Select onChange handler
+	 * Navigate to new transaction account page
+	 */
+	el<HTMLSelectElement>('#account-selector', document, select => {
+		select.addEventListener('change', e => {
+
+			if( !(e.target instanceof HTMLSelectElement) ) {
+				return
+			}
+
+			if( e.target.dataset.account === e.target.value ) {
+				return
+			}
+
+			window.location.href = `/transactions/account/${e.target.value}`
+		})
+	})
+
+})
+</script>
+

@@ -1,10 +1,12 @@
-import { CircleCheckIcon, CirclePlusIcon, CreditCardIcon, EllipsisVerticalIcon, LoaderCircleIcon, PlusIcon, SaveIcon, Trash2Icon, Wallet, Wallet2Icon, WalletIcon, XIcon } from "lucide-react"
+import { CreditCardIcon, Trash2Icon } from "lucide-react"
 import type { Account, CreateAccount } from "./accounts.schema"
 import { useRef, useState, type FormEvent } from "react"
 import { actions } from "astro:actions"
-import { sleep } from "../app/app.utils"
 import { getFormData } from "../app/form.utils"
-import { el, els } from "../../lib/el"
+import { els } from "../../lib/el"
+import { LoadingButton, useLoadingButtonStatus } from "../../components/Button/LoadingButton.tsx"
+import CancelButton from "../../components/Button/CancelButton.tsx"
+import EditButton from "../../components/Button/EditButton.tsx"
 
 interface Props {
     accounts : Account[]
@@ -14,8 +16,9 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
 
     const [accounts, setAccounts] = useState<Account[]>(initialAccounts)
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
-    const [createStatus, setCreateStatus] = useState<'initial' | 'creating' | 'created'>('initial')
+
+    const saveStatus = useLoadingButtonStatus()
+    const createStatus = useLoadingButtonStatus()
     
     const lastSavedAccounts = useRef<Account[]>(initialAccounts)
 
@@ -30,21 +33,17 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
 
     const handleSave = async (e: any) => {
 
-        setSaveStatus('saving')
+        saveStatus.setAsLoading()
 
         const response = await actions.accounts.update(accounts)
 
         if( response.error ) {
-            setSaveStatus('initial')
+            saveStatus.setAsInitial()
             throw new Error(response.error.message)
         }
 
         lastSavedAccounts.current = accounts
-
-        setSaveStatus('saved')
-        await sleep(1000)
-        setSaveStatus('initial')
-
+        saveStatus.setAsComplete()
         setIsEditing(false)
     }
 
@@ -56,7 +55,7 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
     const handleCreate = async (e : FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        setCreateStatus('creating')
+        createStatus.setAsLoading()
 
         const formData = getFormData(e.currentTarget)
         const createAccount = {
@@ -67,13 +66,11 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
         const response = await actions.accounts.store(createAccount)
 
         if( response.error ) {
-            setCreateStatus('initial')
+            createStatus.setAsInitial()
             throw new Error( response.error.message )
         }
 
-        setCreateStatus('created')
-        await sleep(1000)
-        setCreateStatus('initial')
+        createStatus.setAsComplete()
 
         const accountsResponse = await actions.accounts.index()
 
@@ -114,38 +111,15 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
                 </h2>
                 { isEditing ? (
                     <>
-                        <button 
-                            className="ml-auto"
-                            onClick={handleSave}
-                            disabled={saveStatus !== 'initial'}
-                            title="Save Changes"
-                        >
-                            { saveStatus === 'initial' && (
-                                <SaveIcon className="w-[24px] h-[24px] hover:stroke-red cursor-pointer" />
-                            )}
-                            { saveStatus === 'saving' && (
-                                <LoaderCircleIcon className="w-[24px] h-[24px] animate-spin" />
-                            )}
-                            { saveStatus === 'saved' && (
-                                <CircleCheckIcon className="w-[24px] h-[24px]" />
-                            )}
-                        </button>
-                        <button 
-                            type="button"
-                            className="ml-2"
-                            onClick={handleCancel}
-                            title="Cancel edit"
-                        >
-                            <XIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors hover" />
-                        </button>
+                        <LoadingButton 
+                            state={saveStatus} 
+                            onClick={handleSave} 
+                            className="ml-auto" 
+                        />
+                        <CancelButton onClick={handleCancel} />
                     </>
-                ) :  (
-                    <button 
-                        className="ml-auto"
-                        onClick={ () => setIsEditing(true) }
-                    >
-                        <EllipsisVerticalIcon className="text-base-text/60 hover:text-red"/>
-                    </button>
+                ) : (
+                    <EditButton onClick={ () => setIsEditing(true) } />
                 )}
             </div>
             { accounts.map( account => (
@@ -211,23 +185,7 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
                     id="number"
                     className="w-[6rem]"
                 />
-                <button className="relative max-h-min">
-                    { createStatus === 'initial' && (
-                        <>
-                            <CreditCardIcon size={28} />
-                            <CirclePlusIcon 
-                                size={20}
-                                className="fill-green-600 stroke-2 stroke-white absolute -bottom-1 -right-2" 
-                            />
-                        </>
-                    )}
-                    { createStatus === 'creating' && (
-                            <LoaderCircleIcon className="w-[24px] h-[24px] animate-spin" />
-                    )}
-                    { createStatus === 'created' && (
-                            <CircleCheckIcon className="w-[24px] h-[24px]" />
-                    )}
-                </button>
+                <LoadingButton state={createStatus} badge="add" type="submit" />
             </form>
         </div>
     )

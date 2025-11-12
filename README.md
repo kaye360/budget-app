@@ -3,8 +3,6 @@ Made with Astro
 
 ## Todo
 - Make auth more secure
-- save status, delete status, cancel, etc components
-- implement badge icons
 - test importing and adding transactions after recent changes
 - transactions/account pages
 

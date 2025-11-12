@@ -124,6 +124,28 @@ export const getTransactionsBy : Record<string, Function> = {
         return data
     },
 
+    account : async ({ filterValue: accountId} : Params) => {
+
+        if (accountId === null) {
+            throw new Error('Invalid accountId')
+        } 
+
+        let query =  db.from('TransactionView')
+            .select('*')
+            .order('date', { ascending: false })
+            .eq('userId', userId)
+            .eq('isDeleted', false)
+
+        if (accountId === 'null') {
+            query = query.is('accountId', null)
+        } else if (accountId) {
+            query = query.eq('accountId', Number(accountId))
+        }
+        
+        const { data } = await query
+        return data
+    },
+
     deleted : async () => {
 
         const { data } = await db.from('TransactionView')

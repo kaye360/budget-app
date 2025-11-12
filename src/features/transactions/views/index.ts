@@ -1,5 +1,6 @@
 // @ts-nocheck
 export { default as AddView } from './AddView.astro'
+export { default as AccountView } from './AccountView.astro'
 export { default as BudgetView } from './BudgetView.astro'
 export { default as DeletedView } from './DeletedView.astro'
 export { default as ImportView } from './ImportView.astro'

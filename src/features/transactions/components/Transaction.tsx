@@ -1,4 +1,4 @@
-import { ArchiveRestoreIcon, BanknoteArrowDownIcon, BanknoteArrowUpIcon, EllipsisIcon, Trash2Icon, XIcon } from "lucide-react";
+import { ArchiveRestoreIcon, BanknoteArrowDownIcon, BanknoteArrowUpIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
@@ -7,6 +7,8 @@ import type { Transaction as TransactionSchema } from "../schema/transaction.sch
 import type { Budget } from "../../budgets/schema/budget.schema";
 import type { Account } from "../../settings/accounts.schema";
 import { LoadingButton, useLoadingButtonStatus } from '../../../components/Button/LoadingButton.tsx'
+import CancelButton from "../../../components/Button/CancelButton.tsx";
+import EditButton from "../../../components/Button/EditButton.tsx";
 
 export interface Props {
     transaction : TransactionSchema
@@ -181,12 +183,15 @@ export default function Transaction({
                     )) }
                 </select>
             ) : (
-                <span className="bg-red/10 px-2 py-1 font-medium rounded-sm tracking-wide text-sm md:text-xs capitalize flex items-center gap-1 min-w-fit order-11 md:order-none">
+                <a 
+                    href={`/transactions/account/${transaction.accountId}`}
+                    className="bg-red/10 px-2 py-1 font-medium rounded-sm tracking-wide text-sm md:text-xs capitalize flex items-center gap-1 min-w-fit order-11 md:order-none hover:underline"
+                >
                     { !transaction.accountId
                         ? 'No Account'
                         : `${ transaction.accountName } ● ${ transaction.accountNumber}`
                     }
-                </span>
+                </a>
             )}
 
             { isEditing ? (
@@ -251,25 +256,19 @@ export default function Transaction({
             )}
 
             { actionButton === 'edit' && isEditing &&
-                <button 
-                    type="button"
+                <CancelButton 
                     className="order-last group cursor-pointer transition-all active:scale-95"
                     onClick={handlers.cancelChangesHandler}
                     title="Cancel Editing"
-                >
-                    <XIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
-                </button>
+                />
             }
 
             { actionButton === 'edit' && !isEditing &&
-                <button 
-                    type="button"
+                <EditButton
                     className="order-last group cursor-pointer transition-all active:scale-95 ml-auto md:ml-0"
                     onClick={ () => setIsEditing(true) }
                     title="Edit Transaction"
-                >
-                    <EllipsisIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors" />
-                </button>
+                />
             }
 
             { actionButton === 'restore' && (

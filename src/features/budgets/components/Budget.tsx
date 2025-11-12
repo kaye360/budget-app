@@ -1,9 +1,11 @@
-import { CircleCheckIcon, EllipsisVerticalIcon, LoaderCircleIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react"
+import { Trash2Icon } from "lucide-react"
 import { useState, type FormEvent, type KeyboardEvent } from "react"
 import { actions } from "astro:actions"
 import { sleep } from "../../app/app.utils"
 import type { Budget } from "../schema/budget.schema"
 import { LoadingButton, useLoadingButtonStatus } from "../../../components/Button/LoadingButton.tsx"
+import CancelButton from "../../../components/Button/CancelButton.tsx"
+import EditButton from "../../../components/Button/EditButton.tsx"
 
 interface Props {
     budget : Budget
@@ -106,9 +108,7 @@ export default function Budget({
             </span>
 
             { !isEditing && (
-                <button onClick={ () => setIsEditing(true) }>
-                    <EllipsisVerticalIcon className="text-base-text/60 hover:text-red"/>
-                </button>
+                <EditButton onClick={ () => setIsEditing(true) } />
             )}
 
             { isEditing && (
@@ -124,13 +124,7 @@ export default function Budget({
                         onClick={handlers.handleDelete}
                         title="Delete Budget"
                     />
-                    <button 
-                        type="button"
-                        onClick={ () => setIsEditing(false) }
-                        title="Cancel edit"
-                    >
-                        <XIcon className="stroke-slate-400 group-hover:stroke-slate-900 transition-colors hover" />
-                    </button>
+                    <CancelButton onClick={ () => setIsEditing(false) } title="Cancel Edit" />
                 </>
             )}
 
