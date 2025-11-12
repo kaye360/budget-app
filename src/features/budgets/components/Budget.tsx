@@ -3,6 +3,7 @@ import { useState, type FormEvent, type KeyboardEvent } from "react"
 import { actions } from "astro:actions"
 import { sleep } from "../../app/app.utils"
 import type { Budget } from "../schema/budget.schema"
+import { LoadingButton, useLoadingButtonStatus } from "../../../components/Button/LoadingButton.tsx"
 
 interface Props {
     budget : Budget
@@ -14,17 +15,23 @@ export default function Budget({
 
     const [budget, setBudget] = useState<Budget>(initialBudget)
     const [isEditing, setIsEditing] = useState(false)
-    const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
-    const [deleteStatus, setDeleteStatus] = useState<'initial' | 'deleting' | 'deleted'>('initial')
+
+    const saveStatus = useLoadingButtonStatus()
+    const deleteStatus = useLoadingButtonStatus()
 
     const handlers = {
 
         handleDelete : async () => {
-            setDeleteStatus('deleting')
+            deleteStatus.setAsLoading()
+
             const response = await actions.budget.destroy({id : budget.id})
-            if( !response.error ) {
-                setDeleteStatus('deleted')
+
+            if( response.error ) {
+                deleteStatus.setAsInitial()
+                throw new Error(response.error.message)
             }
+
+            deleteStatus.setAsComplete()
         },
 
         handleCancel : () => {
@@ -38,19 +45,23 @@ export default function Budget({
 
         handleSave : async (e: FormEvent) => {
             e.preventDefault()
-            setSaveStatus('saving')
+
+            saveStatus.setAsLoading()
+
             const response = await actions.budget.update({...budget})
 
-            if( !response.error ) {
-                setSaveStatus('saved')
-                await sleep(1500)
-                setSaveStatus('initial')
-                setIsEditing(false)
+            if( response.error ) {
+                saveStatus.setAsInitial()
+                throw new Error(response.error.message)
             }
+
+            saveStatus.setAsComplete()
+            await sleep(1000)
+            setIsEditing(false)
         }
     }
 
-    if( deleteStatus === 'deleted' ) {
+    if( deleteStatus.isComplete() ) {
         return <></>
     }
 
@@ -95,39 +106,24 @@ export default function Budget({
             </span>
 
             { !isEditing && (
-                <button
-                    onClick={ () => setIsEditing(true) }
-                >
+                <button onClick={ () => setIsEditing(true) }>
                     <EllipsisVerticalIcon className="text-base-text/60 hover:text-red"/>
                 </button>
             )}
 
             { isEditing && (
                 <>
-                    <button 
-                        type="submit"
-                        className="shrink-0 ml-auto md:ml-0 active:scale-90"
-                        disabled={saveStatus !== 'initial'}
-                        title="Save Changes"
-                    >
-                        { saveStatus === 'initial' && (
-                            <SaveIcon className="w-[24px] h-[24px] hover:stroke-red cursor-pointer" />
-                        )}
-                        { saveStatus === 'saving' && (
-                            <LoaderCircleIcon className="w-[24px] h-[24px] animate-spin" />
-                        )}
-                        { saveStatus === 'saved' && (
-                            <CircleCheckIcon className="w-[24px] h-[24px]" />
-                        )}
-                    </button>
-                    <button 
-                        type="button"
-                        className=" shrink-0 active:scale-90"
-                        title="Hide Transaction"
+                    <LoadingButton 
+                        state={saveStatus} 
+                        type="submit" 
+                        title="Save Budget"
+                    />
+                    <LoadingButton 
+                        icon={Trash2Icon} 
+                        state={deleteStatus} 
                         onClick={handlers.handleDelete}
-                    >
-                        <Trash2Icon className="w-[24px] h-[24px]  hover:stroke-red cursor-pointer" />
-                    </button>
+                        title="Delete Budget"
+                    />
                     <button 
                         type="button"
                         onClick={ () => setIsEditing(false) }

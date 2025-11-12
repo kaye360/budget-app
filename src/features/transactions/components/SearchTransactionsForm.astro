@@ -5,12 +5,12 @@ import { SearchIcon } from "@lucide/astro";
 <form 
     method="get"
     action="/transactions/search"
-    class="flex min-w-[300px] md:w-full gap-1"
+    class="flex min-w-[300px] md:w-full gap-1 relative"
 >
-    <input type="text" name="q" />
+    <input type="text" name="q" class="py-1" />
 
-    <button class="bg-red/50 hover:bg-red rounded p-1">
-        <SearchIcon />
+    <button class="hover:bg-blue rounded p-1 absolute right-0 top-1/2 -translate-y-1/2">
+        <SearchIcon size={20} />
     </button>
 
 </form>

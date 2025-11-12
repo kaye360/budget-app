@@ -1,4 +1,4 @@
-import { ArchiveRestoreIcon, BanknoteArrowDownIcon, BanknoteArrowUpIcon, CircleCheckIcon, EllipsisIcon, LoaderCircleIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
+import { ArchiveRestoreIcon, BanknoteArrowDownIcon, BanknoteArrowUpIcon, EllipsisIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
@@ -6,6 +6,7 @@ import { sleep, toCurrency } from "../../app/app.utils";
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 import type { Budget } from "../../budgets/schema/budget.schema";
 import type { Account } from "../../settings/accounts.schema";
+import { LoadingButton, useLoadingButtonStatus } from '../../../components/Button/LoadingButton.tsx'
 
 export interface Props {
     transaction : TransactionSchema
@@ -22,13 +23,15 @@ export default function Transaction({
 } : Props) {
 
     const [isEditing, setIsEditing] = useState<Boolean>(false)
-    const [saveStatus, setSaveStatus] = useState<'initial' | 'saving' | 'saved'>('initial')
-    const [deleteStatus, setDeleteStatus] = useState<'initial' | 'deleting' | 'deleted'>('initial')
-    const [restoreStatus, setRestoreStatus] = useState<'initial' | 'restoring' | 'restored'>('initial')
     const [transaction, setTransaction] = useState<TransactionSchema>(initialTransaction)
+
+    const saveStatus = useLoadingButtonStatus()
+    const deleteStatus = useLoadingButtonStatus()
+    const restoreStatus = useLoadingButtonStatus()
 
     const budgetInputRef = useRef<HTMLSelectElement>(null)
 
+    // Send focus to budget select element when isEditing === true
     useEffect( () => {
         if( isEditing && budgetInputRef.current ) {
             budgetInputRef.current.focus()
@@ -40,31 +43,47 @@ export default function Transaction({
         handleSave : async (e : FormEvent) => {
             e.preventDefault()
     
-            setSaveStatus('saving')
+            saveStatus.setAsLoading()
             
             const response = await actions.transaction.update({...transaction})
-    
-            if( !response.error ) {
-                setSaveStatus('saved')
-                await sleep(500)
-                setSaveStatus('initial')
-                setIsEditing(false)
+
+            if( response.error ) {
+                saveStatus.setAsInitial()
+                throw new Error(response.error.message)
             }
+    
+            saveStatus.setAsComplete()
+            await sleep(1000)
+            setIsEditing(false)
         },
     
         handleDelete : async () => {
-            setDeleteStatus("deleting")
+            deleteStatus.setAsLoading()
+
             const response = await actions.transaction.destroy({id: Number(transaction.id)})
-            if( !response.error ) setDeleteStatus('deleted')
+
+            if( response.error ) {
+                deleteStatus.setAsInitial()
+                throw new Error(response.error.message)
+            }
+            
+            deleteStatus.setAsComplete()
         },
     
         handleRestore : async () => {
-            setRestoreStatus('restoring')
+            restoreStatus.setAsLoading()
+
             const response = await actions.transaction.update({
                 isDeleted : false,
                 id : transaction.id
             })
-            if( !response.error ) setRestoreStatus('restored')
+
+            if( response.error ) {
+                restoreStatus.setAsInitial()
+                throw new Error(response.error.message)
+            }
+            
+            restoreStatus.setAsComplete()
         },
     
         handleEsc : (e: KeyboardEvent<HTMLFormElement>) => {
@@ -78,21 +97,21 @@ export default function Transaction({
         
     }
 
-    if( 
-        deleteStatus === 'deleted' ||
-        restoreStatus === 'restored'
-    ) return <></>
+    if( deleteStatus.isComplete() || restoreStatus.isComplete() ) return (
+        <></>
+    )
 
     return (
         <form 
             onSubmit={handlers.handleSave}
             onKeyDown={handlers.handleEsc}
-            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2 p-2 rounded-md transition-opacity border border-transparent [&:has(:focus)]:!bg-blue/30 [&:has(:focus)]:!border-blue/40 ${isEditing ? 'selected' : ''}`}
+            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2.5 p-2 rounded-md transition-opacity border border-transparent [&:has(:focus)]:!border-blue ${isEditing ? 'selected' : ''}`}
         >
             { isEditing ? (
                 <input 
                     type="date" 
                     name="date"
+                    className="w-28"
                     onChange={ (e) => setTransaction({...transaction, date : e.target.value})}
                     defaultValue={transaction.date as string}
                 />
@@ -175,7 +194,7 @@ export default function Transaction({
                     type="text" 
                     name="amount" 
                     defaultValue={transaction.amount} 
-                    className="w-24 shrink-0" 
+                    className="w-16 shrink-0" 
                     onChange={ (e) => setTransaction({...transaction, amount : Number(e.target.value)}) }
                 />
             ) : (
@@ -191,12 +210,12 @@ export default function Transaction({
             )}
 
             { isEditing && (
-                <div className="border border-red/60 rounded min-w-max text-sm font-medium md:h-full">
+                <div className="border border-blue rounded min-w-max text-sm font-medium md:h-full">
                     <button 
                         type="button"
                         className={`
                             px-2 h-full 
-                            ${transaction.type === 'income' ? 'bg-red/60 text-white' : ''}
+                            ${transaction.type === 'income' ? 'bg-blue text-white' : ''}
                         `}
                         onClick={ () => setTransaction({...transaction, type : 'income'}) }
                     >
@@ -206,7 +225,7 @@ export default function Transaction({
                         type="button"
                         className={`
                             px-2 h-full 
-                            ${transaction.type === 'spending' ? 'bg-red/60 text-white' : ''}
+                            ${transaction.type === 'spending' ? 'bg-blue text-white' : ''}
                         `}
                         onClick={ () => setTransaction({...transaction, type : 'spending'}) }
                     >
@@ -217,31 +236,17 @@ export default function Transaction({
 
             { isEditing && (
                 <>
-                    <button 
+                    <LoadingButton 
+                        state={saveStatus} 
+                        title="Save Transaction"
                         type="submit"
-                        className="shrink-0 ml-auto md:ml-0 active:scale-90"
-                        disabled={saveStatus !== 'initial'}
-                        title="Save Changes"
-                    >
-                        { saveStatus === 'initial' && (
-                            <SaveIcon className="w-[24px] h-[24px] hover:stroke-red cursor-pointer" />
-                        )}
-                        { saveStatus === 'saving' && (
-                            <LoaderCircleIcon className="w-[24px] h-[24px] animate-spin" />
-                        )}
-                        { saveStatus === 'saved' && (
-                            <CircleCheckIcon className="w-[24px] h-[24px]" />
-                        )}
-                    </button>
-
-                    <button 
-                        type="button"
-                        className=" shrink-0 active:scale-90"
-                        title="Hide Transaction"
+                    />
+                    <LoadingButton
+                        state={deleteStatus}
+                        icon={Trash2Icon}
+                        title="Delete Transaction"
                         onClick={handlers.handleDelete}
-                    >
-                        <Trash2Icon className="w-[24px] h-[24px]  hover:stroke-red cursor-pointer" />
-                    </button>
+                    />
                 </>
             )}
 
