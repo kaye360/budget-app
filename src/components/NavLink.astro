@@ -13,12 +13,12 @@ const { href, title, Icon, isActive } = Astro.props
 <a 
     href={href} 
     class:list={[
-        "relative flex flex-col md:flex-row md:gap-2 items-center px-2 py-4 md:p-3 hover:text-red hover:scale-105 active:scale-95 active:text-red transition-all duration-75",
+        " relative flex flex-col md:flex-row gap-y-1 md:gap-2 items-center py-2 md:p-3 hover:text-red hover:scale-105 active:scale-95 active:text-red transition-all duration-75",
         href === "/transactions/add" && "bg-black/70 scale-105"
     ]}
 >
-    <Icon stroke-width={1.5} width="24" height="24" class="w-7 h-7 md:w-auto md:h-auto" />
-    <span class="hidden sm:block font-theme text-sm">
+    <Icon stroke-width={1.5} width="20" height="20" class="w-7 h-7 md:w-auto md:h-auto" />
+    <span class="font-theme text-xs sm:text-sm ">
         {title}
     </span>
     { isActive &&
