@@ -32,6 +32,7 @@ export const summary = {
                 .order('date', { ascending : false })
                 .eq('userId', userId)
                 .eq('isDeleted', false)
+                .eq('type', 'spending')
                 .gte('date', startDate)
                 .lte('date', endDate)
         
@@ -50,6 +51,7 @@ export const summary = {
                 .select('amount')
                 .order('name')
                 .eq('userId', userId)
+                .neq('name', 'Income')
 
             const totalBudgets = Math.round( amounts?.reduce(
                 (acc, current) => acc + current.amount,

@@ -13,6 +13,7 @@ import TrendsView from "../features/trends/views/TrendsView.astro"
 import ForecastView from "../features/forecast/ForecastView.astro"
 import BudgetView from "../features/budgets/views/BudgetView.astro"
 import SettingsView from "../features/settings/SettingsView.astro"
+import EditForecastView from "../features/forecast/EditForecastView.astro"
 
 const auth = await isAuth(Astro)
 
@@ -29,13 +30,13 @@ const routes = {
     "/transactions/month" : Transactions.MonthView,
     "/transactions/month/:month" : Transactions.MonthView,
     "/transactions/recent" : Transactions.RecentView,
+    "/transactions" : Transactions.RecentView,
     "/transactions/search" : Transactions.SearchView,
     "/transactions/uncategorized" : Transactions.UncategorizedView,
     "/budgets" : BudgetsView,
     "/budgets/month" : BudgetsView,
     "/budgets/budget" : BudgetView,
     "/trends" : TrendsView,
-    "/forecast" : ForecastView,
     "/settings" : SettingsView,
     "/auth/login" : LoginView,
     "/auth/logout" : LogoutView,

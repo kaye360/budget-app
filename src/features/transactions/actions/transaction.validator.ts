@@ -13,10 +13,7 @@ export const TransactionValidator =  {
         perPage : z.number().optional()
     }),
 
-    store : z.union([
-        CreateTransaction,
-        z.array(CreateTransaction)
-    ]).transform( t => Array.isArray(t) ? t : [t]),
+    store : CreateTransaction,
 
     update : UpdateTransaction,
 

@@ -5,7 +5,6 @@ import { z } from "astro/zod"
  */
 export const Transaction = z.object({
     accountId: z.coerce.number().nullable(),
-
     amount: z.coerce.number(),
     accountName : z.coerce.string(),
     accountNumber : z.coerce.number(),
@@ -22,12 +21,16 @@ export const Transaction = z.object({
 /**
  * CreateTransaction Schema - Based on Transaction table
  */
-export const CreateTransaction = Transaction.omit({ 
-    id : true,
-    budget : true,
-    accountName : true,
-    accountNumber : true
-})
+export const CreateTransaction = Transaction
+    .omit({ 
+        id : true,
+        budget : true,
+        accountName : true,
+        accountNumber : true
+    })
+    .extend({
+        amount : z.union([z.string(), z.number()])
+    })
 
 /**
  * UpdateTransaction Schema - Based on Transaction Table

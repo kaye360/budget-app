@@ -81,6 +81,39 @@ export type Database = {
         }
         Relationships: []
       }
+      Forecast: {
+        Row: {
+          amount: number
+          date: string
+          id: number
+          repeats: string
+          startDate: string
+          title: string
+          type: string
+          userId: number
+        }
+        Insert: {
+          amount: number
+          date: string
+          id?: number
+          repeats: string
+          startDate: string
+          title: string
+          type: string
+          userId: number
+        }
+        Update: {
+          amount?: number
+          date?: string
+          id?: number
+          repeats?: string
+          startDate?: string
+          title?: string
+          type?: string
+          userId?: number
+        }
+        Relationships: []
+      }
       Transactions: {
         Row: {
           accountId: number | null

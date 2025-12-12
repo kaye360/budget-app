@@ -37,6 +37,6 @@ const budgetsWithSpendingTotals = calcBudgetSpendingTotals(budgets.data, transac
 
 	<Divider />
 
-	<BudgetList budgets={budgetsWithSpendingTotals} client:idle />
+	<BudgetList budgets={budgetsWithSpendingTotals} client:only="react" />
 
 </Layout>

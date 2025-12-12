@@ -6,10 +6,9 @@ const auth = await Astro.session?.get('auth')
 
 const navLinks = [
     { href : '/dashboard', title : 'Dashboard',      Icon : LayoutDashboardIcon},
-    { href : '/transactions/recent', title : 'Transactions',   Icon : ArrowLeftRight},
+    { href : '/transactions', title : 'Transactions',   Icon : ArrowLeftRight},
     { href : '/budgets', title : 'Budgets',   Icon : ChartPieIcon},
     { href : '/trends', title : 'Trends',   Icon : ChartColumnIncreasingIcon},
-    { href : '/forecast', title : 'Forecast',   Icon : TrendingUpDown},
     { href : '/settings', title : 'Settings',        Icon : UserCog},
 ]
 ---

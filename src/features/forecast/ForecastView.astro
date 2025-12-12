@@ -1,13 +1,33 @@
 ---
+import { EllipsisVerticalIcon } from "@lucide/astro"
 import H1 from "../../components/H1.astro"
 import AppLayout from "../../layouts/AppLayout.astro"
+import { actions } from "astro:actions"
+
+const forecast = await Astro.callAction( actions.forecast.index, {} )
 ---
 
 <AppLayout>
-    <H1>Forecast</H1>
+
+    <div class="flex items-center justify-between">
+        <H1>Forecast</H1>
+        <a href="/forecast/edit">
+            <EllipsisVerticalIcon />
+        </a>
+    </div>
 
     <p>
         Upcoming bills and expenses.
+        Group list by week and show weekly expense totals
         Coming soon.
     </p>
+
+    { forecast.data?.map( entry => (
+        <div class="my-2">
+            {entry.title}
+            {entry.amount}
+        </div>
+    ))}
+
+
 </Layout>

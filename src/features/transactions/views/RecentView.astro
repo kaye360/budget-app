@@ -20,8 +20,10 @@ const [transactions, budgets, accounts] = await Promise.all([
 		budgets={budgets.data ?? []}
 		accounts={accounts.data ?? []}
 		actionButton="edit"
-		client:idle 
-	/>
+		client:only="react"
+	>
+		<span slot="fallback">Loading...</span>
+	</InfiniteTransactionList>
 
 </TransactionListLayout>
 

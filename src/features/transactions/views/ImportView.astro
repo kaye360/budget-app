@@ -1,9 +1,9 @@
 ---
 import { ImportIcon } from "@lucide/astro";
-import LoadingButton from "../../../components/Button/LoadingButton.astro";
 import ImportTransactionsDroppable from "../components/ImportTransactionsDroppable.astro";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
 import { actions } from "astro:actions";
+import { LoadingButton } from "../../../components/Button/LoadingButton.tsx";
 
 const response = await Astro.callAction( actions.accounts.index, {} )
 

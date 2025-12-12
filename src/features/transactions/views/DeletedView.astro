@@ -20,7 +20,7 @@ const [transactions, budgets, accounts] = await Promise.all([
 		budgets={budgets.data ?? []} 
 		accounts={accounts.data ?? []}
 		actionButton="restore" 
-		client:idle
+		client:only="react"
 	/>
 
 </TransactionListLayout>

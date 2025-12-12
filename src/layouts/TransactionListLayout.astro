@@ -22,14 +22,14 @@ const { title, active } = Astro.props
 
 		<span class="flex items-center gap-3">
 			<a 
-                class="flex items-center gap-0.5 text-base text-red hover:text-blue min-w-fit"
+                class="flex items-center gap-0.5 text-sm font-semibold hover:text-red text-blue min-w-fit border hover:border-red/50 border-blue/50 rounded-xl px-3 py-1"
                 href="/transactions/add"
             >
                 <CirclePlusIcon size={20} />
                 Add
             </a>
 			<a 
-                class="flex items-center gap-0.5 text-base text-red hover:text-blue min-w-fit"
+                class="flex items-center gap-0.5 text-sm font-semibold hover:text-red text-blue min-w-fit border hover:border-red/50 border-blue/50 rounded-xl px-3 py-1"
                 href="/transactions/import"
             >
                 <ImportIcon size={22} />
@@ -38,7 +38,7 @@ const { title, active } = Astro.props
 		</span>
 	</div>
     
-    <filter-transactions class="flex items-center gap-x-3 gap-y-1 rounded text-xs w-full overflow-x-auto py-2 scrollbar-hide relative">
+    <filter-transactions class="flex items-center gap-x-3 gap-y-1 rounded text-xs w-full overflow-x-auto py-2 scrollbar-hide relative mb-4">
 
         <TransactionFilterLink
             isActive={active === 'recent'}

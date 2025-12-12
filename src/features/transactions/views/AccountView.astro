@@ -54,7 +54,7 @@ const title = account ? `${account.name} ● ${account.number}` : 'Select an Acc
 		transactions={transactions}
 		accounts={accounts.data ?? []}
 		budgets={budgets}
-		client:idle
+		client:only="react"
 	/>
 
 </AppLayout>

@@ -57,7 +57,7 @@ const monthRange = calcMonthRange(spendingTotals)
 				Recent Transactions
 			</h2>
 			<div class="grid gap-2">
-				{ !transactions.error && recentTransactions.data.list.map( 
+				{ recentTransactions.data.list && recentTransactions.data.list.map( 
 					(transaction : Transaction ) => <TransactionLite {transaction} />
 				)}
 			</div>

@@ -12,7 +12,7 @@ const accounts = await Astro.callAction( actions.accounts.index, {} )
     <H1>Settings</H1>
 
     { accounts?.data && 
-        <AccountsList accounts={accounts.data} client:idle />
+        <AccountsList accounts={accounts.data} client:only="react" />
     }
 
     <Divider />

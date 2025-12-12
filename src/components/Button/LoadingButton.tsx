@@ -6,9 +6,11 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     state : ReturnType<typeof useLoadingButtonStatus>,
     icon? : ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>,
     badge? : 'add' 
+    text? : string
+    className? : string
 }
 
-export function LoadingButton({state, title, type, icon, badge, ...props } : Props) {
+export function LoadingButton({state, title, type, icon, badge, text, className = '', ...props } : Props) {
 
     // Automatically switch from 'complete' status back to 'initial' status after 1 second
     useEffect( () => {
@@ -23,23 +25,26 @@ export function LoadingButton({state, title, type, icon, badge, ...props } : Pro
     return (
         <button 
             type={type ?? 'button'}
-            className="shrink-0 active:scale-90 relative"
+            className={`shrink-0 active:scale-90 flex items-center justify-center gap-2 hover:bg-blue/40 rounded font-semibold text-sm ${text ? 'px-3 py-2 w-full bg-blue/60' : 'px-1 py-1 max-w-fit'} ${className}`}
             disabled={state.status !== 'initial'}
             title={title ?? 'Save Changes'}
             {...props}
         >
-            { state.status === 'initial' && (
-                <>
-                    { badge === 'add' && <LoadingButtonBadge.Add /> }
-                    <Icon className="w-[24px] h-[24px] hover:stroke-red cursor-pointer" />
-                </>
-            )}
-            { state.status === 'loading' && (
-                <LoaderCircleIcon className="w-[24px] h-[24px] animate-spin" />
-            )}
-            { state.status === 'complete' && (
-                <CircleCheckIcon className="w-[24px] h-[24px]" />
-            )}
+            { text ?? text}
+            <span className="relative inline-block">
+                { state.status === 'initial' && (
+                    <>
+                        { badge === 'add' && <LoadingButtonBadge.Add /> }
+                        <Icon className="w-[24px] h-[24px] hover:stroke-red cursor-pointer" />
+                    </>
+                )}
+                { state.status === 'loading' && (
+                    <LoaderCircleIcon className="w-[24px] h-[24px] animate-spin" />
+                )}
+                { state.status === 'complete' && (
+                    <CircleCheckIcon className="w-[24px] h-[24px]" />
+                )}
+            </span>
         </button>
     )
 }

@@ -1,0 +1,27 @@
+---
+import { actions } from "astro:actions";
+import H1 from "../../components/H1.astro";
+import AppLayout from "../../layouts/AppLayout.astro";
+import { type Forecast } from "./recurringTransaction";
+import ForecastEditor from "./components/ForecastEditor";
+
+const forecast = await Astro.callAction( actions.forecast.index, {} )
+---
+
+<AppLayout>
+
+    <H1>
+        Edit Forecast
+    </H1>
+
+    { !forecast.error && (
+
+        <ForecastEditor 
+            initialForecast={forecast.data as Forecast} 
+            client:only="react"
+        />
+
+    )}
+
+
+</AppLayout>
