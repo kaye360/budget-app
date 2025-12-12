@@ -1,5 +1,5 @@
 ---
-import { ArrowLeftRightIcon, BotIcon, ChartColumnIncreasingIcon, MoveRightIcon } from "@lucide/astro"
+import { ArrowLeftRightIcon, BotIcon, ChartColumnIncreasingIcon, CirclePlusIcon, MoveRightIcon } from "@lucide/astro"
 import { actions } from "astro:actions";
 import AppLayout from "../../layouts/AppLayout.astro";
 import { convertDate } from "../../lib/convertDate";
@@ -55,6 +55,15 @@ const monthRange = calcMonthRange(spendingTotals)
 			<h2 class="flex items-center gap-2 font-semibold tex-2xl">
 				<ArrowLeftRightIcon />
 				Recent Transactions
+				<span class="flex items-center gap-3 ml-auto">
+					<a 
+						class="flex items-center gap-0.5 text-sm font-semibold hover:text-red text-blue min-w-fit border hover:border-red/50 border-blue/50 rounded-xl px-3 py-1"
+						href="/transactions/add"
+					>
+						<CirclePlusIcon size={20} />
+						Add
+					</a>
+				</span>
 			</h2>
 			<div class="grid gap-2">
 				{ recentTransactions.data.list && recentTransactions.data.list.map( 
