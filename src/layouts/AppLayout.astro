@@ -22,6 +22,8 @@ const {
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{APP_NAME} - {import.meta.env.MODE}</title>
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="theme-color" content="#0f172a" />
 	</head>
 	<body class="min-h-screen bg-bg-2 text-base-text font-base">
         <div class:list={"max-w-[1000px] w-full mx-auto p-4"}>
@@ -34,3 +36,11 @@ const {
         <ErrorToast />
 	</body>
 </html>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+</script>
