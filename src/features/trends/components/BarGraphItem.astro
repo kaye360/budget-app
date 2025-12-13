@@ -1,0 +1,25 @@
+---
+import BarGraphBar from './BarGraphBar.astro'
+import BarGraphLabel from './BarGraphLabel.astro'
+
+interface Props {
+    heightRatio : number
+    type : 'spending' | 'income'
+    title : string
+    amount : string
+}
+
+const { heightRatio, type, title, amount } = Astro.props
+
+---
+<div class="flex flex-col items-center gap-1 shrink-0 relative">
+
+    <BarGraphLabel>{amount}</BarGraphLabel>
+    
+    <BarGraphBar type={type} heightRatio={heightRatio} />
+
+    <span class="text-sm font-semibold -rotate-[37deg] -translate-x-1/3 translate-y-full">
+        {title}
+    </span>
+    
+</div>

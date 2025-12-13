@@ -1,0 +1,29 @@
+---
+interface Props {
+    baseline? : 'end' | 'center'
+    class? : string
+}
+
+const { 
+    baseline = 'end',
+    class : className 
+} = Astro.props
+---
+<div 
+    class:list={[
+        "flex h-[320px] overflow-x-auto scroll-right scrollbar-hide pb-12 pl-4", 
+        baseline === 'end' && 'items-end',
+        baseline === 'center' && 'items-center',
+        className
+    ]}
+>
+    <slot />
+</div>
+
+<script>
+import { els } from "../../../lib/el";
+
+els('.scroll-right', document, div => {
+    div.scrollLeft = div.scrollWidth
+})
+</script>

@@ -1,7 +1,9 @@
 ---
 import { convertDate } from "../../../lib/convertDate";
 import type { calcSpendingTotals } from "../utils/trendGraph.utils";
-import GraphBarList from "./GraphBarList.astro";
+import BarGraph from "./BarGraph.astro";
+import BarGraphBar from "./BarGraphBar.astro";
+import BarGraphLabel from "./BarGraphLabel.astro";
 import GraphTitle from "./GraphTitle.astro";
 import GraphWrapper from "./GraphWrapper.astro";
 
@@ -9,41 +11,47 @@ interface Props {
     monthRange : string[]
     spendingTotals : ReturnType<typeof calcSpendingTotals>
     upperRange : number
+    title : string
 }
 
-const { monthRange, spendingTotals, upperRange } = Astro.props
+const { monthRange, spendingTotals, upperRange, title } = Astro.props
+
 ---
 
 <GraphWrapper>
-    <GraphTitle title="Net over time" />
+    <GraphTitle title={title} />
 
-    <GraphBarList class="h-[450px]">
-        { monthRange.map((month) => (
-            <div class="relative h-full flex items-center shrink-0">
-                <div class:list={[
-                    "flex flex-col items-center w-[70px] ",
-                    spendingTotals[month]?.net > 0 && "-translate-y-1/2",
-                    spendingTotals[month]?.net < 0 && "translate-y-1/2",
-                ]}>
-                    { spendingTotals[month]?.net > 0 && (
-                        <span>+{ spendingTotals[month]?.net }</span>
-                    )}
-                    <div
-                        class:list={[
-                            "bg-gradient-to-t w-[40px] rounded-t",
-                            spendingTotals[month]?.net > 0 && "from-green/40 to-green/20 border-b-2  border-green",
-                            spendingTotals[month]?.net < 0 && "from-red/30 to-red/20 border-t-2  border-red",
-                        ]}
-                        style={`
-                            height : ${ Math.abs(spendingTotals[month]?.net / upperRange * 150) }px;
-                        `}
-                    />
-                    { spendingTotals[month]?.net < 0 && (
-                        <span>{spendingTotals[month]?.net}</span>
-                    )}
+    <BarGraph baseline="center" class="h-[450px]">
+        { monthRange.map((month) => {
+
+            const net = spendingTotals[month]?.net
+            const type = net > 0 ? 'income' : 'spending'
+
+            return (
+                <div class="relative px-1">
+
+                    <span class="text-sm font-semibold min-w-max">
+                        {convertDate(month).to("MMM-YYYY")}
+                    </span>
+
+                    <div class:list={[
+                        "absolute left-1/2 -translate-x-1/2 flex flex-col items-center text-sm text-slate",
+                        net > 0 && "bottom-full",
+                        net < 0 && "top-full",
+                    ]}>
+
+                        { net > 0 && <BarGraphLabel>+{ net }</BarGraphLabel> }
+
+                        <BarGraphBar 
+                            type={type} 
+                            heightRatio={Math.abs(net / upperRange * 150)} 
+                        />
+
+                        { net < 0 && <BarGraphLabel>{ net }</BarGraphLabel> }
+
+                    </div>
                 </div>
-                <span class="absolute bottom-0 text-sm font-semibold">{convertDate(month).to("MMM-YYYY")}</span>
-            </div>
-        ))}
+            )
+        })}
     </GraphBarList>
 </GraphWrapper>

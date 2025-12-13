@@ -172,6 +172,17 @@ html.dark {
             transform : scaleX(1);
         }
     }
+
+    --animate-bargraph : bargraph 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+    @keyframes bargraph {
+        from {
+            transform : scaleY(0);
+        }
+        to {
+            transform : scaleY(1);
+        }
+    }
 }
 
 @layer components {
