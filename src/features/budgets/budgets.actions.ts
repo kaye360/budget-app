@@ -14,14 +14,28 @@ export const budget = {
 
             const { data, error } = await db.from('Budgets')
                 .select('*')
-                .order('name')
                 .eq('userId', userId)
+
 
             if( error ) {
                 throw new Error( error.message )
             }
 
-            return data 
+            // Sort while ignoring emojis
+            const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+
+            function stripLeadingEmoji(str : string) {
+                const segments = [...segmenter.segment(str)];
+                return segments.length > 1
+                    ? segments.slice(1).map(s => s.segment).join("").trim()
+                    : str;
+            }   
+
+            const sorted = data.sort((a,b) => 
+                stripLeadingEmoji(a.name).localeCompare(stripLeadingEmoji(b.name))
+            )
+
+            return sorted 
         }
     }),
 

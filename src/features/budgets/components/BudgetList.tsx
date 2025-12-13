@@ -16,7 +16,7 @@ export default function BudgetList({
     budgets : initialBudgets = []
 } : Props) {
 
-    const [budgets, setBudgets] = useState<Props['budgets']>(initialBudgets.toSorted())
+    const [budgets, setBudgets] = useState<Props['budgets']>(initialBudgets)
     const saveStatus = useLoadingButtonStatus()
 
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
