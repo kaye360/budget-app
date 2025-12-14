@@ -71,7 +71,7 @@ export default function Budget({
         <form
             onSubmit={handlers.handleSave}
             onKeyDown={handlers.handleEsc}
-            className={` relative rounded-sm flex items-center gap-2 justify-between px-4 py-2 font-semibold budget-progress-bar ${isEditing ? 'selected' : ''} `}
+            className={` relative rounded-sm flex items-center gap-2 justify-between pt-2 pb-4 font-semibold budget-progress-bar ${isEditing ? 'selected' : ''} `}
         >
             { isEditing ? (
                 <input 
@@ -129,7 +129,7 @@ export default function Budget({
             )}
 
             <span 
-                className="absolute left-0 top-0 bottom-0 -z-10 rounded-sm block animate-progress-bar origin-left border progress-bar"
+                className="absolute left-0 bottom-0 h-[15px] -z-10 rounded-lg px-4 block animate-progress-bar origin-left progress-bar"
                 style={ budget.percentSpent
                     ? { width : `${budget.percentSpent}%`}
                     : { width : '0%' }

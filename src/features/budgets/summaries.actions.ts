@@ -35,6 +35,7 @@ export const summary = {
                 .eq('type', 'spending')
                 .gte('date', startDate)
                 .lte('date', endDate)
+
         
             /**
              * Total spent in current month
@@ -51,7 +52,9 @@ export const summary = {
                 .select('amount')
                 .order('name')
                 .eq('userId', userId)
-                .neq('name', 'Income')
+                .not('name', 'ilike', '%Income%')
+
+            console.log(amounts)
 
             const totalBudgets = Math.round( amounts?.reduce(
                 (acc, current) => acc + current.amount,

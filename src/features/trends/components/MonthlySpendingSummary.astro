@@ -13,18 +13,17 @@ const {
 
 <monthly-spending-summary 
     month={month}
-    class="bg-blue/30 rounded-sm"
 >
-    <budget-total class="relative rounded-sm flex items-center justify-between px-4 py-2 font-semibold !bg-white/50 min-w-fit">
+    <budget-total class="relative rounded-sm flex items-center justify-between py-2 pb-4 font-semibold min-w-fit">
         <span>
-            {convertDate(month).to('MMMM-YYYY')}
+            🗓️ {convertDate(month).to('MMMM-YYYY')}
         </span>
 
         <monthly-spending-total class="text-lg min-w-fit" />
 
         <span 
             class:list={[
-                "absolute left-0 top-0 bottom-0 -z-10 rounded-sm block bg-blue/50 scale-y-105 origin-left",
+                "absolute left-0 bottom-0 h-[15px] -z-10 rounded-lg block bg-blue/60 scale-y-105 origin-left",
                 'progress-bar animate-progress-bar',
             ]}
         />

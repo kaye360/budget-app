@@ -51,7 +51,7 @@ export default function BudgetList({
         <>
             <div 
                 id="budget-list"
-                className="grid gap-6 text-lg w-full [&:has(.selected)]:[&_form:not(.selected)]:opacity-20 [&_form]:opacity-100 [&_form]:transition-opacity"
+                className="grid gap-8 text-lg w-full [&:has(.selected)]:[&_form:not(.selected)]:opacity-20 [&_form]:opacity-100 [&_form]:transition-opacity"
             >
                 { budgets.map( budget => (
                     <Budget budget={budget} key={budget.id} />

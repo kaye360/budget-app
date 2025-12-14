@@ -191,11 +191,15 @@ html.dark {
     }
 
     .budget-progress-bar {
-        @apply nth-[5n+1]:bg-blue/10 [&:nth-child(5n+1)_span.progress-bar]:bg-blue/20 [&:nth-child(5n+1)_span.progress-bar]:border-blue/50
-                nth-[5n+2]:bg-green/10 [&:nth-child(5n+2)_span.progress-bar]:bg-green/20 [&:nth-child(5n+2)_span.progress-bar]:border-green/50
-                nth-[5n+3]:bg-purple/10 [&:nth-child(5n+3)_span.progress-bar]:bg-purple/20 [&:nth-child(5n+3)_span.progress-bar]:border-purple/50
-                nth-[5n+4]:bg-red/10 [&:nth-child(5n+4)_span.progress-bar]:bg-red/20 [&:nth-child(5n+4)_span.progress-bar]:border-red/50
-                nth-[5n]:bg-orange/10 [&:nth-child(5n)_span.progress-bar]:bg-orange/20 [&:nth-child(5n)_span.progress-bar]:border-orange/50
+        @apply [&:nth-child(5n+1)_span.progress-bar]:bg-blue/50
+
+        [&:nth-child(5n+2)_span.progress-bar]:bg-green/50
+
+        [&:nth-child(5n+3)_span.progress-bar]:bg-purple/50
+
+        [&:nth-child(5n+4)_span.progress-bar]:bg-red/50
+
+         [&:nth-child(5n)_span.progress-bar]:bg-orange/50
     }
 }
 
