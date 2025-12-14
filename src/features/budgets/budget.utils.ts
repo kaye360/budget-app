@@ -67,25 +67,25 @@ export function calcBudgetPieChartData(budgetsWithSpendingTotals : Budget[]) {
 		}))
 		.sort((a,b) => a.amount < b.amount ? 1 : -1)
 		.reduce<PieChart>( (acc, entry, i) => {
-			if( i < 4) {
+			if( i < 5) {
 				acc.push(entry)
 			} else {
-				if( !acc[4]) acc[4] = {label : '🗂️ Other', amount : 0}
-				acc[4].amount += entry.amount
+				if( !acc[5]) acc[5] = {label : '🗂️ Other', amount : 0}
+				acc[5].amount += entry.amount
 			}
 
 			return acc
 		}, [])
 
 	const budgetPieChartData = [
-		...budgetsPieChartSorted.slice(0, 4),
+		...budgetsPieChartSorted.slice(0, 5),
 		{
 			label: 'Other',
 			amount: budgetsPieChartSorted
-				.slice(4)
+				.slice(5)
 				.reduce((sum, item) => sum + item.amount, 0)
 		}
 	].filter(item => item.amount > 0)
-
+	
 	return budgetPieChartData
 }
