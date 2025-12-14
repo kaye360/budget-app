@@ -1,0 +1,122 @@
+---
+interface Props {
+	data : {
+		label : string,
+		amount : number
+	}[]
+}
+
+const {	data } = Astro.props
+
+const size = 220
+const strokeWidth = 15
+const radius = (size - strokeWidth) / 2;
+const circumference = 2 * Math.PI * radius;
+const center = size / 2;
+
+const total = data.reduce((sum, s) => sum + s.amount, 0);
+
+let dashOffset = 0;
+let angleCursor = 0;
+const gap = strokeWidth * 1.6;
+---
+
+<svg
+	width={size}
+	height={size}
+	viewBox={`0 0 ${size} ${size}`}
+	role="img"
+	aria-label="Pie chart"
+	class="overflow-visible mx-auto pointer-events-none w-fit max-w-[195px] sm:max-w-none"
+>
+	<!-- Rotate so chart starts at 12 o’clock -->
+	<g transform={`rotate(-90 ${center} ${center})`}>
+		{
+			data.map((slice, i) => {
+
+				const fraction = slice.amount / total;
+
+				const rawDash = fraction * circumference;
+				const adjustedDash = Math.max(rawDash - gap, 0);
+
+				const dashArray = `${adjustedDash} ${circumference - adjustedDash}`;
+
+				const currentOffset = dashOffset;
+				dashOffset -= rawDash;
+
+				return (
+					<circle
+						cx={center}
+						cy={center}
+						r={radius}
+						fill="transparent"
+						stroke-width={strokeWidth}
+						stroke-dasharray={dashArray}
+						stroke-dashoffset={currentOffset}
+						stroke-linecap="round"
+						class:list={[
+							i === 0 && 'stroke-red/30',
+							i === 1 && 'stroke-green/30',
+							i === 2 && 'stroke-blue/30',
+							i === 3 && 'stroke-orange/30',
+							i === 4 && 'stroke-purple/30',
+						]}
+					/>
+				);
+			})
+		}
+	</g>
+
+	<!-- Percentage labels -->
+	{
+		data.map((slice, i) => {
+			const fraction = slice.amount / total;
+
+			// Mid-angle of slice (same math you already use)
+			const midAngle = angleCursor + fraction * Math.PI;
+			angleCursor += fraction * Math.PI * 2;
+
+			// Label position (existing logic)
+			const labelRadius = radius + strokeWidth * 3.25;
+			const labelX = center + Math.cos(midAngle - Math.PI / 2) * labelRadius;
+			const labelY = center + Math.sin(midAngle - Math.PI / 2) * labelRadius;
+
+			return (
+				<text
+					x={labelX}
+					y={labelY}
+					text-anchor="middle"
+					dominant-baseline="middle"
+					class:list={[
+						"font-theme font-semibold text-sm",
+						i === 0 && 'fill-red',
+						i === 1 && 'fill-green',
+						i === 2 && 'fill-blue',
+						i === 3 && 'fill-orange',
+						i === 4 && 'fill-purple',
+					]}
+				>
+					{slice.label} ● {Math.round(fraction * 100)}%
+				</text>
+			);
+		})
+	}
+
+
+</svg>
+
+<style>
+	circle {
+		animation: draw 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		transform-origin: center;
+	}
+
+	@keyframes draw {
+		from {
+			transform: scale(0);
+		}
+		to {
+			transform: scale(1);
+		}
+	}
+</style>

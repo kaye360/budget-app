@@ -48,3 +48,44 @@ export function calcBudgetSpendingTotals(
 }
 
 
+/**
+ * @function calcBudgetPieChartData
+ * Calculates the data needed to be passed intp a generic Pie Chart from a Budget[] Array
+ */
+type PieChart = {
+	label : string,
+	amount : number
+}[]
+
+export function calcBudgetPieChartData(budgetsWithSpendingTotals : Budget[]) {
+
+	const budgetsPieChartSorted: PieChart = budgetsWithSpendingTotals
+		.filter( budget => !budget.name.includes('Income') )
+		.map( budget => ({
+			label : budget.name,
+			amount : budget.totalSpent ?? 0
+		}))
+		.sort((a,b) => a.amount < b.amount ? 1 : -1)
+		.reduce<PieChart>( (acc, entry, i) => {
+			if( i < 4) {
+				acc.push(entry)
+			} else {
+				if( !acc[4]) acc[4] = {label : '🗂️ Other', amount : 0}
+				acc[4].amount += entry.amount
+			}
+
+			return acc
+		}, [])
+
+	const budgetPieChartData = [
+		...budgetsPieChartSorted.slice(0, 4),
+		{
+			label: 'Other',
+			amount: budgetsPieChartSorted
+				.slice(4)
+				.reduce((sum, item) => sum + item.amount, 0)
+		}
+	].filter(item => item.amount > 0)
+
+	return budgetPieChartData
+}

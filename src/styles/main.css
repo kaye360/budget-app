@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 html {
-    ---base-color-green : hsl(163, 97%, 50%);
+    ---base-color-green : hsl(145, 100%, 40%);
     ---base-color-blue : hsl(205, 90%, 50%);
     ---base-color-orange : hsl(14, 81%, 50%);
     ---base-color-red : hsl(336, 81%, 50%);
