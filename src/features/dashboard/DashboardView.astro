@@ -11,6 +11,7 @@ import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../trends/ut
 import IncomeGraph from "../trends/components/IncomeGraph.astro";
 import NetGraph from "../trends/components/NetGraph.astro";
 import SpendingGraph from "../trends/components/SpendingGraph.astro";
+import { calcBudgetPieChartData } from "../budgets/budget.utils";
 
 const auth = await getAuth(Astro)
 
@@ -27,7 +28,6 @@ const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
 const incomeUpperRange = calcUpperRange(spendingTotals, 'income')
 const netUpperRange = calcUpperRange(spendingTotals, 'net')
 const monthRange = calcMonthRange(spendingTotals)
-
 ---
 <AppLayout>
 
@@ -71,7 +71,7 @@ const monthRange = calcMonthRange(spendingTotals)
 				upperRange={netUpperRange}
 			/>
 
-			<div class="col-span-3">
+			<div class="md:col-span-3">
 				<a href="/trends" class="flex items-center gap-2 justify-self-start">
 					View your monthly trends 
 					<MoveRightIcon />

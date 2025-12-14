@@ -20,7 +20,7 @@ const { monthRange, spendingTotals, upperRange } = Astro.props
     <BarGraph>
         { monthRange.map((month) => (
             <BarGraphItem
-                title={convertDate(month).to("MMM-YYYY")}
+                title={convertDate(month).to("MMM-YY")}
                 amount={`+${ spendingTotals[month]?.income ?? 0 }`}
                 type="income"
                 heightRatio={(spendingTotals[month]?.income ?? 0) / upperRange * 225}
