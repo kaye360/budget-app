@@ -10,10 +10,8 @@ import Error401View from "../features/static/Error401View.astro"
 import { isAuth } from "../features/auth/auth.utils"
 import BudgetsView from "../features/budgets/views/BudgetsView.astro"
 import TrendsView from "../features/trends/views/TrendsView.astro"
-import ForecastView from "../features/forecast/ForecastView.astro"
 import BudgetView from "../features/budgets/views/BudgetView.astro"
 import SettingsView from "../features/settings/SettingsView.astro"
-import EditForecastView from "../features/forecast/EditForecastView.astro"
 
 const auth = await isAuth(Astro)
 
@@ -84,6 +82,7 @@ const View = ( () => {
     }
 })() as AstroComponentFactory
 
+console.log({...props})
 ---
 
 <View {...props} />

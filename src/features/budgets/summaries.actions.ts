@@ -54,8 +54,6 @@ export const summary = {
                 .eq('userId', userId)
                 .not('name', 'ilike', '%Income%')
 
-            console.log(amounts)
-
             const totalBudgets = Math.round( amounts?.reduce(
                 (acc, current) => acc + current.amount,
                 0

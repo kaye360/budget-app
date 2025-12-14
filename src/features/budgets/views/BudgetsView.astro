@@ -9,7 +9,8 @@ import H1 from "../../../components/H1.astro";
 import BudgetList from "../components/BudgetList";
 import PieChart from "../components/PieChart.astro";
 
-const { routeParam } = Astro.params;
+
+const { routeParam } = Astro.props
 
 const month = routeParam ?? convertDate().to('YYYY-MM')
 
