@@ -34,15 +34,15 @@ const gap = strokeWidth * 1.6;
 		{
 			data.map((slice, i) => {
 
-				const fraction = slice.amount / total;
+				const fraction = slice.amount / total
 
-				const rawDash = fraction * circumference;
-				const adjustedDash = Math.max(rawDash - gap, 0);
+				const rawDash = fraction * circumference
+				const adjustedDash = Math.max(rawDash - gap, 0)
 
-				const dashArray = `${adjustedDash} ${circumference - adjustedDash}`;
+				const dashArray = `${adjustedDash} ${circumference - adjustedDash}`
 
-				const currentOffset = dashOffset;
-				dashOffset -= rawDash;
+				const currentOffset = dashOffset
+				dashOffset -= rawDash
 
 				return (
 					<circle
@@ -72,16 +72,38 @@ const gap = strokeWidth * 1.6;
 	<!-- Percentage labels -->
 	{
 		data.map((slice, i) => {
-			const fraction = slice.amount / total;
+			const fraction = slice.amount / total
 
 			// Mid-angle of slice (same math you already use)
-			const midAngle = angleCursor + fraction * Math.PI;
-			angleCursor += fraction * Math.PI * 2;
+			const midAngle = angleCursor + fraction * Math.PI
+			angleCursor += fraction * Math.PI * 2
 
 			// Label position (existing logic)
-			const labelRadius = radius + strokeWidth * 3.25;
-			const labelX = center + Math.cos(midAngle - Math.PI / 2) * labelRadius;
-			const labelY = center + Math.sin(midAngle - Math.PI / 2) * labelRadius;
+			const labelRadius = radius + strokeWidth * 3.5
+
+			let xOffset = 0
+			let yOffset = 0
+
+			switch (i) {
+				case 0:
+				case 1:
+					xOffset = -20
+					break
+				case 2:
+					yOffset = 10
+					break
+				case 3:
+					xOffset = 60
+					yOffset = 20
+					break
+				case 4:
+					xOffset = 70
+					yOffset = 20
+					break
+			}
+
+			const labelX = center + Math.cos(midAngle - Math.PI / 2) * labelRadius - xOffset
+			const labelY = center + Math.sin(midAngle - Math.PI / 2) * labelRadius - yOffset
 
 			return (
 				<text
@@ -111,8 +133,13 @@ const gap = strokeWidth * 1.6;
 
 <style>
 	circle {
-		animation: draw 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		animation: draw 30ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 		transform-origin: center;
+	}
+
+	circle, text {
+		animation: draw 750ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		transform-origin: bottom;
 	}
 
 	@keyframes draw {

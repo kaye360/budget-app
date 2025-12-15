@@ -139,7 +139,7 @@ export default function Transaction({
             { isEditing ? (
                 <select 
                     name="budgetId" 
-                    className="w-full bg-bg-2"
+                    className="w-full bg-background-main"
                     ref={budgetInputRef}
                     onChange={ (e) => setTransaction({
                         ...transaction, 
@@ -168,7 +168,7 @@ export default function Transaction({
             { isEditing ? (
                 <select 
                     name="account" 
-                    className="w-full bg-bg-2" 
+                    className="w-full bg-background-main" 
                     defaultValue={transaction.accountId ?? ''}
                     onChange={ (e) => setTransaction({
                         ...transaction, 

@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
 
 html {
     ---base-color-green : hsl(145, 100%, 40%);
@@ -6,8 +8,8 @@ html {
     ---base-color-orange : hsl(14, 81%, 50%);
     ---base-color-red : hsl(336, 81%, 50%);
     ---base-color-purple : hsl(272, 94%, 50%);
-    ---base-color-bg-1 : hsl(223, 45%, 98%);
-    ---base-color-bg-2 : hsl(189, 52%, 98%);
+    ---base-color-background-main : hsl(189, 52%, 98%);
+    ---base-color-background-accent : hsl(223, 45%, 98%);
     ---base-color-base-text : hsl(223, 30%, 35%);
     ---base-color-accent-text : hsl(223, 30%, 25%);
 }
@@ -18,8 +20,8 @@ html.dark {
     ---base-color-orange : hsl(14, 81%, 59%);
     ---base-color-red : hsl(336, 81%, 59%);
     ---base-color-purple : hsl(272, 94%, 62%);
-    ---base-color-bg-1 : hsl(223, 45%, 8%);
-    ---base-color-bg-2 : hsl(189, 52%, 12%);
+    ---base-color-background-main : hsl(219, 25%, 10%);
+    ---base-color-background-accent : hsl(219, 35%, 10%);
     ---base-color-base-text : hsl(223, 30%, 95%);
     ---base-color-accent-text : hsl(223, 30%, 75%);
 }
@@ -30,8 +32,8 @@ html.dark {
     --color-orange : hsl(14, 81%, 59%);
     --color-red : hsl(336, 81%, 59%);
     --color-purple : hsl(272, 94%, 62%);
-    --color-bg-1 : var(---base-color-bg-1);
-    --color-bg-2 : var(---base-color-bg-2);
+    --color-background-main : var(---base-color-background-main);
+    --color-background-accent : var(---base-color-background-accent);
     --color-base-text : var(---base-color-base-text);
     --color-accent-text : var(---base-color-accent-text);
 
@@ -50,7 +52,7 @@ html.dark {
     }
 
     select {
-        @apply bg-bg-2 hover:bg-bg-1 cursor-pointer px-2 py-0.5;
+        @apply bg-background-main hover:bg-background-accent cursor-pointer px-2 py-0.5;
     }
 
     option {
