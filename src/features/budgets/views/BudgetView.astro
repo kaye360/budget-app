@@ -3,15 +3,17 @@ import { actions } from "astro:actions";
 import AppLayout from "../../../layouts/AppLayout.astro";
 import type { Transaction as TransactionSchema } from "../../transactions/schema/transaction.schema";
 import TransactionList from "../../transactions/components/TransactionList";
-import Transaction from "../../transactions/components/Transaction";
-import type { Budget } from "../schema/budget.schema";
 import { MoveLeftIcon } from "@lucide/astro";
 import BudgetGraph from "../../trends/components/BudgetGraph.astro";
 import H1 from "../../../components/H1.astro";
 
 const { routeParam } = Astro.props
 
-const budgets = await Astro.callAction( actions.budget.index, {})
+const [budgets, accounts] = await Promise.all([
+	Astro.callAction( actions.budget.index, {} ),
+	Astro.callAction( actions.accounts.index, {} )
+])
+
 const budget = budgets.data?.filter( budget => budget.id === Number(routeParam))[0]
 const budgetName = budget?.name ?? '' as string
 
@@ -57,7 +59,9 @@ const hasTransactions = transactions.length > 0
         <TransactionList
             transactions={transactions} 
             budgets={budgets.data ?? []} 
+            accounts={accounts.data ?? []}
             actionButton="edit"
+            client:load
         />
     )}
 

@@ -108,7 +108,7 @@ export default function Transaction({
             onSubmit={handlers.handleSave}
             onKeyDown={handlers.handleEsc}
             className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2.5 p-2 rounded-md transition-opacity border border-transparent [&:has(:focus)]:!border-blue ${isEditing ? 'selected' : ''}`}
-        >
+        >   
             { isEditing ? (
                 <input 
                     type="date" 
@@ -265,6 +265,7 @@ export default function Transaction({
 
             { actionButton === 'edit' && !isEditing &&
                 <EditButton
+                    type="button"
                     className="order-last group cursor-pointer transition-all active:scale-95 ml-auto md:ml-0"
                     onClick={ () => setIsEditing(true) }
                     title="Edit Transaction"

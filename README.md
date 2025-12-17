@@ -2,7 +2,6 @@
 Made with Astro, React, Supabase
 
 ## Todo
-- BudgetView Transactionlist error
 - ImportView error
 
 ## Upcoming
