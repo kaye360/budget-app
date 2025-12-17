@@ -22,7 +22,7 @@ html.dark {
     ---base-color-purple : hsl(272, 94%, 62%);
     ---base-color-background-main : hsl(219, 25%, 10%);
     ---base-color-background-accent : hsl(219, 35%, 10%);
-    ---base-color-base-text : hsl(223, 30%, 95%);
+    ---base-color-base-text : hsl(223, 30%, 85%);
     ---base-color-accent-text : hsl(223, 30%, 75%);
 }
 
@@ -48,7 +48,7 @@ html.dark {
     } */
 
     input, select, textarea {
-        @apply border-t border-l border-r border-b-2 border-blue/50 bg-blue-50/50 text-sm w-full px-2 py-0.5 rounded;
+        @apply border-t border-l border-r border-b-2 border-blue/50 dark:border-blue/20 bg-blue-50/50 dark:bg-blue/10 text-sm w-full px-2 py-0.5 rounded;
     }
 
     select {

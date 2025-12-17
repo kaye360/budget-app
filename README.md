@@ -6,6 +6,5 @@ Made with Astro, React, Supabase
 - ImportView error
 
 ## Upcoming
-- dark mode
 - Upcoming bills on dashboard. Update in settings. Keep simple. May already have funcgionality in forecast
 - Budget Groups - Housing, Food, Entertainment etc.

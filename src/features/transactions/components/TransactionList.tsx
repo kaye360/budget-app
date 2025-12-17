@@ -16,6 +16,7 @@ export default function TransactionList({
         <div className="
             grid gap-2
             [&>form:nth-of-type(odd)]:bg-blue/10
+            dark:[&>form:nth-of-type(odd)]:bg-blue/5
             [&:has(.selected)]:[&_form:not(.selected)]:opacity-20
             [&_form]:opacity-100 [&_form]:transition-opacity
         ">
