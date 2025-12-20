@@ -20,6 +20,11 @@ export async function getAuthIfExists(Astro: APIContext) {
 
 
 export async function isAuth(Astro: APIContext) {
-    const auth = await Astro.session?.get("auth");
-    return !!auth
+    try {
+        const auth = await Astro.session?.get("auth");
+        return Boolean(auth)
+    } catch (e) {
+        console.error(e)
+        return false
+    }
 }

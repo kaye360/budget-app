@@ -1,9 +1,9 @@
 ---
-import { ImportIcon } from "@lucide/astro";
 import ImportTransactionsDroppable from "../components/ImportTransactionsDroppable.astro";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
 import { actions } from "astro:actions";
 import { LoadingButton } from "../../../components/Button/LoadingButton.tsx";
+import { ImportIcon } from "lucide-react";
 
 const response = await Astro.callAction( actions.accounts.index, {} )
 
@@ -39,18 +39,10 @@ const accounts = response.data ?? []
             </select>
         </label>
 
-        <LoadingButton 
-            state={{
-                initial : 'Import Transactions',
-                loading : 'Importing...',
-                error : 'Import Failed',
-                success : 'Transactions Imported'
-            }}
-            Icon={ImportIcon}
-            variant="fill"
-            class="w-full lg:max-w-1/2"
-            type="submit"
-        />
+        <button>
+            Upload
+        </button>
+
     </form>
 
 </TransactionListLayout>
