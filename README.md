@@ -8,6 +8,7 @@ Made with Astro, React, Supabase
 - Make Add Transactions not reset state once submitted. Only clear description, amount, and budget. Keep date and account
 - Fix budget select: cant press a key to go to a budget faster
 - isAuth 500 bug
+- stripLeadingEmoji util function: strip all emojis
 
 ## Upcoming
 - Upcoming bills on dashboard. Update in settings. Keep simple. May already have funcgionality in forecast

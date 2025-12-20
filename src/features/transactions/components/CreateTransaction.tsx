@@ -34,7 +34,6 @@ export default function CreateTransaction({budgets, accounts} : Props) {
         e.preventDefault()
 
         saveStatus.setAsLoading()
-
         const response = await actions.transaction.store(transaction)
 
         if( response.error ) {
@@ -44,7 +43,12 @@ export default function CreateTransaction({budgets, accounts} : Props) {
 
         saveStatus.setAsComplete()
         await sleep(1000)
-        setTransaction(initialTransaction)
+
+        setTransaction({
+            ...transaction,
+            description : initialTransaction.description,
+            amount : initialTransaction.amount,
+        })
     }   
 
     return (
@@ -122,6 +126,24 @@ export default function CreateTransaction({budgets, accounts} : Props) {
                     className="w-full" 
                     value={transaction.budgetId ?? 0}
                     onChange={ e => setTransaction({...transaction, budgetId : Number(e.target.value)})}
+                    onKeyDown={ e => {
+                        const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+
+                        function stripLeadingEmoji(str : string) {
+                            const segments = [...segmenter.segment(str)];
+                            return segments.length > 1
+                                ? segments.slice(1).map(s => s.segment).join("").trim()
+                                : str;
+                        }  
+                        const match = budgets.find( b => stripLeadingEmoji(b.name)
+                            .toLowerCase()
+                            .startsWith(e.key.toLowerCase()) 
+                        ) 
+
+                        if( match ) {
+                            setTransaction({...transaction, budgetId : Number(match.id)})
+                        }
+                    }}
                 >
                     { budgets.map( budget => (
                         <option value={budget.id} key={budget.id}>

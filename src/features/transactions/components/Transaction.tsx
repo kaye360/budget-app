@@ -150,7 +150,7 @@ export default function Transaction({
                 >
                     <option value="0">Uncategorized</option>
                     { budgets.map( budget => (
-                        <option value={budget.id}key={budget.id}>
+                        <option value={budget.id} key={budget.id}>
                             {budget.name}
                         </option>
                     ))}
@@ -177,7 +177,7 @@ export default function Transaction({
                     })}
                 >
                     { accounts.map( account => (
-                        <option value={account.id}>
+                        <option value={account.id} key={account.id}>
                             {account.name} - {account.number}
                         </option>
                     )) }
