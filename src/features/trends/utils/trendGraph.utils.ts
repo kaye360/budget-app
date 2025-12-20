@@ -17,6 +17,10 @@ export function calcSpendingTotals(transactions: Transaction[]) {
         }
     > = {}
 
+    if( !transactions ) {
+        return totals
+    }
+
     transactions.forEach((transaction: Transaction) => {
         
         if (!transaction.amount) return
