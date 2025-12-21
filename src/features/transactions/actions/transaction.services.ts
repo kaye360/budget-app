@@ -82,13 +82,13 @@ export const getTransactionsBy : Record<string, Function> = {
         console.log("monthRange Called")
 
         if( typeof filterValue !== 'object' || !filterValue ) {
-            return { error : 'Invalid monthRange input value', filterValue}
+            return { error : 'Invalid monthRange input value'}
         }
 
         const { start, end } = filterValue
 
         if( !start || !end ) {
-            return { error : "Invalid start or end date", start, end }
+            return { error : "Invalid start or end date"}
         }
 
         const startDate = `${start}-01`; // first day of July
@@ -96,27 +96,16 @@ export const getTransactionsBy : Record<string, Function> = {
         const nextMonth = month === 12 ? 1 : month + 1;
         const nextYear = month === 12 ? year + 1 : year;
         const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
-        return {
-            startDate, endDate
-        }
-        // try {
-        //     const { data, error } = await db.from('TransactionView')
-        //         .select('*')
-        //         .eq('userId', userId)
-        //         .eq('isDeleted', false)
-        //         .gte('date', startDate)
-        //         .lte('date', endDate);
 
-        //     if (error) {
-        //         console.error("Supabase query error:", error);
-        //         return {error, params: {startDate, endDate}}
-        //     }
+        const { data } = await db.from('TransactionView')
+            .select('*')
+            .order('date', { ascending : false })
+            .eq('userId', userId)
+            .eq('isDeleted', false)
+            .gte('date', startDate)
+            .lte('date', endDate)
 
-        //     return data ?? [];
-        // } catch (err) {
-        //     console.error("monthRange action failed:", err);
-        //     return {err, params: {startDate, endDate}}
-        // }
+        return data ?? []
     },
 
     budget : async ({ filterValue: budgetId} : Params) => {

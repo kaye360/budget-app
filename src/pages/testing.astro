@@ -1,0 +1,28 @@
+---
+import { actions } from "astro:actions"
+import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../features/trends/utils/trendGraph.utils"
+import { convertDate } from "../lib/convertDate"
+
+
+const start = convertDate().prevMonth(4).to('YYYY-MM')
+const end = convertDate().to('YYYY-MM')
+
+const transactions = await 	Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
+    start : start,
+    end : end
+}})
+
+const spendingTotals = calcSpendingTotals(transactions.data ?? [])
+const monthRange = calcMonthRange(spendingTotals)
+
+console.log({monthRange})
+---
+<div>
+<pre>
+{JSON.stringify({start, end}, null, 2)}
+
+-----
+
+{JSON.stringify(transactions, null, 2)}
+</pre>
+</div>
