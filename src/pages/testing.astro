@@ -1,45 +1,119 @@
 ---
-import { actions } from "astro:actions"
-import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../features/trends/utils/trendGraph.utils"
-import { convertDate } from "../lib/convertDate"
-import { db } from "../lib/db"
+import { ArrowLeftRightIcon, BotIcon, ChartColumnIncreasingIcon, CirclePlusIcon, MoveRightIcon } from "@lucide/astro"
+import { actions } from "astro:actions";
+import { getAuth } from "../features/auth/auth.utils";
+import TransactionLite from "../features/transactions/components/TransactionLite";
+import type { Transaction } from "../features/transactions/schema/transaction.schema";
+import IncomeGraph from "../features/trends/components/IncomeGraph.astro";
+import MonthlySpendingSummary from "../features/trends/components/MonthlySpendingSummary.astro";
+import NetGraph from "../features/trends/components/NetGraph.astro";
+import SpendingGraph from "../features/trends/components/SpendingGraph.astro";
+import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../features/trends/utils/trendGraph.utils";
+import AppLayout from "../layouts/AppLayout.astro";
+import { convertDate } from "../lib/convertDate";
 
+const auth = await getAuth(Astro)
 
 const start = convertDate().prevMonth(4).to('YYYY-MM')
 const end = convertDate().to('YYYY-MM')
 
-const startDate = `${start}-01`; // first day of July
-const [year, month] = end.split("-").map(Number);
-const nextMonth = month === 12 ? 1 : month + 1;
-const nextYear = month === 12 ? year + 1 : year;
-const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
-
-const { data } = await db.from('TransactionView')
-    .select('*') 
-    .order('date', { ascending : false })
-    .eq('userId', 1)
-    .eq('isDeleted', false)
-    .gte('date', startDate)
-    .lte('date', endDate)
-
-const transactions = data
+const [recentTransactions, transactions] = await Promise.all([
+	Astro.callAction( actions.transaction.index, {filter : 'recent', perPage : 5} ),
+	Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
+		start : start,
+		end : end
+	}} ),
+])
 
 // const spendingTotals = calcSpendingTotals(transactions.data ?? [])
+// const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
+// const incomeUpperRange = calcUpperRange(spendingTotals, 'income')
+// const netUpperRange = calcUpperRange(spendingTotals, 'net')
 // const monthRange = calcMonthRange(spendingTotals)
 
 // console.log({monthRange})
 ---
-<div>
 <pre>
-{JSON.stringify({
-    start, 
-    end,
-    startDate,
-    endDate
-}, null, 2)}
-
------
-
-{JSON.stringify(transactions, null, 2)}
+{transactions}
 </pre>
-</div>
+<AppLayout>
+
+	<div class="text-2xl mb-16 mt-12 flex items-center gap-2 font-theme">
+		<BotIcon width="36" height="36" />
+		Welcome Back {auth?.userName}!<br />
+	</div>
+
+	<div class="grid gap-8">
+
+		<div class="grid gap-6 border-b border-slate-300 pb-4">
+			<h2 class="flex items-center gap-2 font-semibold">
+				<ChartColumnIncreasingIcon />
+				Your Spending this month: 
+				<span class="italic text-sm">({convertDate().to('MMM-YYYY')})</span>
+			</h2>
+			<MonthlySpendingSummary />
+			<a href="/budgets" class="flex items-center gap-2 justify-self-start">
+				View your budgets 
+				<MoveRightIcon />
+			</a>
+		</div>
+
+		<div class="grid gap-x-4 gap-y-0 md:grid-cols-3">
+			<!-- <SpendingGraph
+				monthRange={monthRange}
+				spendingTotals={spendingTotals}
+				upperRange={spendingUpperRange}
+			/>
+	
+			<IncomeGraph 
+				monthRange={monthRange}
+				spendingTotals={spendingTotals}
+				upperRange={incomeUpperRange}
+			/>
+	
+			<NetGraph 
+				title="Net over time"
+				monthRange={monthRange}
+				spendingTotals={spendingTotals}
+				upperRange={netUpperRange}
+			/> -->
+
+			<div class="md:col-span-3">
+				<a href="/trends" class="flex items-center gap-2 justify-self-start">
+					View your monthly trends 
+					<MoveRightIcon />
+				</a>
+			</div>
+		</div>
+
+		<div class="bg-blue/5 rounded-sm p-4 grid gap-4">
+			<h2 class="flex items-center gap-2 font-semibold tex-2xl">
+				<ArrowLeftRightIcon />
+				Recent Transactions
+				<span class="flex items-center gap-3 ml-auto">
+					<a 
+						class="flex items-center gap-0.5 text-sm font-semibold hover:text-red text-blue min-w-fit border hover:border-red/50 border-blue/50 rounded-xl px-3 py-1"
+						href="/transactions/add"
+					>
+						<CirclePlusIcon size={20} />
+						Add
+					</a>
+				</span>
+			</h2>
+			<div class="grid gap-2">
+				{ recentTransactions.data.list && recentTransactions.data.list.map( 
+					(transaction : Transaction ) => <TransactionLite {transaction} />
+				)}
+			</div>
+			<a href="/transactions/recent" class="flex items-center gap-2 justify-self-start">
+				View your transactions
+				<MoveRightIcon />
+			</a>
+		</div>
+
+
+		<div class="bg-blue/10 rounded-sm p-4 min-h-32">
+			Upcoming Bills
+		</div>
+	</div>
+</AppLayout>

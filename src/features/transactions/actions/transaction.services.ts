@@ -105,7 +105,7 @@ export const getTransactionsBy : Record<string, Function> = {
             .gte('date', startDate)
             .lte('date', endDate)
 
-        return data ?? []
+        return JSON.stringify(data)
     },
 
     budget : async ({ filterValue: budgetId} : Params) => {
