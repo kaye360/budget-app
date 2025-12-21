@@ -25,19 +25,19 @@ const [recentTransactions, transactions] = await Promise.all([
 	}} ),
 ])
 
-const spendingTotals = calcSpendingTotals(transactions.data.data ?? [])
-const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
-const incomeUpperRange = calcUpperRange(spendingTotals, 'income')
-const netUpperRange = calcUpperRange(spendingTotals, 'net')
-const monthRange = calcMonthRange(spendingTotals)
+// const spendingTotals = calcSpendingTotals(transactions.data.data ?? [])
+// const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
+// const incomeUpperRange = calcUpperRange(spendingTotals, 'income')
+// const netUpperRange = calcUpperRange(spendingTotals, 'net')
+// const monthRange = calcMonthRange(spendingTotals)
 
-console.log({monthRange})
+// console.log({monthRange})
 ---
 <pre>
 
 	{JSON.stringify(transactions, null, 2)}
 </pre>
-<AppLayout>
+<!-- <AppLayout>
 
 	<div class="text-2xl mb-16 mt-12 flex items-center gap-2 font-theme">
 		<BotIcon width="36" height="36" />
@@ -117,4 +117,4 @@ console.log({monthRange})
 			Upcoming Bills
 		</div>
 	</div>
-</Layout>
+</AppLayout> -->
