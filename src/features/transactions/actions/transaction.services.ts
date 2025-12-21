@@ -96,25 +96,27 @@ export const getTransactionsBy : Record<string, Function> = {
         const nextMonth = month === 12 ? 1 : month + 1;
         const nextYear = month === 12 ? year + 1 : year;
         const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
-
-        try {
-            const { data, error } = await db.from('TransactionView')
-                .select('*')
-                .eq('userId', userId)
-                .eq('isDeleted', false)
-                .gte('date', startDate)
-                .lte('date', endDate);
-
-            if (error) {
-                console.error("Supabase query error:", error);
-                return {error, params: {startDate, endDate}}
-            }
-
-            return data ?? [];
-        } catch (err) {
-            console.error("monthRange action failed:", err);
-            return {err, params: {startDate, endDate}}
+        return {
+            startDate, endDate
         }
+        // try {
+        //     const { data, error } = await db.from('TransactionView')
+        //         .select('*')
+        //         .eq('userId', userId)
+        //         .eq('isDeleted', false)
+        //         .gte('date', startDate)
+        //         .lte('date', endDate);
+
+        //     if (error) {
+        //         console.error("Supabase query error:", error);
+        //         return {error, params: {startDate, endDate}}
+        //     }
+
+        //     return data ?? [];
+        // } catch (err) {
+        //     console.error("monthRange action failed:", err);
+        //     return {err, params: {startDate, endDate}}
+        // }
     },
 
     budget : async ({ filterValue: budgetId} : Params) => {
