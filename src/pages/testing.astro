@@ -11,19 +11,52 @@ import SpendingGraph from "../features/trends/components/SpendingGraph.astro";
 import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../features/trends/utils/trendGraph.utils";
 import AppLayout from "../layouts/AppLayout.astro";
 import { convertDate } from "../lib/convertDate";
+import { db } from "../lib/db";
 
 const auth = await getAuth(Astro)
 
 const start = convertDate().prevMonth(4).to('YYYY-MM')
 const end = convertDate().to('YYYY-MM')
 
-const [recentTransactions, transactions] = await Promise.all([
-	Astro.callAction( actions.transaction.index, {filter : 'recent', perPage : 5} ),
-	Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
-		start : start,
-		end : end
-	}} ),
-])
+const getMonthRange = async (filterValue) => {
+
+        console.log("monthRange Called")
+
+        if( typeof filterValue !== 'object' || !filterValue ) {
+            return { error : 'Invalid monthRange input value'}
+        }
+
+        const { start, end } = filterValue
+
+        if( !start || !end ) {
+            return { error : "Invalid start or end date"}
+        }
+
+        const startDate = `${start}-01`; // first day of July
+        const [year, month] = end.split("-").map(Number);
+        const nextMonth = month === 12 ? 1 : month + 1;
+        const nextYear = month === 12 ? year + 1 : year;
+        const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
+
+        const { data } = await db.from('TransactionView')
+            .select('*')
+            .order('date', { ascending : false })
+            .eq('userId', 1)
+            .eq('isDeleted', false)
+            .gte('date', startDate)
+            .lte('date', endDate)
+
+        return {
+            data,
+            startDate,
+            endDate
+        }
+}
+
+const transactions = await getMonthRange({
+    start : start,
+    end : end
+})
 
 // const spendingTotals = calcSpendingTotals(transactions.data ?? [])
 // const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
@@ -34,7 +67,7 @@ const [recentTransactions, transactions] = await Promise.all([
 // console.log({monthRange})
 ---
 <pre>
-{JSON.stringify(transactions)}
+{JSON.stringify(transactions, null, 2)}
 </pre>
 <AppLayout>
 
@@ -100,11 +133,11 @@ const [recentTransactions, transactions] = await Promise.all([
 					</a>
 				</span>
 			</h2>
-			<div class="grid gap-2">
+			<!-- <div class="grid gap-2">
 				{ recentTransactions.data.list && recentTransactions.data.list.map( 
 					(transaction : Transaction ) => <TransactionLite {transaction} />
 				)}
-			</div>
+			</div> -->
 			<a href="/transactions/recent" class="flex items-center gap-2 justify-self-start">
 				View your transactions
 				<MoveRightIcon />
