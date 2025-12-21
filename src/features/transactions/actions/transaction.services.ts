@@ -97,7 +97,7 @@ export const getTransactionsBy : Record<string, Function> = {
         const nextYear = month === 12 ? year + 1 : year;
         const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
 
-        const { data } = await db.from('TransactionView')
+        const { data, error } = await db.from('TransactionView')
             .select('*')
             .order('date', { ascending : false })
             .eq('userId', userId)
@@ -105,7 +105,7 @@ export const getTransactionsBy : Record<string, Function> = {
             .gte('date', startDate)
             .lte('date', endDate)
 
-        return data ?? []
+        return { data, error }
     },
 
     budget : async ({ filterValue: budgetId} : Params) => {
