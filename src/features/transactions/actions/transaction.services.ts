@@ -79,6 +79,8 @@ export const getTransactionsBy : Record<string, Function> = {
 
     monthRange : async ({filterValue} : Params) => {
 
+        console.log("monthRange Called")
+
         if( typeof filterValue !== 'object' || !filterValue ) {
             return { error : 'Invalid monthRange input value'}
         }

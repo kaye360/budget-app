@@ -18,11 +18,11 @@ export const convertDate = (inputDate: string | undefined | null = undefined) =>
     const fullMonthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
     const getFormattedDates = () => {
-        const year = date.getFullYear()
+        const year = date.getUTCFullYear()
         const yearShort = String(year).slice(-2)
-        const month = date.getMonth()
+        const month = date.getUTCMonth()
         const monthNumber = String(month + 1).padStart(2, '0')
-        const day = String(date.getDate()).padStart(2, '0')
+        const day = String(date.getUTCDate()).padStart(2, '0')
 
         return {
             'MMM-DD': `${shortMonthNames[month]} ${day}`,
@@ -41,12 +41,12 @@ export const convertDate = (inputDate: string | undefined | null = undefined) =>
         },
 
         nextMonth(num: number = 1) {
-            date.setMonth(date.getMonth() + num)
+            date.setMonth(date.getUTCMonth() + num)
             return this 
         },
 
         prevMonth(num: number = 1) {
-            date.setMonth(date.getMonth() - num)
+            date.setMonth(date.getUTCMonth() - num)
             return this 
         },
     }
