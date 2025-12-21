@@ -82,13 +82,13 @@ export const getTransactionsBy : Record<string, Function> = {
         console.log("monthRange Called")
 
         if( typeof filterValue !== 'object' || !filterValue ) {
-            return { error : 'Invalid monthRange input value'}
+            return { error : 'Invalid monthRange input value', filterValue}
         }
 
         const { start, end } = filterValue
 
         if( !start || !end ) {
-            return { error : "Invalid start or end date"}
+            return { error : "Invalid start or end date", start, end }
         }
 
         const startDate = `${start}-01`; // first day of July
@@ -107,13 +107,13 @@ export const getTransactionsBy : Record<string, Function> = {
 
             if (error) {
                 console.error("Supabase query error:", error);
-                return error
+                return {error, params: {startDate, endDate}}
             }
 
             return data ?? [];
         } catch (err) {
             console.error("monthRange action failed:", err);
-            return err
+            return {err, params: {startDate, endDate}}
         }
     },
 
