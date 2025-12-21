@@ -2,24 +2,41 @@
 import { actions } from "astro:actions"
 import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../features/trends/utils/trendGraph.utils"
 import { convertDate } from "../lib/convertDate"
+import { db } from "../lib/db"
 
 
 const start = convertDate().prevMonth(4).to('YYYY-MM')
 const end = convertDate().to('YYYY-MM')
 
-const transactions = await 	Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
-    start : start,
-    end : end
-}})
+const startDate = `${start}-01`; // first day of July
+const [year, month] = end.split("-").map(Number);
+const nextMonth = month === 12 ? 1 : month + 1;
+const nextYear = month === 12 ? year + 1 : year;
+const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
 
-const spendingTotals = calcSpendingTotals(transactions.data ?? [])
-const monthRange = calcMonthRange(spendingTotals)
+const { data } = await db.from<any>('TransactionView')
+    .select('id, description, amount, date') 
+    .order('date', { ascending : false })
+    .eq('userId', 1)
+    .eq('isDeleted', false)
+    .gte('date', startDate)
+    .lte('date', endDate)
 
-console.log({monthRange})
+const transactions = data
+
+// const spendingTotals = calcSpendingTotals(transactions.data ?? [])
+// const monthRange = calcMonthRange(spendingTotals)
+
+// console.log({monthRange})
 ---
 <div>
 <pre>
-{JSON.stringify({start, end}, null, 2)}
+{JSON.stringify({
+    start, 
+    end,
+    startDate,
+    endDate
+}, null, 2)}
 
 -----
 
