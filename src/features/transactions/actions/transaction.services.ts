@@ -105,7 +105,16 @@ export const getTransactionsBy : Record<string, Function> = {
             .gte('date', startDate)
             .lte('date', endDate)
 
-        return JSON.parse(JSON.stringify(data))
+        try {
+            return JSON.parse(JSON.stringify(data));
+        } catch (err) {
+            return {
+                stringifyError: String(err),
+                sample: Object.entries(data?.[0] ?? {}).map(
+                    ([k, v]) => [k, typeof v]
+                )
+            };
+        }
     },
 
     budget : async ({ filterValue: budgetId} : Params) => {
