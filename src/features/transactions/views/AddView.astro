@@ -3,10 +3,13 @@ import { actions } from "astro:actions";
 import TransactionListLayout from "../../../layouts/TransactionListLayout.astro";
 import CreateTransaction from "../components/CreateTransaction";
 
-const [budgets, accounts] = await Promise.all([
+const [budgetsResponse, accountsResponse] = await Promise.all([
     Astro.callAction( actions.budget.index, {} ),
     Astro.callAction( actions.accounts.index, {} )
 ]) 
+
+const budgets = budgetsResponse.error ? [] : budgetsResponse.data;
+const accounts = accountsResponse.error ? [] : accountsResponse.data;
 ---
 
 <TransactionListLayout
@@ -16,8 +19,8 @@ const [budgets, accounts] = await Promise.all([
 
         <div class="grid gap-4">
             <CreateTransaction 
-                budgets={budgets.data ?? []} 
-                accounts={accounts.data ?? []} 
+                budgets={budgets} 
+                accounts={accounts} 
                 client:only="react"
             />
         </div>

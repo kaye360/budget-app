@@ -9,7 +9,7 @@ const userId = 1
 export const accounts = {
 
     index : defineAction({
-        handler : async () => {
+        handler : async (): Promise<Account[]> => {
             const { data, error } = await db.from('Accounts')
                 .select('*')
                 .order('name')

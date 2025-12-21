@@ -7,7 +7,7 @@ type FormattedDates = {
 
 export const convertDate = (inputDate: string | undefined | null = undefined) => {
     const date = inputDate
-        ? new Date(inputDate.replaceAll('-', '/'))
+        ? new Date(inputDate)
         : new Date()
 
     if (isNaN(date.getTime())) {

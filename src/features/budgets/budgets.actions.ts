@@ -1,6 +1,7 @@
 import { defineAction } from "astro:actions"
 import { z } from "astro:content"
 import { db } from "../../lib/db"
+import type { Budget } from "./schema/budget.schema"
 
 /**
  * @todo implement auth
@@ -10,7 +11,7 @@ const userId = 1
 export const budget = {
     
     index : defineAction({
-        handler : async () => {
+        handler : async (): Promise<Budget[]> => {
 
             const { data, error } = await db.from('Budgets')
                 .select('*')

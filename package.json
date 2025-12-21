@@ -15,13 +15,13 @@
     "@fontsource/lato": "^5.2.6",
     "@lucide/astro": "^0.515.0",
     "@supabase/supabase-js": "^2.50.0",
-    "@tailwindcss/vite": "^4.1.10",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "astro": "^5.16.6",
     "lucide-react": "^0.546.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.10"
+    "tailwindcss": "^4.1.18"
   }
 }

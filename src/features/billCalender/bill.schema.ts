@@ -1,6 +1,6 @@
 import { z } from "astro/zod";
 
-export const RecurringTransaction = z.object({
+export const Bill = z.object({
     id : z.coerce.number(),
     userId : z.coerce.number(),
     title : z.coerce.string(),
@@ -11,10 +11,9 @@ export const RecurringTransaction = z.object({
     startDate : z.coerce.string()
 })
 
-export const CreateRecurringTransaction = RecurringTransaction.omit({
+export const CreateBill = Bill.omit({
     id : true
 })
 
-export type RecurringTransaction = z.infer<typeof RecurringTransaction>
-export type CreateRecurringTransaction = z.infer<typeof CreateRecurringTransaction>
-export type Forecast = RecurringTransaction[]
+export type Bill = z.infer<typeof Bill>
+export type CreateBill = z.infer<typeof CreateBill>

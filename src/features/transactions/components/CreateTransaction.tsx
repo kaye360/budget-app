@@ -14,9 +14,13 @@ interface Props {
     accounts : Account[]
 }
 
+interface CreateTransactionFormState extends Omit<CreateTransactionSchema, "amount"> {
+        amount: string
+    }
+
 export default function CreateTransaction({budgets, accounts} : Props) {
 
-    const initialTransaction: CreateTransactionSchema = {
+    const initialTransaction: CreateTransactionFormState = {
         userId: 1,
         type: "spending",
         accountId: accounts[0].id,

@@ -31,7 +31,7 @@ export const transaction = {
             */
             const { error } = await db
                 .from('Transactions')
-                .insert(input)
+                .insert({...input, amount : Number(input.amount)})
 
             if( error ) {
                 throw new Error(error.message)
