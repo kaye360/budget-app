@@ -14,11 +14,14 @@ import SpendingGraph from "../trends/components/SpendingGraph.astro";
 
 const auth = await getAuth(Astro)
 
+const start = convertDate().prevMonth(4).to('YYYY-MM')
+const end = convertDate().to('YYYY-MM')
+
 const [recentTransactions, transactions] = await Promise.all([
 	Astro.callAction( actions.transaction.index, {filter : 'recent', perPage : 5} ),
 	Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
-		start : convertDate().prevMonth(4).to('YYYY-MM'),
-		end : convertDate().to('YYYY-MM')
+		start : start,
+		end : end
 	}} ),
 ])
 
@@ -32,7 +35,8 @@ const monthRange = calcMonthRange(spendingTotals)
 
 	<div class="text-2xl mb-16 mt-12 flex items-center gap-2 font-theme">
 		<BotIcon width="36" height="36" />
-		Welcome Back {auth?.userName}!
+		Welcome Back {auth?.userName}!<br />
+		[{start}] [{end}]
 	</div>
 
 	<div class="grid gap-8">
