@@ -25,12 +25,11 @@ const end = convertDate().to('YYYY-MM')
 // 	}} ),
 // ])
 
-const [transactions] = await Promise.all([
-	Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
-		start : start,
-		end : end
-	}} ),
-])
+const transactions = await Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
+	start : start,
+	end : end
+}} ),
+
 
 // const spendingTotals = calcSpendingTotals(transactions.data ?? [])
 // const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
@@ -41,10 +40,10 @@ const [transactions] = await Promise.all([
 // console.log({monthRange})
 ---
 <pre>
-	This is  a test
+This is  a test
 
-	
-	{JSON.stringify(transactions, null, 2)}
+
+{JSON.stringify(transactions, null, 2)}
 </pre>
 <!-- <AppLayout>
 
