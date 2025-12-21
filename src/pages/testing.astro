@@ -18,45 +18,50 @@ const auth = await getAuth(Astro)
 const start = convertDate().prevMonth(4).to('YYYY-MM')
 const end = convertDate().to('YYYY-MM')
 
-const getMonthRange = async (filterValue) => {
+// const getMonthRange = async (filterValue) => {
 
-        console.log("monthRange Called")
+//         console.log("monthRange Called")
 
-        if( typeof filterValue !== 'object' || !filterValue ) {
-            return { error : 'Invalid monthRange input value'}
-        }
+//         if( typeof filterValue !== 'object' || !filterValue ) {
+//             return { error : 'Invalid monthRange input value'}
+//         }
 
-        const { start, end } = filterValue
+//         const { start, end } = filterValue
 
-        if( !start || !end ) {
-            return { error : "Invalid start or end date"}
-        }
+//         if( !start || !end ) {
+//             return { error : "Invalid start or end date"}
+//         }
 
-        const startDate = `${start}-01`; // first day of July
-        const [year, month] = end.split("-").map(Number);
-        const nextMonth = month === 12 ? 1 : month + 1;
-        const nextYear = month === 12 ? year + 1 : year;
-        const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
+//         const startDate = `${start}-01`; // first day of July
+//         const [year, month] = end.split("-").map(Number);
+//         const nextMonth = month === 12 ? 1 : month + 1;
+//         const nextYear = month === 12 ? year + 1 : year;
+//         const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
 
-        const { data } = await db.from('TransactionView')
-            .select('*')
-            .order('date', { ascending : false })
-            .eq('userId', 1)
-            .eq('isDeleted', false)
-            .gte('date', startDate)
-            .lte('date', endDate)
+//         const { data } = await db.from('TransactionView')
+//             .select('*')
+//             .order('date', { ascending : false })
+//             .eq('userId', 1)
+//             .eq('isDeleted', false)
+//             .gte('date', startDate)
+//             .lte('date', endDate)
 
-        return {
-            data,
-            startDate,
-            endDate
-        }
-}
+//         return {
+//             data,
+//             startDate,
+//             endDate
+//         }
+// }
 
-const transactions = await getMonthRange({
-    start : start,
-    end : end
-})
+const transactions = await Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
+		start : start,
+		end : end
+}} )
+
+// const transactions = await getMonthRange({
+//     start : start,
+//     end : end
+// })
 
 // const spendingTotals = calcSpendingTotals(transactions.data ?? [])
 // const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
