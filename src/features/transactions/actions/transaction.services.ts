@@ -107,13 +107,13 @@ export const getTransactionsBy : Record<string, Function> = {
 
             if (error) {
                 console.error("Supabase query error:", error);
-                throw new Error("Failed to fetch transactions");
+                return error
             }
 
             return data ?? [];
         } catch (err) {
             console.error("monthRange action failed:", err);
-            throw err
+            return err
         }
     },
 
