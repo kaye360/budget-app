@@ -154,6 +154,10 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
             }
         }
 
+        return {
+            list : ['made', 'it', 'here', JSON.stringify(filterValue)],
+        }
+
         const { start, end } = filterValue
 
         if( typeof start !== 'string' || typeof end !== 'string' ) {
@@ -163,9 +167,6 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
             }
         }
 
-        return {
-            list : ['made', 'it', 'here'],
-        }
 
         // const startDate = `${start}-01`; // first day of July
         // const [year, month] = end.split("-").map(Number);
