@@ -3,11 +3,16 @@ import { getTransactionsBy } from "./transaction.services";
 import { db } from "../../../lib/db";
 import { TransactionValidator } from "./transaction.validator";
 
+export interface TransactionsIndexResult {
+    list : unknown[]    
+    info? : Record<string, unknown> | null
+}
+
 export const transaction = {
 
     index : defineAction({
         input : TransactionValidator.index,
-        handler : async (input) => {
+        handler : async (input) : Promise<TransactionsIndexResult> => {
 
             if( !(typeof getTransactionsBy[input.filter] === 'function') ) {
                 throw new ActionError({

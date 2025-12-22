@@ -2,6 +2,7 @@ import { z } from "astro:schema";
 import { db } from "../../../lib/db";
 import { convertDate } from "../../../lib/convertDate";
 import type { TransactionValidator } from "./transaction.validator";
+import { transaction, type TransactionsIndexResult } from "./transaction.actions";
 
 
 /**
@@ -11,16 +12,21 @@ const userId = 1
 
 type Params = z.infer<typeof TransactionValidator.index>
 
-export const getTransactionsBy : Record<string, Function> = {
+export const getTransactionsBy : Record<string, (input : Params) => Promise<TransactionsIndexResult>> = {
 
     all : async () => {
-        const { data : list, count } = await db.from('TransactionView')
+        const { data, count } = await db.from('TransactionView')
             .select('*', { count: 'exact'})
             .order('date', { ascending : false })
             .eq('userId', userId)
             .eq('isDeleted', false)
 
-        return { list, count } 
+        return { 
+            list : data ?? [], 
+            info : {
+                count
+            } 
+        } 
     },
 
     recent : async ({ page = 0, perPage = 50} : Params ) => {
@@ -28,27 +34,35 @@ export const getTransactionsBy : Record<string, Function> = {
         const start = page * perPage
         const end = start + perPage - 1
 
-        const { data : list, count } = await db.from('TransactionView')
+        const { data, count } = await db.from('TransactionView')
             .select('*', { count: 'exact'})
             .order('date', { ascending : false })
             .eq('userId', userId)
             .eq('isDeleted', false)
             .range(start, end)
 
-        return { list, count, totalPages : Math.ceil( (count ?? 0) / perPage) }
+        return { 
+            list : data ?? [], 
+            info : { 
+                count, 
+                page, 
+                perPage, 
+                totalPages : Math.ceil( (count ?? 0) / perPage) 
+            }
+        } 
     },
 
     month : async ({ filterValue: date} : Params ) => {
 
         if( !date ) {
-            return { error : 'Invalid Date'}
+            throw new Error('Invalid Date')
         }
 
         const [year, month] = date.split('-').map(Number)
         const startDate = `${year}-${month}-01`
         const endDate = (new Date(year, month, 0)).toISOString().slice(0,10)
 
-        const { data : list } = await db.from('TransactionView')
+        const { data : transactions } = await db.from('TransactionView')
             .select('*')
             .order('date', { ascending : false })
             .eq('userId', userId)
@@ -74,7 +88,12 @@ export const getTransactionsBy : Record<string, Function> = {
                 title : convertDate(month).to('MMM-YYYY')
             }))
 
-        return { list, months }
+        return { 
+            list : transactions ?? [], 
+            info : {
+                months
+            }
+        }
     },
 
     monthRange : async ({filterValue} : Params) => {
@@ -82,13 +101,13 @@ export const getTransactionsBy : Record<string, Function> = {
         console.log("monthRange Called")
 
         if( typeof filterValue !== 'object' || !filterValue ) {
-            return { error : 'Invalid monthRange input value'}
+            throw new Error('Invalid monthRange input value')
         }
 
         const { start, end } = filterValue
 
         if( !start || !end ) {
-            return { error : "Invalid start or end date"}
+            throw new Error("Invalid start or end date")
         }
 
         const startDate = `${start}-01`; // first day of July
@@ -105,7 +124,9 @@ export const getTransactionsBy : Record<string, Function> = {
             .gte('date', startDate)
             .lte('date', endDate)
 
-        return data
+        return {
+            list : data ?? [],
+        }
     },
 
     monthRange_TESTING : async ({filterValue} : Params) => {
@@ -113,13 +134,13 @@ export const getTransactionsBy : Record<string, Function> = {
         console.log("monthRange Called")
 
         if( typeof filterValue !== 'object' || !filterValue ) {
-            return { error : 'Invalid monthRange input value'}
+            throw new Error('Invalid monthRange input value')
         }
 
         const { start, end } = filterValue
 
         if( !start || !end ) {
-            return { error : "Invalid start or end date"}
+            throw new Error("Invalid start or end date")
         }
 
         const startDate = `${start}-01`; // first day of July
@@ -136,7 +157,9 @@ export const getTransactionsBy : Record<string, Function> = {
         //     .gte('date', startDate)
         //     .lte('date', endDate)
 
-        return [1,2,3,4,5,6]
+        return {
+            list : [1,2,3,4,5,6]
+        }
     },
 
     budget : async ({ filterValue: budgetId} : Params) => {
@@ -154,7 +177,9 @@ export const getTransactionsBy : Record<string, Function> = {
         }
 
         const { data } = await query
-        return data
+        return {
+            list : data ?? []
+        }
     },
 
     account : async ({ filterValue: accountId} : Params) => {
@@ -176,7 +201,10 @@ export const getTransactionsBy : Record<string, Function> = {
         }
         
         const { data } = await query
-        return data
+
+        return {
+            list : data ?? []
+        }
     },
 
     deleted : async () => {
@@ -187,7 +215,9 @@ export const getTransactionsBy : Record<string, Function> = {
             .eq('userId', userId)
             .eq('isDeleted', true)
         
-        return data
+        return {
+            list : data ?? []
+        }
     },
 
     uncategorized : async () => {
@@ -197,7 +227,9 @@ export const getTransactionsBy : Record<string, Function> = {
             .eq('userId', userId)
             .eq('budget', 'Uncategorized')
         
-        return data
+        return {
+            list : data ?? []
+        }
     },
 
     search : async ({ filterValue : query} : Params) => {
@@ -208,7 +240,9 @@ export const getTransactionsBy : Record<string, Function> = {
             .eq('isDeleted', false)
             .ilike('description', `%${query}%`)
         
-        return data
+        return {
+            list : data ?? []
+        }
     }
 
 }
