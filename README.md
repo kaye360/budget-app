@@ -2,6 +2,7 @@
 Made with Astro, React, Supabase
 
 ## Todo
+- move all transaction actions into main file, remove from services as its too complex. each action will have its own separate validation
 - Redo ImportView Form
 - Add 'add transaction' button to dashboard
 - Make Add Transactions a slim modal and update the page as you add them

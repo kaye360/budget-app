@@ -150,7 +150,7 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
         ) {
             return {
                 list: [],
-                error: 'Invalid monthRange input value'
+                error: 'Invalid monthRange input value: ' +  JSON.stringify(filterValue)
             }
         }
 
