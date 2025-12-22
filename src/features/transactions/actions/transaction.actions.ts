@@ -11,21 +11,47 @@ export interface TransactionsIndexResult {
 
 export const transaction = {
 
-    index : defineAction({
-        input : TransactionValidator.index,
-        handler : async (input) : Promise<TransactionsIndexResult> => {
+    // index : defineAction({
+    //     input : TransactionValidator.index,
+    //     handler : async (input) : Promise<TransactionsIndexResult> => {
 
-            if( !(typeof getTransactionsBy[input.filter] === 'function') ) {
+    //         if( !(typeof getTransactionsBy[input.filter] === 'function') ) {
+    //             throw new ActionError({
+    //                 code : 'BAD_REQUEST',
+    //                 message : 'Invalid transaction filter'
+    //             })
+    //         }
+            
+    //         const data = await getTransactionsBy[input.filter]({...input})
+    //         return data
+    //     }
+    // }),
+    index: defineAction({
+        input: TransactionValidator.index,
+        handler: async (input): Promise<TransactionsIndexResult> => {
+            try {
+                const fn = getTransactionsBy[input.filter]
+
+                if (typeof fn !== 'function') {
+                    throw new ActionError({
+                    code: 'BAD_REQUEST',
+                    message: 'Invalid transaction filter'
+                    })
+                }
+
+                return await fn(input)
+            } catch (err) {
+                 console.error('Transaction index failed:', err)
+
                 throw new ActionError({
-                    code : 'BAD_REQUEST',
-                    message : 'Invalid transaction filter'
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message:
+                    err instanceof Error ? err.message : 'Unknown error'
                 })
             }
-            
-            const data = await getTransactionsBy[input.filter]({...input})
-            return data
         }
     }),
+
 
 
     store : defineAction({
