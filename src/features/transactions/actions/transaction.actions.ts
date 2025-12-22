@@ -29,29 +29,26 @@ export const transaction = {
     index: defineAction({
         input: TransactionValidator.index,
         handler: async (input): Promise<TransactionsIndexResult> => {
-            return {
-                list : ['your', 'butt', 'is', 'working!'],
+            try {
+                const fn = getTransactionsBy[input.filter]
+
+                if (typeof fn !== 'function') {
+                    throw new ActionError({
+                    code: 'BAD_REQUEST',
+                    message: 'Invalid transaction filter'
+                    })
+                }
+
+                return await fn(input)
+            } catch (err) {
+                 console.error('Transaction index failed:', err)
+
+                throw new ActionError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message:
+                    err instanceof Error ? err.message : 'Who knows?'
+                })
             }
-            // try {
-            //     const fn = getTransactionsBy[input.filter]
-
-            //     if (typeof fn !== 'function') {
-            //         throw new ActionError({
-            //         code: 'BAD_REQUEST',
-            //         message: 'Invalid transaction filter'
-            //         })
-            //     }
-
-            //     return await fn(input)
-            // } catch (err) {
-            //      console.error('Transaction index failed:', err)
-
-            //     throw new ActionError({
-            //         code: 'INTERNAL_SERVER_ERROR',
-            //         message:
-            //         err instanceof Error ? err.message : 'Unknown error'
-            //     })
-            // }
         }
     }),
 
