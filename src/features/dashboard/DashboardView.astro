@@ -25,7 +25,7 @@ const [recentTransactions, transactions] = await Promise.all([
 	}} ),
 ])
 
-const spendingTotals = calcSpendingTotals(transactions.data ?? [])
+const spendingTotals = calcSpendingTotals(transactions.data?.list ?? [])
 const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
 const incomeUpperRange = calcUpperRange(spendingTotals, 'income')
 const netUpperRange = calcUpperRange(spendingTotals, 'net')
@@ -99,7 +99,7 @@ console.log({monthRange})
 				</span>
 			</h2>
 			<div class="grid gap-2">
-				{ recentTransactions.data.list && recentTransactions.data.list.map( 
+				{ recentTransactions.data?.list && recentTransactions.data.list.map( 
 					(transaction : Transaction ) => <TransactionLite {transaction} />
 				)}
 			</div>
