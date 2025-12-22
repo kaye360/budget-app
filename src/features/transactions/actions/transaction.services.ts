@@ -139,8 +139,50 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
     },
 
     monthRange_TESTING : async ({filterValue} : Params) => {
+
+        console.log("monthRange Called")
+
+        if (
+            !filterValue ||
+            typeof filterValue !== 'object' ||
+            !('start' in filterValue) ||
+            !('end' in filterValue)
+        ) {
+            return {
+                list: [],
+                error: 'Invalid monthRange input value'
+            }
+        }
+
+        const { start, end } = filterValue
+
+        if( typeof start !== 'string' || typeof end !== 'string' ) {
+            return {
+                list : [],
+                error : 'Invalid start or end date'
+            }
+        }
+
         return {
-            list : ['this', 'is', 'a', 'test'],
+            list : ['made', 'it', 'here'],
+        }
+
+        // const startDate = `${start}-01`; // first day of July
+        // const [year, month] = end.split("-").map(Number);
+        // const nextMonth = month === 12 ? 1 : month + 1;
+        // const nextYear = month === 12 ? year + 1 : year;
+        // const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
+
+        // const { data } = await db.from('TransactionView')
+        //     .select('*')
+        //     .order('date', { ascending : false })
+        //     .eq('userId', userId)
+        //     .eq('isDeleted', false)
+        //     .gte('date', startDate)
+        //     .lte('date', endDate)
+
+        return {
+            list : [1,2,3,4,5,6]
         }
     },
 
