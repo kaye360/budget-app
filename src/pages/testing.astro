@@ -54,10 +54,7 @@ const end = convertDate().to('YYYY-MM')
 // }
 
 const transactions = await Astro.callAction( 
-    actions.transaction.index, {filter : 'monthRange_TESTING', filterValue : {
-		start : start,
-		end : end
-    }} 
+    actions.transaction.index, {filter : 'monthRange_TESTING'} 
 )
 
 // const transactions = await getMonthRange({
