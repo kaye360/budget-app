@@ -14,7 +14,7 @@ type Params = z.infer<typeof TransactionValidator.index>
 
 export const getTransactionsBy : Record<string, (input : Params) => Promise<TransactionsIndexResult>> = {
 
-    all : async () => {
+    all : async (_input : Params) => {
         const { data, count } = await db.from('TransactionView')
             .select('*', { count: 'exact'})
             .order('date', { ascending : false })
@@ -225,7 +225,7 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
         }
     },
 
-    deleted : async () => {
+    deleted : async (_input : Params) => {
 
         const { data } = await db.from('TransactionView')
             .select('*')
@@ -238,7 +238,7 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
         }
     },
 
-    uncategorized : async () => {
+    uncategorized : async (_input : Params) => {
         const { data } = await db.from('TransactionView')
             .select('*')
             .order('date', { ascending : false })
