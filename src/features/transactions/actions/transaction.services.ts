@@ -149,6 +149,18 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
             }
         }
 
+        if (
+            !filterValue ||
+            typeof filterValue !== 'object' ||
+            !('start' in filterValue) ||
+            !('end' in filterValue)
+        ) {
+            return {
+                list: [],
+                error: 'Invalid monthRange input value'
+            }
+        }
+
         const { start, end } = filterValue
 
         if( typeof start !== 'string' || typeof end !== 'string' ) {
