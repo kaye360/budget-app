@@ -8,7 +8,7 @@ export const TransactionValidator =  {
 
     index : z.object({
         filter : z.string(),
-        filterValue : z.union([ z.string(), z.record(z.any()) ]).optional(),
+        filterValue : z.any().optional(),
         page : z.number().optional(),
         perPage : z.number().optional()
     }),
