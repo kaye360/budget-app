@@ -151,7 +151,7 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
 
         const { start, end } = filterValue
 
-        if( !start || !end ) {
+        if( typeof start !== 'string' || typeof end !== 'string' ) {
             return {
                 list : [],
                 error : 'Invalid start or end date'
