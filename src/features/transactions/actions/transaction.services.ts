@@ -55,7 +55,10 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
     month : async ({ filterValue: date} : Params ) => {
 
         if( !date ) {
-            throw new Error('Invalid Date')
+            return {
+                list : [],
+                error : 'No date provided'
+            }
         }
 
         const [year, month] = date.split('-').map(Number)
@@ -101,13 +104,19 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
         console.log("monthRange Called")
 
         if( typeof filterValue !== 'object' || !filterValue ) {
-            throw new Error('Invalid monthRange input value')
+            return {
+                list : [],
+                error : 'Invalid monthRange input value'
+            }
         }
 
         const { start, end } = filterValue
 
         if( !start || !end ) {
-            throw new Error("Invalid start or end date")
+            return {
+                list : [],
+                error : 'Invalid start or end date'
+            }
         }
 
         const startDate = `${start}-01`; // first day of July
@@ -134,13 +143,19 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
         console.log("monthRange Called")
 
         if( typeof filterValue !== 'object' || !filterValue ) {
-            throw new Error('Invalid monthRange input value')
+            return {
+                list : [],
+                error : 'Invalid monthRange input value'
+            }
         }
 
         const { start, end } = filterValue
 
         if( !start || !end ) {
-            throw new Error("Invalid start or end date")
+            return {
+                list : [],
+                error : 'Invalid start or end date'
+            }
         }
 
         const startDate = `${start}-01`; // first day of July
@@ -185,7 +200,10 @@ export const getTransactionsBy : Record<string, (input : Params) => Promise<Tran
     account : async ({ filterValue: accountId} : Params) => {
 
         if (accountId === null) {
-            throw new Error('Invalid accountId')
+            return {
+                list : [],
+                error : 'Invalid accountId'
+            }
         } 
 
         let query =  db.from('TransactionView')

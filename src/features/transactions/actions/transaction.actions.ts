@@ -6,6 +6,7 @@ import { TransactionValidator } from "./transaction.validator";
 export interface TransactionsIndexResult {
     list : unknown[]    
     info? : Record<string, unknown> | null
+    error? : string | null
 }
 
 export const transaction = {
