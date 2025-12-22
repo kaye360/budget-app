@@ -105,16 +105,38 @@ export const getTransactionsBy : Record<string, Function> = {
             .gte('date', startDate)
             .lte('date', endDate)
 
-        try {
-            return JSON.parse(JSON.stringify(data));
-        } catch (err) {
-            return {
-                stringifyError: String(err),
-                sample: Object.entries(data?.[0] ?? {}).map(
-                    ([k, v]) => [k, typeof v]
-                )
-            };
+        return data
+    },
+
+    monthRange_TESTING : async ({filterValue} : Params) => {
+
+        console.log("monthRange Called")
+
+        if( typeof filterValue !== 'object' || !filterValue ) {
+            return { error : 'Invalid monthRange input value'}
         }
+
+        const { start, end } = filterValue
+
+        if( !start || !end ) {
+            return { error : "Invalid start or end date"}
+        }
+
+        const startDate = `${start}-01`; // first day of July
+        const [year, month] = end.split("-").map(Number);
+        const nextMonth = month === 12 ? 1 : month + 1;
+        const nextYear = month === 12 ? year + 1 : year;
+        const endDate = `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
+
+        const { data } = await db.from('TransactionView')
+            .select('*')
+            .order('date', { ascending : false })
+            .eq('userId', userId)
+            .eq('isDeleted', false)
+            .gte('date', startDate)
+            .lte('date', endDate)
+
+        return [1,2,3,4,5,6]
     },
 
     budget : async ({ filterValue: budgetId} : Params) => {
