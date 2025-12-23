@@ -5,24 +5,27 @@ import type { Budget } from "../../budgets/schema/budget.schema";
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 import TransactionList from "../components/TransactionList";
 
-const accountId = Astro.props.routeParam
+const accountId = Number(Astro.props.routeParam)
 const accounts = await Astro.callAction( actions.accounts.index, {} )
-const account = accounts.data?.find( a => a.id === Number(accountId))
+const account = !accounts.error 
+	? accounts.data?.find( a => a.id === Number(accountId))
+	: undefined
 
 let transactions: TransactionSchema[] = []
 let budgets : Budget[] = []
 
 if( accountId ) {
 
-	const transactionResponse = await Astro.callAction( actions.transaction.index, {
-		filter : 'account', 
-		filterValue : accountId, 
-	})
+	const [transactionsResponse, budgetResponse] = await Promise.all([
+		Astro.callAction(actions.transaction.byAccount, { accountId }),
+		Astro.callAction(actions.budget.index, {}),
+	])
 
-	const budgetResponse = await Astro.callAction( actions.budget.index, {} )
+	if ( !transactionsResponse.error ) {
+		transactions = transactionsResponse.data.list
+	}
 
-	if( !transactionResponse.error && !budgetResponse.error ) {
-		transactions = transactionResponse.data as TransactionSchema[]
+	if ( !budgetResponse.error ) {
 		budgets = budgetResponse.data
 	}
 }

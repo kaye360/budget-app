@@ -4,7 +4,7 @@ import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
 import InfiniteTransactionList from "../components/InfinteTransactionList"
 
 const [transactions, budgets, accounts] = await Promise.all([
-	Astro.callAction( actions.transaction.index, {filter : 'recent'} ),
+	Astro.callAction( actions.transaction.byRecent, {} ),
 	Astro.callAction( actions.budget.index, {} ),
 	Astro.callAction( actions.accounts.index, {} )
 ])
@@ -16,7 +16,7 @@ const [transactions, budgets, accounts] = await Promise.all([
 >
 
 	<InfiniteTransactionList 
-		initialTransactions={transactions.data.list} 
+		initialTransactions={transactions.data?.list ?? []} 
 		budgets={budgets.data ?? []}
 		accounts={accounts.data ?? []}
 		actionButton="edit"

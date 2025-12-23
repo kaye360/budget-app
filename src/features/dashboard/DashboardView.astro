@@ -18,20 +18,16 @@ const start = convertDate().prevMonth(4).to('YYYY-MM')
 const end = convertDate().to('YYYY-MM')
 
 const [recentTransactions, transactions] = await Promise.all([
-	Astro.callAction( actions.transaction.index, {filter : 'recent', perPage : 5} ),
-	Astro.callAction( actions.transaction.index, {filter : 'monthRange', filterValue : {
-		start : start,
-		end : end
-	}} ),
+	Astro.callAction( actions.transaction.byRecent, { perPage : 5 }),
+	Astro.callAction( actions.transaction.byMonthRange, { start, end }),
 ])
 
-const spendingTotals = calcSpendingTotals(transactions.data?.list ?? [])
+const spendingTotals = calcSpendingTotals(transactions.data?.list || [])
 const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
 const incomeUpperRange = calcUpperRange(spendingTotals, 'income')
 const netUpperRange = calcUpperRange(spendingTotals, 'net')
 const monthRange = calcMonthRange(spendingTotals)
 
-console.log({monthRange})
 ---
 
 <AppLayout>

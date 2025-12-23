@@ -30,9 +30,9 @@ export default function InfiniteTransactionList({
         if( isLoading ) return
         
         setIsLoading(true)
-        const moreTransactions = await actions.transaction.index({filter : 'recent', page })
+        const moreTransactions = await actions.transaction.byRecent({ page })
 
-        if( !moreTransactions.data.list ) {
+        if( !moreTransactions.data?.list ) {
             setIsAtEnd(true)
             return
         }

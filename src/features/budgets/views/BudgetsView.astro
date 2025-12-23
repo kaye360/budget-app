@@ -9,17 +9,15 @@ import H1 from "../../../components/H1.astro";
 import BudgetList from "../components/BudgetList";
 import PieChart from "../components/PieChart.astro";
 
-
 const { routeParam } = Astro.props
-
 const month = routeParam ?? convertDate().to('YYYY-MM')
 
 const [transactions, budgets] = await Promise.all([
-	Astro.callAction( actions.transaction.index, { filter : 'month', filterValue : month } ),
+	Astro.callAction( actions.transaction.byMonth, { date : month } ),
 	Astro.callAction( actions.budget.index, {} )
 ])
 
-const budgetsWithSpendingTotals = calcBudgetSpendingTotals(budgets.data, transactions.data.list)
+const budgetsWithSpendingTotals = calcBudgetSpendingTotals(budgets.data, transactions.data?.list)
 
 const budgetPieChartData = calcBudgetPieChartData(budgetsWithSpendingTotals)
 ---
@@ -31,7 +29,7 @@ const budgetPieChartData = calcBudgetPieChartData(budgetsWithSpendingTotals)
 			{ convertDate(month).to('MMMM-YYYY') }
 		</H1>
 
-		<SelectMonthlyBudget currentMonth={month} months={transactions.data.months} /> 
+		<SelectMonthlyBudget currentMonth={month} months={transactions.data?.info.months} /> 
 		
 	</div>
 

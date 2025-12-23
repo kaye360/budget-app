@@ -5,27 +5,31 @@ import TransactionList from "../components/TransactionList"
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema"
 import type { Account } from "../../settings/accounts.schema"
 
-const budget = Astro.props.routeParam
+const budgetId = Number(Astro.props.routeParam)
 const budgets = await Astro.callAction( actions.budget.index, {} )
-const budgetName = budgets.data?.find( b => b.id === Number(budget) )?.name
+const budgetName = !budgets.error 
+	? budgets.data?.find( b => b.id === budgetId )?.name
+	: undefined
 
 let transactions: TransactionSchema[] = []
 let accounts : Account[] = []
 
-if( budget ) {
+if( budgetId ) {
 
-	const transactionResponse = await Astro.callAction( actions.transaction.index, {
-		filter : 'budget', 
-		filterValue : budget, 
-	})
+	const [transactionsResult, accountsResult] = await Promise.all([
+		Astro.callAction(actions.transaction.byBudget, { budgetId }),
+		Astro.callAction(actions.accounts.index, {}),
+	])
 
-	const accountResponse = await Astro.callAction( actions.accounts.index, {} )
+	if ( !transactionsResult.error ) {
+		transactions = transactionsResult.data.list
+	}
 
-	if( !transactionResponse.error && !accountResponse.error ) {
-		transactions = transactionResponse.data as TransactionSchema[]
-		accounts = accountResponse.data
+	if ( !accountsResult.error ) {
+		accounts = accountsResult.data
 	}
 }
+
 ---
 
 <TransactionListLayout
@@ -37,7 +41,7 @@ if( budget ) {
 		id="budget-selector"
 		name="budget-selector" 
 		class="w-full md:max-w-fit mb-4"
-		data-budget={budget}
+		data-budget={budgetId}
 	>
 		<option>Select budget to view</option>
 		<option value="null">Uncategorized</option>

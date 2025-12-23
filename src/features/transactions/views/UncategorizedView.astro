@@ -4,7 +4,7 @@ import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
 import TransactionList from "../components/TransactionList";
 
 const [transactions, budgets, accounts] = await Promise.all([
-	Astro.callAction( actions.transaction.index, {filter : 'uncategorized'} ),
+	Astro.callAction( actions.transaction.byUncategorized, {} ),
 	Astro.callAction( actions.budget.index, {} ),
 	Astro.callAction( actions.accounts.index, {} ),
 ])
@@ -16,7 +16,7 @@ const [transactions, budgets, accounts] = await Promise.all([
 >
 	
 	<TransactionList
-		transactions={transactions.data}
+		transactions={transactions.data?.list ?? []}
 		budgets={budgets.data ?? []}
 		accounts={accounts.data ?? []}
 		client:only="react"

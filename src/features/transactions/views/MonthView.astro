@@ -8,7 +8,7 @@ const { routeParam } = Astro.props
 const month = routeParam ?? convertDate().to('YYYY-MM')
 
 const [transactions, budgets, accounts] = await Promise.all([
-	Astro.callAction( actions.transaction.index, {filter : 'month', filterValue : month} ),
+	Astro.callAction( actions.transaction.byMonth, { date : month } ),
 	Astro.callAction( actions.budget.index, {} ),
 	Astro.callAction( actions.accounts.index, {} ),
 ])
@@ -26,7 +26,7 @@ const [transactions, budgets, accounts] = await Promise.all([
 		data-month={month}
 	>
 		<option>Select month to view</option>
-		{ !transactions.error && transactions.data.months.map( (month: { month: string, title: string }) => (
+		{ !transactions.error && transactions.data.info.months.map( month => (
 			<option value={month.month}>
 				{month.title}
 			</option>
@@ -34,7 +34,7 @@ const [transactions, budgets, accounts] = await Promise.all([
 	</select>
 
 	<TransactionList
-		transactions={transactions.data.list}
+		transactions={transactions.data?.list ?? []}
 		budgets={budgets.data || []}
 		accounts={accounts.data || []}
 		client:only="react"
