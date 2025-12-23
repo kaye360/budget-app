@@ -87,5 +87,31 @@ export function calcBudgetPieChartData(budgetsWithSpendingTotals : Budget[]) {
 		}
 	].filter(item => item.amount > 0)
 	
-	return budgetPieChartData
+	return zigZagSort( budgetPieChartData, item => item.amount )
+}
+
+function zigZagSort<T>(
+	arr: T[],
+	getValue: (item: T) => number
+): T[] {
+	const sorted = [...arr].sort(
+		(a, b) => getValue(a) - getValue(b)
+	)
+
+	const result: T[] = []
+	let left = 0
+	let right = sorted.length - 1
+
+	while (left <= right) {
+		if (left === right) {
+		result.push(sorted[left])
+		} else {
+		result.push(sorted[left])
+		result.push(sorted[right])
+		}
+		left++
+		right--
+	}
+
+	return result
 }
