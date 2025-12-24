@@ -20,13 +20,10 @@ const budgetName = budget?.name ?? '' as string
 let transactions : TransactionSchema[] = []
 
 if( budget ) {
-	const { data, error } = await Astro.callAction( actions.transaction.index, {
-		filter : 'budget', 
-		filterValue : String(budget.id), 
-	})
+	const { data, error } = await Astro.callAction( actions.transaction.byBudget, { budgetId : Number(budget.id) })
 
 	if( !error ) {
-		transactions = data as TransactionSchema[]
+		transactions = data.list as TransactionSchema[]
 	}
 }
 
