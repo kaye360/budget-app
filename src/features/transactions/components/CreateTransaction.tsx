@@ -7,7 +7,7 @@ import { getFormData } from "../../app/form.utils.ts";
 import { type CreateTransaction as CreateTransactionSchema } from "../schema/transaction.schema.ts";
 import { convertDate } from "../../../lib/convertDate.ts";
 import { actions } from "astro:actions";
-import { sleep } from "../../app/app.utils.ts";
+import { sleep, stripEmojis } from "../../app/app.utils.ts";
 
 interface Props {
     budgets : Budget[],
@@ -131,19 +131,12 @@ export default function CreateTransaction({budgets, accounts} : Props) {
                     value={transaction.budgetId ?? 0}
                     onChange={ e => setTransaction({...transaction, budgetId : Number(e.target.value)})}
                     onKeyDown={ e => {
-                        const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
-
-                        function stripLeadingEmoji(str : string) {
-                            const segments = [...segmenter.segment(str)];
-                            return segments.length > 1
-                                ? segments.slice(1).map(s => s.segment).join("").trim()
-                                : str;
-                        }  
-                        const match = budgets.find( b => stripLeadingEmoji(b.name)
+                        
+                        const match = budgets.find( b => stripEmojis(b.name)
                             .toLowerCase()
                             .startsWith(e.key.toLowerCase()) 
                         ) 
-
+ 
                         if( match ) {
                             setTransaction({...transaction, budgetId : Number(match.id)})
                         }

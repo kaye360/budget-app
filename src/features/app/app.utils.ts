@@ -56,4 +56,22 @@ export function objectValuesToString(obj: Record<string, any>): Record<string, s
 }
 
 
+/**
+ * Strip emoji function
+ */
+const defaultSegmenter = new Intl.Segmenter(undefined, {
+  	granularity: "grapheme",
+})
+
+function isEmoji(grapheme: string): boolean {
+	return /\p{Extended_Pictographic}/u.test(grapheme)
+}
+
+export function stripEmojis(str: string): string {
+  	return [...defaultSegmenter.segment(str)]
+		.filter(seg => !isEmoji(seg.segment))
+		.map(seg => seg.segment)
+		.join("")
+		.trim()
+}
 

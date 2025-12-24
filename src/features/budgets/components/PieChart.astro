@@ -81,29 +81,10 @@ const gap = strokeWidth * 1.6;
 			// Label position (existing logic)
 			const labelRadius = radius + strokeWidth * 2
 
-			let xOffset = 0
-			let yOffset = 0
+			const labelX = center + Math.cos(midAngle - Math.PI / 2) * labelRadius
+			const labelY = center + Math.sin(midAngle - Math.PI / 2) * labelRadius
 
-			switch (i) {
-				case 0:
-				case 1:
-					xOffset = -20
-					break
-				case 2:
-					yOffset = 10
-					break
-				case 3:
-					xOffset = 60
-					yOffset = 20
-					break
-				case 4:
-					xOffset = 70
-					yOffset = 20
-					break
-			}
-
-			const labelX = center + Math.cos(midAngle - Math.PI / 2) * labelRadius - xOffset
-			const labelY = center + Math.sin(midAngle - Math.PI / 2) * labelRadius - yOffset
+			console.log({labelX, labelY, ...slice})
 
 			return (
 				<text

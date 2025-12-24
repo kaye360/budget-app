@@ -90,10 +90,8 @@ export function calcBudgetPieChartData(budgetsWithSpendingTotals : Budget[]) {
 	return zigZagSort( budgetPieChartData, item => item.amount )
 }
 
-function zigZagSort<T>(
-	arr: T[],
-	getValue: (item: T) => number
-): T[] {
+function zigZagSort<T>( arr: T[], getValue: (item: T) => number ): T[] {
+	
 	const sorted = [...arr].sort(
 		(a, b) => getValue(a) - getValue(b)
 	)
@@ -104,10 +102,10 @@ function zigZagSort<T>(
 
 	while (left <= right) {
 		if (left === right) {
-		result.push(sorted[left])
+			result.push(sorted[left])
 		} else {
-		result.push(sorted[left])
-		result.push(sorted[right])
+			result.push(sorted[left])
+			result.push(sorted[right])
 		}
 		left++
 		right--

@@ -2,6 +2,7 @@ import { defineAction } from "astro:actions"
 import { z } from "astro:content"
 import { db } from "../../lib/db"
 import type { Budget } from "./schema/budget.schema"
+import { stripEmojis } from "../app/app.utils"
 
 /**
  * @todo implement auth
@@ -22,19 +23,9 @@ export const budget = {
                 throw new Error( error.message )
             }
 
-            // Sort while ignoring emojis
-            const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
-
-            function stripLeadingEmoji(str : string) {
-                const segments = [...segmenter.segment(str)];
-                return segments.length > 1
-                    ? segments.slice(1).map(s => s.segment).join("").trim()
-                    : str;
-            }   
-
             const sorted = data.sort((a,b) => 
-                stripLeadingEmoji(a.name).localeCompare(stripLeadingEmoji(b.name))
-            )
+                stripEmojis(a.name).localeCompare(stripEmojis(b.name)) 
+            ) 
 
             return sorted 
         }
