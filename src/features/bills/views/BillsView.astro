@@ -1,10 +1,25 @@
 ---
+import { actions } from "astro:actions";
 import H1 from "../../../components/H1.astro";
 import AppLayout from "../../../layouts/AppLayout.astro";
+import EditBillCalendar from "../components/EditBillCalendar";
 
+const accounts = await Astro.callAction( actions.accounts.index, {})
+const bills = await Astro.callAction( actions.bill.index, {})
 ---
 <AppLayout>
 
     <H1>Bill Calendar</H1>
+
+
+    <section>
+
+        <h2 class="text-lg font-semibold mb-2">Add a Bill</h2>
+
+        <EditBillCalendar 
+            bills={bills.data?.bills ?? []}
+            accounts={accounts.data ?? []} 
+            client:only="react"
+        />
 
 </AppLayout>

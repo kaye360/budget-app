@@ -1,3 +1,4 @@
+import { bill } from "../features/bills/bills.actions";
 import { budget } from "../features/budgets/budgets.actions";
 import { summary } from "../features/budgets/summaries.actions";
 import { accounts } from "../features/settings/settings.actions";
@@ -8,4 +9,5 @@ export const server = {
     budget,
     summary,
     accounts,
+    bill
 }

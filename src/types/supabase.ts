@@ -60,6 +60,53 @@ export type Database = {
         }
         Relationships: []
       }
+      Bills: {
+        Row: {
+          accountId: number | null
+          amount: number
+          created_at: string
+          date: string
+          id: number
+          repeats: string
+          startDate: string | null
+          title: string
+          type: string
+          userId: number
+        }
+        Insert: {
+          accountId?: number | null
+          amount: number
+          created_at?: string
+          date: string
+          id?: number
+          repeats: string
+          startDate?: string | null
+          title: string
+          type: string
+          userId: number
+        }
+        Update: {
+          accountId?: number | null
+          amount?: number
+          created_at?: string
+          date?: string
+          id?: number
+          repeats?: string
+          startDate?: string | null
+          title?: string
+          type?: string
+          userId?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Bills_accountId_fkey"
+            columns: ["accountId"]
+            isOneToOne: false
+            referencedRelation: "Accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Budgets: {
         Row: {
           amount: number
@@ -77,39 +124,6 @@ export type Database = {
           amount?: number
           id?: number
           name?: string
-          userId?: number
-        }
-        Relationships: []
-      }
-      Forecast: {
-        Row: {
-          amount: number
-          date: string
-          id: number
-          repeats: string
-          startDate: string
-          title: string
-          type: string
-          userId: number
-        }
-        Insert: {
-          amount: number
-          date: string
-          id?: number
-          repeats: string
-          startDate: string
-          title: string
-          type: string
-          userId: number
-        }
-        Update: {
-          amount?: number
-          date?: string
-          id?: number
-          repeats?: string
-          startDate?: string
-          title?: string
-          type?: string
           userId?: number
         }
         Relationships: []
