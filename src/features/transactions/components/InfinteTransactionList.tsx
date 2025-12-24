@@ -17,7 +17,7 @@ export default function InfiniteTransactionList({
     actionButton, 
     budgets,
     accounts
-} : Props) {
+} : Props) { 
 
     const [transactions, setTransactions] = useState(initialTransactions)
     const [page, setPage] = useState(1)
