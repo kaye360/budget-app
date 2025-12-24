@@ -12,6 +12,7 @@ import BudgetsView from "../features/budgets/views/BudgetsView.astro"
 import TrendsView from "../features/trends/views/TrendsView.astro"
 import BudgetView from "../features/budgets/views/BudgetView.astro"
 import SettingsView from "../features/settings/SettingsView.astro"
+import BillsView from "../features/bills/views/BillsView.astro"
 
 const auth = await isAuth(Astro)
 
@@ -34,6 +35,7 @@ const routes = {
     "/budgets" : BudgetsView,
     "/budgets/month" : BudgetsView,
     "/budgets/budget" : BudgetView,
+    "/bills" : BillsView,
     "/trends" : TrendsView,
     "/settings" : SettingsView,
     "/auth/login" : LoginView,

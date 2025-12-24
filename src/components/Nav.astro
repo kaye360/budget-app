@@ -1,15 +1,16 @@
 ---
 import NavLink from "./NavLink.astro"
-import { LayoutDashboardIcon, ArrowLeftRight, ChartColumnIncreasingIcon, ChartPieIcon, BotIcon, TrendingUpDown, UserCog } from "@lucide/astro"
+import { LayoutDashboardIcon, ChartColumnIncreasingIcon, ChartPieIcon, BotIcon, ArrowLeftRightIcon, UserCogIcon, CalendarSyncIcon } from "@lucide/astro"
 
 const auth = await Astro.session?.get('auth')
 
 const navLinks = [
-    { href : '/dashboard', title : 'Dashboard',      Icon : LayoutDashboardIcon},
-    { href : '/transactions', title : 'Transactions',   Icon : ArrowLeftRight},
-    { href : '/budgets', title : 'Budgets',   Icon : ChartPieIcon},
-    { href : '/trends', title : 'Trends',   Icon : ChartColumnIncreasingIcon},
-    { href : '/settings', title : 'Settings',        Icon : UserCog},
+    { href : '/dashboard', title : 'Dashboard', Icon : LayoutDashboardIcon},
+    { href : '/transactions', title : 'Transactions', Icon : ArrowLeftRightIcon},
+    { href : '/budgets', title : 'Budgets', Icon : ChartPieIcon},
+    { href : '/bills', title : 'Bill Calendar', Icon : CalendarSyncIcon},
+    { href : '/trends', title : 'Trends', Icon : ChartColumnIncreasingIcon},
+    // { href : '/settings', title : 'Settings', Icon : UserCogIcon},
 ]
 ---
 { auth && 
@@ -21,8 +22,8 @@ const navLinks = [
         <nav 
             transition:name="nav"
             class:list={[
-                "bg-slate-900/80 md:bg-transparent text-white md:text-inherit backdrop-blur-lg rounded-sm shadow-md shadow-blue/20",
-                "w-[97vw] px-2 md:w-full mx-auto ",
+                "bg-background-accent md:bg-transparent text-white md:text-inherit backdrop-blur-lg rounded-sm shadow-md shadow-blue/20",
+                "p-2 w-full",
                 "flex items-center md:gap-2 justify-between md:justify-start"
             ]}
         >
