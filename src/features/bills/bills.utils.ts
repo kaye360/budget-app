@@ -7,12 +7,20 @@ export const normalizeDate = (d: Date) => {
   return n
 }
 
-export const getDateRange = () => {
+export const getDateRange = (numDays?: number) => {
   const start = normalizeDate(new Date())
 
-  const end = new Date(start)
-  end.setMonth(end.getMonth() + 2, 0) // end of next month
-  end.setHours(23, 59, 59, 999)
+  let end: Date
+
+  if (typeof numDays === 'number') {
+    end = new Date(start)
+    end.setDate(end.getDate() + numDays - 1)
+    end.setHours(23, 59, 59, 999)
+  } else {
+    end = new Date(start)
+    end.setMonth(end.getMonth() + 2, 0) // end of next month
+    end.setHours(23, 59, 59, 999)
+  }
 
   const days: Date[] = []
 
@@ -23,12 +31,16 @@ export const getDateRange = () => {
   return days
 }
 
-export const occursOnDate = (bill : Bill, day: Date) => {
+export const parseLocalDate = (date: string) => {
+  const [year, month, day] = date.split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
+export const occursOnDate = (bill: Bill, day: Date) => {
   const target = normalizeDate(day)
-  const billDate = normalizeDate(new Date(bill.date))
+  const billDate = normalizeDate(parseLocalDate(bill.date))
 
   switch (bill.repeats) {
-
     case 'monthly':
       return target.getDate() === billDate.getDate()
 

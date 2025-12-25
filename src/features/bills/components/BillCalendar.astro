@@ -1,0 +1,79 @@
+---
+import { convertDate } from "../../../lib/convertDate";
+import { getDateRange, buildSchedule, formatMonth } from "../bills.utils";
+import type { Bill } from "../bill.schema";
+import { BanknoteArrowDownIcon, BanknoteArrowUpIcon } from "@lucide/astro";
+
+interface Props {
+    bills : Bill[],
+    numberOfDays? : number
+}
+
+const { bills, numberOfDays } = Astro.props
+
+const days = getDateRange(numberOfDays)
+const schedule = buildSchedule(days, bills)
+
+let lastMonth = ''
+---
+<div class="grid mt-8">
+    { schedule.map((entry) => {
+
+        const month = formatMonth(entry.date);
+        const showMonthHeader = month !== lastMonth;
+        lastMonth = month;
+        const hasBills = entry.bills.length > 0
+        const day = convertDate(entry.date.toString()).to('WW-MMM-DD')
+        const isEndOfWeek = day.includes('Sat')
+
+        return (
+            <>
+                { showMonthHeader && (
+                    <h3 class="font-semibold border-l-4 border-button-main pl-2 py-2 bg-red/10">{month}</h3>
+                )}
+            </>
+
+            <div class:list={["border-l-4 border-button-main pl-2 py-2", isEndOfWeek && 'mb-8']}>
+
+                { hasBills ? (
+
+                    <span class="relative mb-2 font-semibold">
+                        { day }
+                    </span>
+                    <>
+                        {entry.bills.map((bill) => (
+                            <div class="flex items-center gap-x-2 opacity-90">
+                                { bill.type === 'expense' ? (
+                                    <BanknoteArrowDownIcon class="stroke-red" size={16} />
+                                ) : (
+                                    <BanknoteArrowUpIcon class="stroke-green-500" size={16} />
+                                ) }
+                                <span class="min-w-fit md:w-45">
+                                    {bill.title}
+                                </span>
+                                <span class="min-w-fit md:w-20">
+                                    ${bill.amount}
+                                </span>
+                                {bill.accountName && (
+                                    <span class="min-w-fit md:w-62.5">
+                                        {bill.accountName} ● {bill.accountNumber}
+                                    </span>
+                                )}
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <div class="text-sm italic text-white/40 py-2">
+                        { day } - No bills
+                    </div>
+                )}
+                {/* <>
+                    { isEndOfWeek && (
+                        <div class="my-4 border-b border-base-text/40" />
+                    ) }
+                </> */}
+
+            </div>
+        )
+    })}
+</div>

@@ -2,77 +2,26 @@
 import { actions } from "astro:actions";
 import H1 from "../../../components/H1.astro";
 import AppLayout from "../../../layouts/AppLayout.astro";
-import { getDateRange, buildSchedule, formatMonth } from "../bills.utils";
-import { convertDate } from "../../../lib/convertDate";
-import { BanknoteArrowDownIcon, BanknoteArrowUpIcon } from "@lucide/astro";
+import { EditIcon } from "@lucide/astro";
+import BillCalendar from "../components/BillCalendar.astro";
 
-// const accounts = await Astro.callAction(actions.accounts.index, {});
 const bills = await Astro.callAction(actions.bill.index, {});
 
-const days = getDateRange()
-const schedule = buildSchedule(days, bills.data?.bills || [])
-
-let lastMonth = ''
 ---
 
 <AppLayout>
-    <H1>Bill Calendar</H1>
 
-    <a href="/bills/edit">Edit Bill Calendar</a>
+    <div class="flex items-center justify-between">
+        <H1>Bill Calendar</H1>
+        <a 
+            href="/bills/edit"
+            class="flex items-center gap-2"
+        >
+            Edit <EditIcon />
+        </a>
+    </div>  
 
-    <div class="grid gap-4 mt-8">
-        { schedule.map((entry) => {
+    <BillCalendar bills={bills.data?.bills ?? []} />
 
-            const month = formatMonth(entry.date);
-            const showMonthHeader = month !== lastMonth;
-            lastMonth = month;
-            const hasBills = entry.bills.length > 0;
 
-            return (
-                <>
-                    { showMonthHeader && (
-                        <h3 class="font-semibold border-b border-base-text">{month}</h3>
-                    )}
-                </>
-
-                <div>
-
-                    { hasBills ? (
-
-                        <span class="relative mb-2 font-semibold">
-                            { convertDate(entry.date.toString()).to('MMM-DD') }
-                        </span>
-                        <>
-                            {entry.bills.map((bill) => (
-                                <div class="flex items-center gap-x-2 w-min opacity-90">
-                                    { bill.type === 'expense' ? (
-                                        <BanknoteArrowDownIcon class="stroke-red" size={16} />
-                                    ) : (
-                                        <BanknoteArrowUpIcon class="stroke-green-500" size={16} />
-                                    ) }
-                                    <span class="w-45">
-                                        {bill.title}
-                                    </span>
-                                    <span class="w-20">
-                                        ${bill.amount}
-                                    </span>
-                                    {bill.accountName && (
-                                        <span class="w-62.5">
-                                            {bill.accountName} ● {bill.accountNumber}
-                                        </span>
-                                    )}
-                                </div>
-                            ))}
-                        </>
-                    ) : (
-                        <div class="text-sm italic text-white/40">
-                            { convertDate(entry.date.toString()).to('MMM-DD') } - No bills
-                        </div>
-                    )}
-
-                </div>
-
-            );
-        })}
-    </div>
 </AppLayout>

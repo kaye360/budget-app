@@ -21,9 +21,10 @@ html.dark {
     ---base-color-red : hsl(336, 81%, 59%);
     ---base-color-purple : hsl(272, 94%, 62%);
     ---base-color-background-main : hsl(219, 25%, 10%);
-    ---base-color-background-accent : hsl(219, 35%, 10%);
+    ---base-color-background-accent : hsl(219, 35%, 15%);
     ---base-color-base-text : hsl(223, 30%, 85%);
     ---base-color-accent-text : hsl(223, 30%, 75%);
+    ---base-color-button-main : hsl(219, 35%, 20%);
 }
 
 @theme {
@@ -36,6 +37,7 @@ html.dark {
     --color-background-accent : var(---base-color-background-accent);
     --color-base-text : var(---base-color-base-text);
     --color-accent-text : var(---base-color-accent-text);
+    --color-button-main : var(---base-color-button-main);
 
     --font-base : 'Helvetica', 'sans-serif';
     --font-theme : 'Sora Variable', 'Lato', 'Helvetica', 'sans-serif';

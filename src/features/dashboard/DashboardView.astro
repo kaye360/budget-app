@@ -1,5 +1,5 @@
 ---
-import { ArrowLeftRightIcon, BotIcon, ChartColumnIncreasingIcon, CirclePlusIcon, MoveRightIcon } from "@lucide/astro"
+import { ArrowLeftRightIcon, BotIcon, CalendarSyncIcon, ChartColumnIncreasingIcon, CircleArrowRightIcon, CirclePlusIcon, MoveRightIcon, SquareArrowRightIcon } from "@lucide/astro"
 import { actions } from "astro:actions";
 import AppLayout from "../../layouts/AppLayout.astro";
 import { convertDate } from "../../lib/convertDate";
@@ -11,15 +11,18 @@ import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../trends/ut
 import IncomeGraph from "../trends/components/IncomeGraph.astro";
 import NetGraph from "../trends/components/NetGraph.astro";
 import SpendingGraph from "../trends/components/SpendingGraph.astro";
+import BillCalendar from "../bills/components/BillCalendar.astro";
+import DashboardButton from "./DashboardButton.astro";
 
 const auth = await getAuth(Astro)
 
 const start = convertDate().prevMonth(4).to('YYYY-MM')
 const end = convertDate().to('YYYY-MM')
 
-const [recentTransactions, transactions] = await Promise.all([
-	Astro.callAction( actions.transaction.byRecent, { perPage : 5 }),
+const [recentTransactions, transactions, bills] = await Promise.all([
+	Astro.callAction( actions.transaction.byRecent, { perPage : 15 }),
 	Astro.callAction( actions.transaction.byMonthRange, { start, end }),
+	Astro.callAction(actions.bill.index, {})
 ])
 
 const spendingTotals = calcSpendingTotals(transactions.data?.list || [])
@@ -43,7 +46,7 @@ const monthRange = calcMonthRange(spendingTotals)
 		</a>
 	</div>
 
-	<div class="grid gap-8">
+	<div class="grid gap-16">
 
 		<div class="grid gap-6 border-b border-slate-300 pb-4">
 			<h2 class="flex items-center gap-2 font-semibold">
@@ -58,7 +61,7 @@ const monthRange = calcMonthRange(spendingTotals)
 			</a>
 		</div>
 
-		<div class="grid gap-x-4 gap-y-0 md:grid-cols-3">
+		<div class="grid gap-x-4 gap-y-0 grid-cols-2 md:grid-cols-3">
 			<SpendingGraph
 				monthRange={monthRange}
 				spendingTotals={spendingTotals}
@@ -70,50 +73,68 @@ const monthRange = calcMonthRange(spendingTotals)
 				spendingTotals={spendingTotals}
 				upperRange={incomeUpperRange}
 			/>
-	
-			<NetGraph 
-				title="Net over time"
-				monthRange={monthRange}
-				spendingTotals={spendingTotals}
-				upperRange={netUpperRange}
-			/>
+			
+			<div class="col-span-2 md:col-span-1">
+				<NetGraph 
+					title="Net over time"
+					monthRange={monthRange}
+					spendingTotals={spendingTotals}
+					upperRange={netUpperRange}
+				/>
+			</div>
 
-			<div class="md:col-span-3">
-				<a href="/trends" class="flex items-center gap-2 justify-self-start">
+			<div class="col-span-2 md:col-span-3">
+				<DashboardButton href="/trends">
 					View your monthly trends 
-					<MoveRightIcon />
-				</a>
+				</DashboardButton>
 			</div>
 		</div>
 
-		<div class="bg-blue/5 rounded-sm p-4 grid gap-4">
-			<h2 class="flex items-center gap-2 font-semibold tex-2xl">
-				<ArrowLeftRightIcon />
-				Recent Transactions
-				<span class="flex items-center gap-3 ml-auto">
-					<a 
-						class="flex items-center gap-0.5 text-sm font-semibold hover:text-red text-blue min-w-fit border hover:border-red/50 border-blue/50 rounded-xl px-3 py-1"
-						href="/transactions/add"
-					>
-						<CirclePlusIcon size={20} />
-						Add
-					</a>
-				</span>
-			</h2>
-			<div class="grid gap-2">
-				{ recentTransactions.data?.list && recentTransactions.data.list.map( 
-					(transaction : Transaction ) => <TransactionLite {transaction} />
-				)}
+		<div class="grid md:grid-cols-2 gap-x-8 gap-y-16 items-start">
+
+			<div class="bg-blue/5 rounded-sm p-4 grid gap-4">
+				<h2 class="flex items-center gap-2 font-semibold tex-2xl">
+					<ArrowLeftRightIcon />
+					Recent Transactions
+					<span class="flex items-center gap-3 ml-auto">
+						<a 
+							class="flex items-center gap-0.5 text-sm font-semibold hover:text-red text-blue min-w-fit border hover:border-red/50 border-blue/50 rounded-xl px-3 py-1"
+							href="/transactions/add"
+						>
+							<CirclePlusIcon size={20} />
+							Add
+						</a>
+					</span>
+				</h2>
+				<div class="grid gap-2">
+					{ recentTransactions.data?.list && recentTransactions.data.list.map( 
+						( transaction : Transaction, i ) => (
+							<div class:list={[ i > 4 && 'hidden md:block']} >
+								<TransactionLite {transaction} />
+							</div>
+						)
+					)}
+				</div>
+				<DashboardButton href="/transactions">
+					View all transactions
+				</DashboardButton>
 			</div>
-			<a href="/transactions/recent" class="flex items-center gap-2 justify-self-start">
-				View your transactions
-				<MoveRightIcon />
-			</a>
+	
+			<div class="">
+				<h2 class="flex items-center gap-2 font-semibold">
+					<CalendarSyncIcon />
+					Upcoming Bills (2 weeks)
+				</h2>
+				<BillCalendar 
+					bills={bills.data?.bills ?? []} 
+					numberOfDays={15}
+				/>
+				<DashboardButton href="/bills" class="mt-6">
+					View Bill Calendar
+				</DashboardButton>
+			</div>
+
 		</div>
 
-
-		<div class="bg-blue/10 rounded-sm p-4 min-h-32">
-			Upcoming Bills
-		</div>
 	</div>
 </AppLayout>

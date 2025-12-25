@@ -1,5 +1,5 @@
 
-type ValidDateFormats = 'YYYY-MM' | 'YYYY-MM-DD' | "MMM-DD" | "MMM-YYYY" |"MMM-DD-YYYY" | 'MMMM-YYYY' | 'MMM-YY'
+type ValidDateFormats = 'YYYY-MM' | 'YYYY-MM-DD' | "MMM-DD" | "MMM-YYYY" |"MMM-DD-YYYY" | 'MMMM-YYYY' | 'MMM-YY' | 'WW-MMM-DD'
 
 type FormattedDates = {
     [key in ValidDateFormats]: string
@@ -14,6 +14,7 @@ export const convertDate = (inputDate: string | undefined | null = undefined) =>
         throw new Error(`Invalid date: ${inputDate}`)
     }
 
+    const weekDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
     const fullMonthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -23,6 +24,7 @@ export const convertDate = (inputDate: string | undefined | null = undefined) =>
         const month = date.getUTCMonth()
         const monthNumber = String(month + 1).padStart(2, '0')
         const day = String(date.getUTCDate()).padStart(2, '0')
+        const weekDay = weekDayNames[date.getUTCDay()]
 
         return {
             'MMM-DD': `${shortMonthNames[month]} ${day}`,
@@ -32,6 +34,7 @@ export const convertDate = (inputDate: string | undefined | null = undefined) =>
             'MMMM-YYYY': `${fullMonthNames[month]} ${year}`,
             'YYYY-MM': `${year}-${monthNumber}`,
             'YYYY-MM-DD': `${year}-${monthNumber}-${day}`,
+            'WW-MMM-DD'  : `${weekDay}, ${shortMonthNames[month]} ${day}`,
         } as FormattedDates
     }
 
