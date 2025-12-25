@@ -22,6 +22,7 @@ export const bill = {
                     )
                 `)
                 .eq('userId', userId)
+                .order('date', { ascending : true })
 
             const bills = data?.map( bill => ({
                 ...bill,

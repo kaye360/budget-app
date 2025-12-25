@@ -5,6 +5,7 @@ import { LoadingButton, useLoadingButtonStatus } from "../../../components/Butto
 import { actions } from "astro:actions"
 import { sleep } from "../../app/app.utils.ts"
 import { ArrowRightLeftIcon } from "lucide-react"
+import EditBill from "./EditBill.tsx"
 
 interface Props {
     bills : Bill[],
@@ -23,7 +24,7 @@ export default function EditBillCalendar({
         repeats: "monthly",
         date: "",
         startDate: "",
-        accountId: null
+        accountId: accounts[0].id ?? null
     }
 
     const [bill, setBill] = useState<CreateBill>(intitialBill)
@@ -34,7 +35,6 @@ export default function EditBillCalendar({
     const handleSave = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        console.log('sup')
         saveStatus.setAsLoading()
         const saveResponse = await actions.bill.store(bill)
         
@@ -59,13 +59,17 @@ export default function EditBillCalendar({
 
     return (
         <>
-            <section>
+            <section className="grid gap-2 py-6">
                 { billList.map( (bill) => (
-                    <div key={bill.id}>
-                        {bill.title} - {bill.amount}
-                    </div>
+                    <EditBill 
+                        key={bill.id} 
+                        bill={bill} 
+                        accounts={accounts}
+                    />
                 ))}
             </section>
+
+            <h2 className="text-lg font-semibold my-2">Add a Bill</h2>
 
             <form
                 method="post"
@@ -75,27 +79,46 @@ export default function EditBillCalendar({
 
                 <label>
                     Title
-                    <input type="text" name="title" required />
-                </label>
-
-                <label>
-                    Description
-                    <input type="text" name="description" />
+                    <input 
+                        type="text" 
+                        name="title" 
+                        value={bill.title}
+                        onChange={ e => setBill({...bill, title : e.target.value})}
+                        required 
+                    />
                 </label>
 
                 <label>
                     Amount
-                    <input type="number" name="amount"  required /> 
+                    <input 
+                        type="number" 
+                        name="amount"  
+                        value={bill.amount}
+                        onChange={ e => setBill({...bill, amount : Number(e.target.value)})}
+                        required 
+                    /> 
                 </label>
 
                 <label>
                     Withdrawl Date:
-                    <input type="date" name="date" required />
+                    <input 
+                        type="date" 
+                        name="date" 
+                        value={bill.date}
+                        onChange={ e => setBill({...bill, date : e.target.value})}
+                        required 
+                    />
                 </label>
 
                 <label>
                     Start Date:
-                    <input type="date" name="startDate" required />
+                    <input 
+                        type="date" 
+                        name="startDate" 
+                        value={bill.startDate}
+                        onChange={ e => setBill({...bill, startDate : e.target.value})}
+                        required 
+                    />
                 </label>
 
                 <div>
@@ -103,18 +126,20 @@ export default function EditBillCalendar({
                     <div className="border border-blue rounded w-fit text-sm font-medium md:h-full">
                         <button 
                             type="button"
+                            onClick={ () => setBill({...bill, type : 'income'}) }
                             className={`
                                 py-0.5 px-2 h-full 
-                                ${false ? 'bg-blue text-white' : ''}
+                                ${bill.type === 'income' ? 'bg-blue text-white' : ''}
                             `}
                         >
                             Income
                         </button>
                         <button 
                             type="button"
+                            onClick={ () => setBill({...bill, type : 'expense'}) }
                             className={`
                                 py-0.5 px-2 h-full 
-                                ${true ? 'bg-blue text-white' : ''}
+                                ${bill.type === 'expense' ? 'bg-blue text-white' : ''}
                             `}
                         >
                             Spending
@@ -124,7 +149,12 @@ export default function EditBillCalendar({
 
                 <label>
                     Repeats
-                    <select name="repeats" required>
+                    <select 
+                        name="repeats" 
+                        onChange={ e => setBill({...bill, repeats : e.target.value as CreateBill['repeats']})}
+                        value={bill.repeats}
+                        required
+                    >
                         <option value="weekly">Weekly</option>
                         <option value="biweekly">Biweekly</option>
                         <option value="monthly">Monthly</option>
@@ -133,7 +163,11 @@ export default function EditBillCalendar({
 
                 <label>
                     Account
-                    <select name="account">
+                    <select 
+                        name="account"
+                        value-={bill.accountId ?? ''}
+                        onChange={ e => setBill({...bill, accountId : Number(e.target.value)})}
+                    >
                         { accounts.map( (account) => (
                             <option value={account.id} key={account.id}>{account.name}</option>
                         )) }
