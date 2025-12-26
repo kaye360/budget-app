@@ -1,20 +1,21 @@
 ---
 import NavLink from "./NavLink.astro"
-import { LayoutDashboardIcon, ChartColumnIncreasingIcon, ChartPieIcon, BotIcon, ArrowLeftRightIcon, UserCogIcon, CalendarSyncIcon } from "@lucide/astro"
+import { LayoutDashboardIcon, ChartColumnIncreasingIcon, ChartPieIcon, BotIcon, ArrowLeftRightIcon, CalendarSyncIcon, Settings2Icon } from "@lucide/astro"
 
 const auth = await Astro.session?.get('auth')
 
 const navLinks = [
     { href : '/dashboard', title : 'Dashboard', Icon : LayoutDashboardIcon},
-    { href : '/transactions', title : 'Transactions', Icon : ArrowLeftRightIcon},
+    { href : '/transactions', title : 'Activity', Icon : ArrowLeftRightIcon},
     { href : '/budgets', title : 'Budgets', Icon : ChartPieIcon},
-    { href : '/bills', title : 'Bill Calendar', Icon : CalendarSyncIcon},
+    { href : '/bills', title : 'Bills', Icon : CalendarSyncIcon},
     { href : '/trends', title : 'Trends', Icon : ChartColumnIncreasingIcon},
+    { href : '/settings', title : 'Settings', Icon : Settings2Icon},
 ]
 ---
 { auth && 
     <div class:list={[
-        "fixed bottom-1 left-0 right-0 w-full z-[9999] flex items-center md:items-start justify-center",
+        "fixed bottom-1 left-0 right-0 w-full z-9999 flex items-center md:items-start justify-center",
         "md:relative md:bottom-auto md:mt-4",
         "md:sticky md:top-4 md:mb-8",
     ]}>

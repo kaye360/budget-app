@@ -74,7 +74,7 @@ export default function EditBill({bill : intitialBill, accounts} : Props) {
         <form 
             onSubmit={handlers.handleSave}
             onKeyDown={handlers.handleEsc}
-            className="flex items-center gap-4 odd:bg-blue/5 hover:bg-blue/10 p-2 rounded-md"
+            className="flex items-center gap-4 flex-wrap odd:bg-blue/5 hover:bg-blue/10 p-2 rounded-md"
         >
             { isEditing ? (
                 <input 
@@ -86,7 +86,7 @@ export default function EditBill({bill : intitialBill, accounts} : Props) {
                     className="w-37.5"
                 />
             ): (
-                <span className="text-lg font-semibold">
+                <span className="text-lg font-semibold min-w-max">
                     {bill.title}
                 </span>
             )}
@@ -106,7 +106,7 @@ export default function EditBill({bill : intitialBill, accounts} : Props) {
                 </span>
             )}
 
-            <span className="ml-auto flex items-center gap-2 italic text-sm">
+            <span className="ml-auto md:flex items-center gap-2 italic text-sm">
                 <span className="min-w-max">
                     Withdraws from &nbsp;
                 </span>
@@ -128,7 +128,7 @@ export default function EditBill({bill : intitialBill, accounts} : Props) {
                         ))}
                     </select>
                 ) : (
-                    <span className="relative bg-blue/20 p-2 rounded-md">
+                    <span className="relative bg-blue/20 md:p-2 rounded-md">
                         {bill.accountName} ● {bill.accountNumber}
                     </span> 
                 )}
@@ -142,7 +142,7 @@ export default function EditBill({bill : intitialBill, accounts} : Props) {
                         required 
                     />
                 ) : (
-                    <span className="relative bg-blue/20 p-2 rounded-md">
+                    <span className="relative bg-blue/20 md:p-2 rounded-md">
                         {bill.date}
                     </span> 
                 )}
@@ -160,7 +160,7 @@ export default function EditBill({bill : intitialBill, accounts} : Props) {
                         <option value="monthly">Monthly</option>
                     </select>
                 ) : (
-                    <span className="relative bg-blue/20 p-2 rounded-md">
+                    <span className="relative bg-blue/20 md:p-2 rounded-md">
                         {bill.repeats}
                     </span> 
                 )}
