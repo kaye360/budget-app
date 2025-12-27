@@ -59,6 +59,8 @@ type PieChart = {
 
 export function calcBudgetPieChartData(budgetsWithSpendingTotals : Budget[]) {
 
+	const numOfSlices = 5
+
 	const budgetsPieChartSorted: PieChart = budgetsWithSpendingTotals
 		.filter( budget => !budget.name.includes('Income') )
 		.map( budget => ({
@@ -67,49 +69,25 @@ export function calcBudgetPieChartData(budgetsWithSpendingTotals : Budget[]) {
 		}))
 		.sort((a,b) => a.amount < b.amount ? 1 : -1)
 		.reduce<PieChart>( (acc, entry, i) => {
-			if( i < 5) {
+			if( i < numOfSlices) {
 				acc.push(entry)
 			} else {
-				if( !acc[5]) acc[5] = {label : '🗂️ Other', amount : 0}
-				acc[5].amount += entry.amount
+				if( !acc[numOfSlices]) acc[numOfSlices] = {label : '🗂️ Other', amount : 0}
+				acc[numOfSlices].amount += entry.amount
 			}
 
 			return acc
 		}, [])
 
 	const budgetPieChartData = [
-		...budgetsPieChartSorted.slice(0, 5),
+		...budgetsPieChartSorted.slice(0, numOfSlices),
 		{
-			label: 'Other',
+			label: '🗂️ Other',
 			amount: budgetsPieChartSorted
-				.slice(5)
+				.slice(numOfSlices)
 				.reduce((sum, item) => sum + item.amount, 0)
 		}
 	].filter(item => item.amount > 0)
 	
-	return zigZagSort( budgetPieChartData, item => item.amount )
-}
-
-function zigZagSort<T>( arr: T[], getValue: (item: T) => number ): T[] {
-	
-	const sorted = [...arr].sort(
-		(a, b) => getValue(a) - getValue(b)
-	)
-
-	const result: T[] = []
-	let left = 0
-	let right = sorted.length - 1
-
-	while (left <= right) {
-		if (left === right) {
-			result.push(sorted[left])
-		} else {
-			result.push(sorted[left])
-			result.push(sorted[right])
-		}
-		left++
-		right--
-	}
-
-	return result
+	return budgetPieChartData
 }

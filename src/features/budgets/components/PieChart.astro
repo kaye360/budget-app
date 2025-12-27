@@ -27,7 +27,7 @@ const gap = strokeWidth * 1.6;
 	viewBox={`0 0 ${size} ${size}`}
 	role="img"
 	aria-label="Pie chart"
-	class="overflow-visible mx-auto pointer-events-none w-fit max-w-[195px] sm:max-w-none"
+	class="overflow-visible mx-auto pointer-events-none w-fit max-w-48.75 sm:max-w-none"
 >
 	<!-- Rotate so chart starts at 12 o’clock -->
 	<g transform={`rotate(-90 ${center} ${center})`}>
@@ -61,7 +61,11 @@ const gap = strokeWidth * 1.6;
 							i === 3 && 'stroke-orange/30',
 							i === 4 && 'stroke-purple/30',
 							i === 5 && 'stroke-slate-400/30',
-							i === 6 && 'stroke-blue/30',
+							i === 6 && 'stroke-red/50',
+							i === 7 && 'stroke-green/50',
+							i === 8 && 'stroke-blue/50',
+							i === 9 && 'stroke-orange/50',
+							i === 9 && 'stroke-purple/50',
 						]}
 					/>
 				);
@@ -70,7 +74,7 @@ const gap = strokeWidth * 1.6;
 	</g>
 
 	<!-- Percentage labels -->
-	{
+	<!-- {
 		data.map((slice, i) => {
 			const fraction = slice.amount / total
 
@@ -94,20 +98,24 @@ const gap = strokeWidth * 1.6;
 					dominant-baseline="middle"
 					class:list={[
 						"font-theme font-semibold text-sm",
-						i === 0 && 'fill-red',
-						i === 1 && 'fill-green',
-						i === 2 && 'fill-blue',
-						i === 3 && 'fill-orange',
-						i === 4 && 'fill-purple',
-						i === 5 && 'fill-slate-600',
-						i === 6 && 'fill-blue',
+							i === 0 && 'fill-red',
+							i === 1 && 'fill-green',
+							i === 2 && 'fill-blue',
+							i === 3 && 'fill-orange',
+							i === 4 && 'fill-purple',
+							i === 5 && 'fill-slate-400',
+							i === 6 && 'fill-red',
+							i === 7 && 'fill-green',
+							i === 8 && 'fill-blue',
+							i === 9 && 'fill-orange',
+							i === 10 && 'fill-purple',
 					]}
 				>
 					{slice.label} ● {Math.round(fraction * 100)}%
 				</text>
 			);
 		})
-	}
+	} -->
 
 
 </svg>

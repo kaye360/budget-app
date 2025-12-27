@@ -92,7 +92,7 @@ export const transaction = {
             const uniqueMonths = [...new Set( 
                 monthData?.map( month => month.date && month.date.slice(0,7) )
                     .filter(Boolean)
-            )]
+            )].filter( Boolean ) as string[]
     
             const months = uniqueMonths
                 .sort()
