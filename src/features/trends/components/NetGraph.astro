@@ -15,13 +15,12 @@ interface Props {
 }
 
 const { monthRange, spendingTotals, upperRange, title } = Astro.props
-
 ---
 
 <GraphWrapper>
     <GraphTitle title={title} />
 
-    <BarGraph baseline="center" class="h-[450px]">
+    <BarGraph baseline="center" class="h-112.5">
         { monthRange.map((month) => {
 
             const net = spendingTotals[month]?.net
@@ -30,7 +29,7 @@ const { monthRange, spendingTotals, upperRange, title } = Astro.props
             return (
                 <div class="relative px-1">
 
-                    <span class="text-sm font-semibold min-w-max">
+                    <span class="text-sm font-semibold min-w-max whitespace-nowrap">
                         {convertDate(month).to("MMM-YY")}
                     </span>
 
