@@ -13,7 +13,7 @@ let accounts
 
 if( query ) {
 	[transactions, budgets, accounts] = await Promise.all([
-		Astro.callAction(actions.transaction.index, { filter: "search", filterValue : query }),
+		Astro.callAction(actions.transaction.search, { query }),
 		Astro.callAction(actions.budget.index, {}),
 		Astro.callAction(actions.accounts.index, {}),
 	])
@@ -30,7 +30,7 @@ if( query ) {
 			Search results for : <strong>"{query}"</strong>
 		</div>
 		<TransactionList 
-			transactions={transactions.data}
+			transactions={transactions.data.list ?? []}
 			budgets={budgets.data}
 			accounts={accounts?.data ?? []}
 			actionButton="edit"

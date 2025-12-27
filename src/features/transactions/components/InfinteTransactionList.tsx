@@ -32,8 +32,6 @@ export default function InfiniteTransactionList({
         setIsLoading(true)
         const moreTransactions = await actions.transaction.byRecent({ page })
 
-        console.log(moreTransactions.data?.list)
-
         if( moreTransactions.data?.list.length === 0 ) {
             setIsAtEnd(true)
             return
@@ -69,11 +67,6 @@ export default function InfiniteTransactionList({
                 accounts={accounts}
                 actionButton={actionButton}
             />
-
-            <div className="p-12 bg-red">
-                {page}
-            </div>
-
 
             { !isAtEnd && (
                 <button 
