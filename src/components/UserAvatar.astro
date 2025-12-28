@@ -1,9 +1,0 @@
----
-import { CircleUserRoundIcon } from "@lucide/astro"
-const auth = await Astro.session?.get('auth')
----
-{ auth && 
-    <a href="/profile">
-        <CircleUserRoundIcon width="30" height="30" />
-    </a>
-}

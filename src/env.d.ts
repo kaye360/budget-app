@@ -1,5 +1,5 @@
 declare namespace App {
-    interface SessionData {
+    interface CookieData {
         auth: {
             userId: number,
             userName : string

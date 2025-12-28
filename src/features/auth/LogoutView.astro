@@ -1,7 +1,8 @@
 ---
 import StaticLayout from "../../layouts/StaticLayout.astro"
+import { clearAuthCookie } from "../auth/cookies.utils";
 
-Astro.session?.destroy()
+clearAuthCookie(Astro)
 ---
 
 <StaticLayout>

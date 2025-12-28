@@ -73,51 +73,6 @@ const gap = strokeWidth * 1.6;
 		}
 	</g>
 
-	<!-- Percentage labels -->
-	<!-- {
-		data.map((slice, i) => {
-			const fraction = slice.amount / total
-
-			// Mid-angle of slice (same math you already use)
-			const midAngle = angleCursor + fraction * Math.PI
-			angleCursor += fraction * Math.PI * 2
-
-			// Label position (existing logic)
-			const labelRadius = radius + strokeWidth * 2
-
-			const labelX = center + Math.cos(midAngle - Math.PI / 2) * labelRadius
-			const labelY = center + Math.sin(midAngle - Math.PI / 2) * labelRadius
-
-			console.log({labelX, labelY, ...slice})
-
-			return (
-				<text
-					x={labelX}
-					y={labelY}
-					text-anchor="middle"
-					dominant-baseline="middle"
-					class:list={[
-						"font-theme font-semibold text-sm",
-							i === 0 && 'fill-red',
-							i === 1 && 'fill-green',
-							i === 2 && 'fill-blue',
-							i === 3 && 'fill-orange',
-							i === 4 && 'fill-purple',
-							i === 5 && 'fill-slate-400',
-							i === 6 && 'fill-red',
-							i === 7 && 'fill-green',
-							i === 8 && 'fill-blue',
-							i === 9 && 'fill-orange',
-							i === 10 && 'fill-purple',
-					]}
-				>
-					{slice.label} ● {Math.round(fraction * 100)}%
-				</text>
-			);
-		})
-	} -->
-
-
 </svg>
 
 <style>

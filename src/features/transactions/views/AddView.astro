@@ -12,8 +12,6 @@ const [transactionsResponse, budgetsResponse, accountsResponse] = await Promise.
 const transactions = transactionsResponse.error ? [] : transactionsResponse.data.list
 const budgets = budgetsResponse.error ? [] : budgetsResponse.data
 const accounts = accountsResponse.error ? [] : accountsResponse.data
-
-console.log(transactions)
 ---
 
 <TransactionListLayout

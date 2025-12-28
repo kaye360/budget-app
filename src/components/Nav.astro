@@ -1,8 +1,9 @@
 ---
 import NavLink from "./NavLink.astro"
 import { LayoutDashboardIcon, ChartColumnIncreasingIcon, ChartPieIcon, BotIcon, ArrowLeftRightIcon, CalendarSyncIcon, Settings2Icon } from "@lucide/astro"
+import { getAuthIfExists } from "../features/auth/auth.utils";
 
-const auth = await Astro.session?.get('auth')
+const auth = await getAuthIfExists(Astro)
 
 const navLinks = [
     { href : '/dashboard', title : 'Dashboard', Icon : LayoutDashboardIcon},

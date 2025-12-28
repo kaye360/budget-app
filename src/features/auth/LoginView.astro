@@ -1,4 +1,6 @@
 ---
+import { setAuthCookie } from "./cookies.utils"
+
 const data = await Astro.request.formData()
 const password = data.get('password')
 const isAuth = password === import.meta.env.APP_PASSWORD
@@ -8,7 +10,7 @@ const defaultAuth = {
     userName : 'Josh',
 }
 
-Astro.session?.set('auth', isAuth ? defaultAuth : undefined )
+setAuthCookie(Astro, isAuth ? defaultAuth : null)
 ---
 
 <html>
