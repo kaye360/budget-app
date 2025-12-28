@@ -105,8 +105,8 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
 
     return (
         <div>
-            <div className="flex items-end justify-center my-4 bg-red`">
-                <h2 className="font-semibold">
+            <div className="flex items-end justify-between my-4 bg-red`">
+                <h2 className="font-semibold text-lg">
                     Bank Accounts
                 </h2>
                 { isEditing ? (
@@ -135,14 +135,14 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
                                 type="text" 
                                 name="name" 
                                 defaultValue={account.name} 
-                                className="max-w-[200px]" 
+                                className="max-w-50" 
                                 onChange={ (e) => handleChange(account.id, 'name', e.target.value) }
                             />
                             <input 
                                 type="number" 
                                 name="number" 
                                 defaultValue={account.number} 
-                                className="max-w-[200px]" 
+                                className="max-w-50" 
                                 onChange={ (e) => handleChange(account.id, 'number', e.target.value) }
                             />
                             <button 
@@ -151,7 +151,7 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
                                 title="Hide Transaction"
                                 onClick={ () => handleDelete(account.id) }
                             >
-                                <Trash2Icon className="w-[24px] h-[24px]  hover:stroke-red cursor-pointer" />
+                                <Trash2Icon className="w-6 h-6  hover:stroke-red cursor-pointer" />
                             </button>
                         </>
                     ) : (
@@ -162,31 +162,37 @@ export default function AccountsList( {accounts : initialAccounts} : Props ) {
                 </div>
             ))}
 
-            <form
-                onSubmit={handleCreate}
-                id="create-account-form"
-                className="flex items-center gap-4"
-            >
-                <label htmlFor="name">
-                    Account Name
-                </label>
-                <input 
-                    type="text"
-                    name="name"
-                    id="name"
-                    className="w-fit"
-                />
-                <label htmlFor="number">
-                    Account Number
-                </label>
-                <input 
-                    type="number"
-                    name="number"
-                    id="number"
-                    className="w-[6rem]"
-                />
-                <LoadingButton state={createStatus} badge="add" type="submit" />
-            </form>
+            <section className="my-6">
+                <h2 className="font-semibold text-lg">
+                    Add New Account
+                </h2>
+
+                <form
+                    onSubmit={handleCreate}
+                    id="create-account-form"
+                    className="flex items-center flex-wrap gap-4"
+                >
+                    <label htmlFor="name">
+                        Account Name
+                    </label>
+                    <input 
+                        type="text"
+                        name="name"
+                        id="name"
+                        className="w-fit"
+                    />
+                    <label htmlFor="number">
+                        Account Number
+                    </label>
+                    <input 
+                        type="number"
+                        name="number"
+                        id="number"
+                        className="w-fit"
+                    />
+                    <LoadingButton state={createStatus} badge="add" type="submit" />
+                </form>
+            </section>
         </div>
     )
 }
