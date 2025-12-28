@@ -74,7 +74,7 @@ export default function EditBill({bill : intitialBill, accounts} : Props) {
         <form 
             onSubmit={handlers.handleSave}
             onKeyDown={handlers.handleEsc}
-            className="flex items-center gap-4 flex-wrap odd:bg-blue/5 hover:bg-blue/10 p-2 rounded-md"
+            className="flex items-center gap-4 flex-wrap md:flex-nowrap odd:bg-blue/5 hover:bg-blue/10 p-2 rounded-md"
         >
             { isEditing ? (
                 <input 

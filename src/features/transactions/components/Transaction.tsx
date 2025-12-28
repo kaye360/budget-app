@@ -107,7 +107,7 @@ export default function Transaction({
         <form 
             onSubmit={handlers.handleSave}
             onKeyDown={handlers.handleEsc}
-            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2.5 p-2 rounded-md transition-opacity border border-transparent [&:has(:focus)]:!border-blue ${isEditing ? 'selected' : ''}`}
+            className={`flex flex-wrap md:flex-nowrap items-center gap-y-1 gap-x-2.5 p-2 rounded-md transition-opacity border border-transparent [&:has(:focus)]:border-blue! ${isEditing ? 'selected' : ''}`}
         >   
             { isEditing ? (
                 <input 
@@ -159,7 +159,7 @@ export default function Transaction({
                 <a 
                     href={`/transactions/budget/${transaction.budgetId}`}
                     tabIndex={-1}
-                    className="bg-blue/20 px-2 py-1 text-sm md:text-xs font-medium rounded-sm tracking-wide capitalize flex items-center min-w-fit order-10 md:order-none hover:underline"
+                    className="bg-blue/20 px-2 py-1 text-sm md:text-xs font-medium rounded-sm tracking-wide capitalize flex items-center min-w-fit order-10 md:order-0 hover:underline"
                 >
                     {transaction.budget}
                 </a>
@@ -185,7 +185,7 @@ export default function Transaction({
             ) : (
                 <a 
                     href={`/transactions/account/${transaction.accountId}`}
-                    className="bg-red/10 px-2 py-1 font-medium rounded-sm tracking-wide text-sm md:text-xs capitalize flex items-center gap-1 min-w-fit order-11 md:order-none hover:underline"
+                    className="bg-red/10 px-2 py-1 font-medium rounded-sm tracking-wide text-sm md:text-xs capitalize flex items-center gap-1 min-w-fit order-11 md:order-0 hover:underline"
                 >
                     { !transaction.accountId
                         ? 'No Account'
