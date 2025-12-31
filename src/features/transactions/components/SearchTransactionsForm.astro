@@ -1,13 +1,20 @@
 ---
 import { SearchIcon } from "@lucide/astro";
+
+const query = Astro.url.searchParams.get("q")
 ---
 
 <form 
     method="get"
     action="/transactions/search"
-    class="flex min-w-[300px] md:w-full gap-1 relative"
+    class="flex min-w-75 md:w-full gap-1 relative"
 >
-    <input type="text" name="q" class="py-1" />
+    <input 
+        type="text" 
+        name="q" 
+        class="py-1" 
+        value={query} 
+    />
 
     <button class="hover:bg-blue rounded p-1 absolute right-0 top-1/2 -translate-y-1/2">
         <SearchIcon size={20} />
