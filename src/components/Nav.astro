@@ -1,17 +1,18 @@
 ---
 import NavLink from "./NavLink.astro"
-import { LayoutDashboardIcon, ChartColumnIncreasingIcon, ChartPieIcon, BotIcon, ArrowLeftRightIcon, CalendarSyncIcon, Settings2Icon } from "@lucide/astro"
+import { LayoutDashboardIcon, ChartColumnIncreasingIcon, ChartPieIcon, BotIcon, ArrowLeftRightIcon, CalendarSyncIcon, Settings2Icon, CircleFadingPlusIcon, CalendarIcon } from "@lucide/astro"
 import { getAuthIfExists } from "../features/auth/auth.utils";
 
 const auth = await getAuthIfExists(Astro)
 
 const navLinks = [
-    { href : '/dashboard', title : 'Dashboard', Icon : LayoutDashboardIcon},
-    { href : '/transactions', title : 'Activity', Icon : ArrowLeftRightIcon},
+    // { href : '/dashboard', title : 'Dashboard', Icon : LayoutDashboardIcon},
     { href : '/budgets', title : 'Budgets', Icon : ChartPieIcon},
-    { href : '/bills', title : 'Bills', Icon : CalendarSyncIcon},
+    { href : '/transactions', title : 'Transactions', Icon : ArrowLeftRightIcon},
+    { href : '/transactions/add', title : 'Add', Icon : CircleFadingPlusIcon},
+    { href : '/bills', title : 'Bills', Icon : CalendarIcon},
     { href : '/trends', title : 'Trends', Icon : ChartColumnIncreasingIcon},
-    { href : '/settings', title : 'Settings', Icon : Settings2Icon},
+    // { href : '/settings', title : 'Settings', Icon : Settings2Icon},
 ]
 ---
 { auth && 
@@ -23,7 +24,7 @@ const navLinks = [
         <nav 
             transition:name="nav"
             class:list={[
-                "bg-background-accent md:bg-transparent text-white md:text-inherit backdrop-blur-lg rounded-sm shadow-md shadow-blue/20",
+                "bg-background-accent/80 md:bg-transparent text-white md:text-inherit backdrop-blur-lg rounded-sm shadow-md shadow-blue/20",
                 "p-2 w-full",
                 "flex items-center md:gap-2 justify-between md:justify-start"
             ]}

@@ -16,7 +16,7 @@ setAuthCookie(Astro, isAuth ? defaultAuth : null)
 <html>
     <head>
         { isAuth
-            ? <meta http-equiv="refresh" content={`0; url=/dashboard`} />
+            ? <meta http-equiv="refresh" content={`0; url=/budgets`} />
             : <meta http-equiv="refresh" content={`0; url=/?witherror`} />
         }
     </head>

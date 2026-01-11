@@ -59,7 +59,8 @@ type PieChart = {
 
 export function calcBudgetPieChartData(budgetsWithSpendingTotals : Budget[]) {
 
-	const numOfSlices = 5
+	// Number of budget slices to show. Does not include "other" category that is added afterwards
+	const numOfSlices = 7
 
 	const budgetsPieChartSorted: PieChart = budgetsWithSpendingTotals
 		.filter( budget => !budget.name.includes('Income') )

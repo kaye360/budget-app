@@ -3,9 +3,9 @@ import TransactionListLayout from "../../../layouts/TransactionListLayout.astro"
 import { actions } from "astro:actions";
 import TransactionList from "../components/TransactionList";
 
-const url = new URL(Astro.request.url);
-const searchParams = url.searchParams;
-const query = searchParams.get("q");
+const url = new URL(Astro.request.url)
+const searchParams = url.searchParams
+const query = searchParams.get("q")
 
 let transactions
 let budgets
