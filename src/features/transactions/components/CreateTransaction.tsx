@@ -70,7 +70,7 @@ export default function CreateTransaction({transactions, budgets, accounts} : Pr
             <form 
                 method="post"
                 onSubmit={handleSave}
-                className="flex flex-col md:flex-row md:items-end gap-5 mb-4"
+                className="flex flex-col md:flex-row md:items-end gap-3 mb-8"
             >
 
                 <label>
@@ -101,7 +101,6 @@ export default function CreateTransaction({transactions, budgets, accounts} : Pr
                     <input 
                         type="text"
                         name="amount"
-
                         value={transaction.amount} 
                         onChange={ e => setTransaction({ ...transaction, amount : e.target.value })}
                         required

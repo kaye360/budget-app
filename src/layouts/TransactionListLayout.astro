@@ -1,5 +1,5 @@
 ---
-import { CirclePlusIcon, ImportIcon } from "@lucide/astro";
+import { CircleFadingPlus, CirclePlusIcon, ImportIcon } from "@lucide/astro";
 import H1 from "../components/H1.astro";
 import SearchTransactionsForm from "../features/transactions/components/SearchTransactionsForm.astro";
 import TransactionFilterLink from "../features/transactions/components/TransactionFilterLink.astro";
@@ -13,30 +13,14 @@ interface Props {
 const { title, active } = Astro.props
 ---
 
-<AppLayout>
+<AppLayout title={title}>
 
-	<div class="flex items-center justify-between flex-wrap">
-		<H1>
-			{title}
-		</H1>
-
-		<span class="flex items-center gap-3">
-			<a 
-                class="flex items-center gap-0.5 text-sm font-semibold hover:text-red text-blue min-w-fit border hover:border-red/50 border-blue/50 rounded-xl px-3 py-1"
-                href="/transactions/add"
-            >
-                <CirclePlusIcon size={20} />
-                Add
-            </a>
-			<!-- <a 
-                class="flex items-center gap-0.5 text-sm font-semibold hover:text-red text-blue min-w-fit border hover:border-red/50 border-blue/50 rounded-xl px-3 py-1"
-                href="/transactions/import"
-            >
-                <ImportIcon size={22} />
-                Import
-            </a> -->
-		</span>
-	</div>
+        <a 
+            slot="page-actions"
+            href="/transactions/add"
+        >
+            <CircleFadingPlus size={24} />
+        </a>
     
     <filter-transactions class="flex items-center gap-x-3 gap-y-1 rounded text-xs w-full overflow-x-auto py-2 scrollbar-hide relative mb-4">
 

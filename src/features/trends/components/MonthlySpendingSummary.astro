@@ -13,16 +13,16 @@ const {
 
 <monthly-spending-summary month={month}>
     
-    <budget-total class="relative rounded-sm flex items-center justify-between py-2 pb-4 font-semibold min-w-fit">
-        <span>
+    <budget-total class="relative rounded-sm flex items-center justify-between py-2 pb-4 min-w-fit">
+        <!-- <span>
             🗓️ {convertDate(month).to('MMMM-YYYY')}
-        </span>
+        </span> -->
 
-        <monthly-spending-total class="text-lg min-w-fit" />
+        <monthly-spending-total class="text-lg font-semibold min-w-fit" />
 
         <span 
             class:list={[
-                "absolute left-0 bottom-0 h-[15px] -z-10 rounded-lg block bg-blue/60 scale-y-105 origin-left",
+                "absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg block bg-blue/60 scale-y-105 origin-left",
                 'progress-bar animate-progress-bar',
             ]}
         />
@@ -82,7 +82,7 @@ class MonthlySpendingSummary extends HTMLElement {
         }
 
         el('monthly-spending-total', this, el => {
-            el.textContent = String(`${response.data.spent} / ${response.data.budgets}`)
+            el.textContent = String(`${response.data.spent} / ${response.data.budgets} spent so far`)
         })
 
         el<HTMLSpanElement>('span.progress-bar', this, el => {

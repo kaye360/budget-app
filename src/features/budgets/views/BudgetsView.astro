@@ -22,16 +22,13 @@ const budgetsWithSpendingTotals = calcBudgetSpendingTotals(budgets.data, transac
 const budgetPieChartData = calcBudgetPieChartData(budgetsWithSpendingTotals)
 const budgetsTotal = budgetPieChartData.reduce((sum, s) => sum + s.amount, 0);
 ---
-<AppLayout>
+<AppLayout title={ convertDate(month).to('MMMM-YYYY') }>
 
-	<div class="flex items-center justify-between mb-4">
-
-		<H1>
-			{ convertDate(month).to('MMMM-YYYY') }
-		</H1>
-
-		<SelectMonthlyBudget currentMonth={month} months={transactions.data?.info.months ?? []} /> 
-		
+	<div slot="page-actions">
+		<SelectMonthlyBudget 
+			currentMonth={month} 
+			months={transactions.data?.info.months ?? []} 
+		/> 
 	</div>
 
 	<section class="grid gap-6">

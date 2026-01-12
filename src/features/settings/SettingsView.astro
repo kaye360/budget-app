@@ -8,8 +8,7 @@ import AccountsList from "./AccountsList"
 const accounts = await Astro.callAction( actions.accounts.index, {} )
 ---
 
-<AppLayout>
-    <H1>Settings</H1>
+<AppLayout title="Settings">
 
     { accounts?.data && 
         <AccountsList accounts={accounts.data} client:only="react" />

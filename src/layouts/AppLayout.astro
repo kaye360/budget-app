@@ -2,17 +2,18 @@
 import "../styles/main.css"
 import '@fontsource/lato'
 import '@fontsource-variable/sora'
-import Loader from "../components/Loader/Loader.astro"
 import Nav from "../components/Nav.astro"
-import { APP_NAME } from "../../app.config"
+import { APP_NAME, HOME_ROUTE } from "../../app.config"
 import ErrorToast from "../components/ErrorToast.astro"
+import { BotIcon, Settings2Icon, UserIcon } from "@lucide/astro"
+import H1 from "../components/H1.astro"
 
 interface Props {
-    loader? : boolean
+    title : string
 }
 
 const { 
-    loader = false
+    title,
 } = Astro.props
 
 ---
@@ -26,9 +27,22 @@ const {
         <meta name="theme-color" content="#0f172a" />
 	</head>
 	<body class="min-h-screen bg-background-main text-base-text font-base">
-        <div class:list={"max-w-[1000px] w-full mx-auto p-4"}>
-            <Nav />
-            { loader && <Loader /> }
+        <div class:list={"max-w-250 w-full mx-auto p-4"}>
+			<Nav />
+            <div class="flex items-center gap-2 font-theme mb-6">
+				<a href={HOME_ROUTE} class="md:hidden">
+					<BotIcon class="w-7 h-7" />
+				</a>
+				<H1>
+					{title}
+				</H1>
+				<div class="flex items-center gap-2 ml-auto">
+					<slot name="page-actions" />
+					<a href="/settings" class="p-1 md:hidden">
+						<Settings2Icon class="w-7 h-7" />
+					</a>
+				</div>
+			</div>
             <main class="transition-opacity mb-24">
                 <slot />
             </main>

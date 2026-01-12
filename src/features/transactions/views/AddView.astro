@@ -14,28 +14,11 @@ const budgets = budgetsResponse.error ? [] : budgetsResponse.data
 const accounts = accountsResponse.error ? [] : accountsResponse.data
 ---
 
-<TransactionListLayout
-    title="Add a Transaction"
->
-    <form>
-
-        <div class="grid gap-4">
-            <CreateTransaction 
-                transactions={transactions}
-                budgets={budgets} 
-                accounts={accounts} 
-                client:only="react"
-            />
-        </div>
-
-        <div class="sm:col-span-2 grid grid-cols-2 gap-4">
-
-            <view-transactions-link class="self-center opacity-0 -translate-x-4 pl-2 transition-all">
-                <a href="/transactions/recent">
-                    View Transactions &rarr;
-                </a>
-            </view-transactions-link>
-        </div>
-    </form>
-
+<TransactionListLayout title="Add a Transaction">
+    <CreateTransaction 
+        transactions={transactions}
+        budgets={budgets} 
+        accounts={accounts} 
+        client:only="react"
+    />
 </TransactionListLayout>

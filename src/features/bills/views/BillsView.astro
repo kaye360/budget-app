@@ -9,19 +9,12 @@ const bills = await Astro.callAction(actions.bill.index, {});
 
 ---
 
-<AppLayout>
+<AppLayout title="Bill Calendar">
 
-    <div class="flex items-center justify-between">
-        <H1>Bill Calendar</H1>
-        <a 
-            href="/bills/edit"
-            class="flex items-center gap-2"
-        >
-            Edit <EditIcon />
-        </a>
-    </div>  
+    <a href="/bills/edit" slot="page-actions">
+        <EditIcon />
+    </a>
 
     <BillCalendar bills={bills.data?.bills ?? []} />
-
 
 </AppLayout>

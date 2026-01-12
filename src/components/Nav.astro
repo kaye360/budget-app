@@ -2,6 +2,7 @@
 import NavLink from "./NavLink.astro"
 import { LayoutDashboardIcon, ChartColumnIncreasingIcon, ChartPieIcon, BotIcon, ArrowLeftRightIcon, CalendarSyncIcon, Settings2Icon, CircleFadingPlusIcon, CalendarIcon } from "@lucide/astro"
 import { getAuthIfExists } from "../features/auth/auth.utils";
+import { HOME_ROUTE } from "../../app.config";
 
 const auth = await getAuthIfExists(Astro)
 
@@ -12,12 +13,12 @@ const navLinks = [
     { href : '/transactions/add', title : 'Add', Icon : CircleFadingPlusIcon},
     { href : '/bills', title : 'Bills', Icon : CalendarIcon},
     { href : '/trends', title : 'Trends', Icon : ChartColumnIncreasingIcon},
-    // { href : '/settings', title : 'Settings', Icon : Settings2Icon},
+    { href : '/settings', title : 'Settings', Icon : Settings2Icon},
 ]
 ---
 { auth && 
     <div class:list={[
-        "fixed bottom-1 left-0 right-0 w-full z-9999 flex items-center md:items-start justify-center",
+        "fixed bottom-0 left-0 right-0 w-full z-9999 flex items-center md:items-start justify-center",
         "md:relative md:bottom-auto md:mt-4",
         "md:sticky md:top-4 md:mb-8",
     ]}>
@@ -25,11 +26,11 @@ const navLinks = [
             transition:name="nav"
             class:list={[
                 "bg-background-accent/80 md:bg-transparent text-white md:text-inherit backdrop-blur-lg rounded-sm shadow-md shadow-blue/20",
-                "p-2 w-full",
+                "p-1 w-full",
                 "flex items-center md:gap-2 justify-between md:justify-start"
             ]}
         >
-            <a href="/dashboard" class="hidden md:block md:ml-4 md:mr-auto">
+            <a href={HOME_ROUTE} class="hidden md:block md:ml-4 md:mr-auto">
                 <BotIcon stroke-width={1} width="30" height="30" />
             </a>
             { navLinks.map( link => 

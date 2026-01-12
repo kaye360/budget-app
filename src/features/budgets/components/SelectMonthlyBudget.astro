@@ -10,10 +10,10 @@ const { currentMonth, months = [] } = Astro.props
 <select 
     id="month-selector"
     name="month-selector" 
-    class="w-fit"
+    class="w-full max-w-[8ch]"
     data-month={currentMonth}
 >
-    <option>Select month to view</option>
+    <option>Select</option>
     { months.map( month => (
         <option value={month.month}>
             {month.title}

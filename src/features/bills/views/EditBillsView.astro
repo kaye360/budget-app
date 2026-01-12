@@ -7,17 +7,12 @@ import EditBillCalendar from "../components/EditBillCalendar";
 const accounts = await Astro.callAction( actions.accounts.index, {})
 const bills = await Astro.callAction( actions.bill.index, {})
 ---
-<AppLayout>
+<AppLayout title="Edit Bill Calendar">
 
-    <H1>Edit Bill Calendar</H1>
-
-
-    <section>
-
-        <EditBillCalendar 
-            bills={bills.data?.bills ?? []}
-            accounts={accounts.data ?? []} 
-            client:only="react"
-        />
+    <EditBillCalendar 
+        bills={bills.data?.bills ?? []}
+        accounts={accounts.data ?? []} 
+        client:only="react"
+    />
 
 </AppLayout>

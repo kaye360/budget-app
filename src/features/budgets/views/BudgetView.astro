@@ -6,6 +6,7 @@ import TransactionList from "../../transactions/components/TransactionList";
 import { MoveLeftIcon } from "@lucide/astro";
 import BudgetGraph from "../../trends/components/BudgetGraph.astro";
 import H1 from "../../../components/H1.astro";
+import { stripEmojis } from "../../app/app.utils";
 
 const { routeParam } = Astro.props
 
@@ -30,27 +31,23 @@ if( budget ) {
 const hasTransactions = transactions.length > 0
 ---
 
-<AppLayout>
-    
-	<div class="flex justify-between items-start">
+<AppLayout title={stripEmojis(budgetName)}>
 
-        <a href="/budgets" class="flex items-center gap-1">
-            <MoveLeftIcon size={16} />
-            Back to Budgets
-        </a>
+    <select slot="page-actions" class="w-full max-w-[8ch]">
+        <option>Select</option>
+        { budgets.data?.map( budget => (
+            <option value={budget.id}>{budget.name}</option>
+        ))}
+    </select>
 
-        <select class="max-w-fit">
-            <option>Select a Budget</option>
-            { budgets.data?.map( budget => (
-                <option value={budget.id}>{budget.name}</option>
-            ))}
-        </select>
-		
-	</div>
+    <a href="/budgets" class="inline-flex gap-1 items-center my-2">
+        <MoveLeftIcon size={16} />
+        Back to Budgets
+    </a>
 
     { hasTransactions && (
         <BudgetGraph 
-            budgetName={budgetName}
+            budgetName=""
             transactions={transactions}
         />
         <TransactionList

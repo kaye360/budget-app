@@ -13,17 +13,18 @@ const { href, title, Icon, isActive } = Astro.props
 <a 
     href={href} 
     class:list={[
-        " relative flex flex-col md:flex-row gap-y-1 md:gap-2 items-center p-1.5 hover:text-red hover:scale-105 active:scale-95 active:text-red transition-all duration-75",
-        href === "/transactions/add" && "p-4 rounded-xl bg-background-main md:order-last text-blue scale-110"
+        " relative flex flex-col md:flex-row gap-y-1 md:gap-2 items-center p-3 hover:text-red hover:scale-105 active:scale-95 active:text-red transition-all duration-75",
+        href === "/transactions/add" && " rounded-xl bg-background-main md:order-last text-blue",
+        href === '/settings' && "hidden md:flex"
     ]}
 >
-    <Icon stroke-width={2} width="24" height="24" class="w-8 h-8 md:w-auto md:h-auto" />
+    <Icon stroke-width={2} class="w-7 h-7 md:w-auto md:h-auto" />
     <span class="hidden sm:block font-theme text-sm">
         {title}
     </span>
     { isActive && href !== "/transactions/add" &&
         <span 
-            class="absolute -bottom-2 left-0 right-0 bg-red h-1 rounded-full"
+            class="absolute bottom-1 left-0 right-0 bg-red h-1 rounded-full"
             transition:name="navlink-active" 
         />
     }
