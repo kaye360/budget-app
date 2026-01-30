@@ -42,15 +42,27 @@ export function calcSpendingTotals(transactions: Transaction[]) {
         // Add income, spending, and net
         if ( transaction.type === 'income' ) {
             totals[month].income += absAmount
+            totals[month].net += amount
         }
         if ( transaction.type === 'spending' ) {
             totals[month].spending += absAmount
+            totals[month].net -= absAmount
         }
-        totals[month].net += amount
 
         // Add Budgets
         const budget = transaction.budget as string
-        totals[month].budgets[budget] = (totals[month].budgets[budget] ?? 0) + amount
+        let budgetChange = 0
+
+        if (transaction.type === 'income') {
+            budgetChange = absAmount
+        }
+
+        if (transaction.type === 'spending') {
+            budgetChange = -absAmount
+        }
+
+        const currentBudgetTotal = totals[month].budgets[budget] ?? 0
+        totals[month].budgets[budget] = currentBudgetTotal + budgetChange
     })
 
     return totals

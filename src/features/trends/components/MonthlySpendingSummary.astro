@@ -82,7 +82,7 @@ class MonthlySpendingSummary extends HTMLElement {
         }
 
         el('monthly-spending-total', this, el => {
-            el.textContent = String(`${response.data.spent} / ${response.data.budgets} spent so far`)
+            el.textContent = String(`${response.data.spent} / ${response.data.budgets} spent`)
         })
 
         el<HTMLSpanElement>('span.progress-bar', this, el => {
