@@ -13,20 +13,25 @@ const {
 
 <monthly-spending-summary month={month}>
     
-    <budget-total class="relative rounded-sm flex items-center justify-between py-2 pb-4 min-w-fit">
-        <!-- <span>
-            🗓️ {convertDate(month).to('MMMM-YYYY')}
-        </span> -->
-
+    <spending-total class="relative rounded-sm flex items-center justify-between py-2 pb-4 min-w-fit">
         <monthly-spending-total class="text-lg font-semibold min-w-fit" />
-
         <span 
             class:list={[
-                "absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg block bg-blue/60 scale-y-105 origin-left",
+                "absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg block bg-red/60 scale-y-105 origin-left",
                 'progress-bar animate-progress-bar',
             ]}
         />
-    </budget-total>
+    </spending-total>
+    
+    <income-total class="relative rounded-sm flex items-center justify-between py-2 pb-4 min-w-fit">
+        <monthly-income-total class="text-lg font-semibold min-w-fit" />
+        <span 
+            class:list={[
+                "absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg block bg-green/60 scale-y-105 origin-left",
+                'progress-bar animate-progress-bar',
+            ]}
+        />
+    </income-total>
 
 </monthly-spending-summary>
 
@@ -75,19 +80,34 @@ class MonthlySpendingSummary extends HTMLElement {
      * Fetch and Render monthly spending data
      */
     async updateSpendingSummary() {
-        const response = await actions.summary.getMonthlySpending({date : this.month})
-
-        if( !response.data ) {
+        const [spendingResponse, incomeResponse] = await Promise.all([
+            actions.summary.getMonthlySpending({ date: this.month }),
+            actions.summary.getMonthlyIncome({ date: this.month }),
+        ])
+        
+        if( !spendingResponse.data || !incomeResponse.data ) {
             return
         }
 
         el('monthly-spending-total', this, el => {
-            el.textContent = String(`${response.data.spent} / ${response.data.budgets} spent`)
+            el.textContent = String(`${spendingResponse.data.spent} / ${spendingResponse.data.budgets} spent`)
         })
 
         el<HTMLSpanElement>('span.progress-bar', this, el => {
             const percent = Math.min(
-                Math.round( response.data.spent / response.data.budgets * 100 ),
+                Math.round( spendingResponse.data.spent / spendingResponse.data.budgets * 100 ),
+                100
+            )
+            el.style.width = `${percent}%` 
+        })
+
+        el('monthly-income-total', this, el => {
+            el.textContent = String(`${incomeResponse.data.current} / ${incomeResponse.data.total} total income`)
+        })
+
+        el<HTMLSpanElement>('income-total span.progress-bar', this, el => {
+            const percent = Math.min(
+                Math.round( incomeResponse.data.current / incomeResponse.data.total * 100 ),
                 100
             )
             el.style.width = `${percent}%` 
