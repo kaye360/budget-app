@@ -1,120 +1,42 @@
 ---
-import { convertDate } from '../../../lib/convertDate'
+import { getBudgetPercentage } from '../../budgets/budget.utils'
 
 interface Props {
-    month? : string
+    currentIncome : number | undefined
+    totalIncome : number | undefined
+    currentSpending : number | undefined
+    totalSpending : number | undefined
 }
 
 const { 
-    month = convertDate().to('YYYY-MM')
+    currentIncome,
+    totalIncome,
+    currentSpending,
+    totalSpending,
 } = Astro.props
 
 ---
 
-<monthly-spending-summary month={month}>
+<monthly-spending-summary class="mb-2">
     
     <spending-total class="relative rounded-sm flex items-center justify-between py-2 pb-4 min-w-fit">
-        <monthly-spending-total class="text-lg font-semibold min-w-fit" />
+        <monthly-spending-total class="text-lg font-semibold min-w-fit">
+            {`${currentSpending ?? 0} / ${totalSpending ?? 0} spent`}
+        </monthly-spending-total>
         <span 
-            class:list={[
-                "absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg block bg-red/60 scale-y-105 origin-left",
-                'progress-bar animate-progress-bar',
-            ]}
+            class="absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg block bg-red/60 scale-y-105 origin-left progress-bar animate-progress-bar"
+            style={`width : ${getBudgetPercentage(currentSpending, totalSpending)}%`}
         />
     </spending-total>
     
     <income-total class="relative rounded-sm flex items-center justify-between py-2 pb-4 min-w-fit">
-        <monthly-income-total class="text-lg font-semibold min-w-fit" />
+        <monthly-income-total class="text-lg font-semibold min-w-fit">
+            {`${currentIncome ?? 0} / ${totalIncome ?? 0} total income`}
+        </monthly-income-total>
         <span 
-            class:list={[
-                "absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg block bg-green/60 scale-y-105 origin-left",
-                'progress-bar animate-progress-bar',
-            ]}
+            class="absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg block bg-green/60 scale-y-105 origin-left progress-bar animate-progress-bar"
+            style={`width : ${getBudgetPercentage(currentIncome, totalIncome)}%`}
         />
     </income-total>
 
 </monthly-spending-summary>
-
-
-<script>
-import { actions } from "astro:actions";
-import { el, } from "../../../lib/el";
-
-
-class MonthlySpendingSummary extends HTMLElement {
-
-    private budgetList : HTMLElement | null = null
-    private month : string | null = null
-
-    async connectedCallback() {
-        this.budgetList = el('#budget-list')
-        this.month = this.getAttribute('month')
-
-        /**
-         * Observe changes to budgetList if it exists as we want to update the total of all budgets if 1 is changed. If no budgetList, then just render the component without and observer
-         */
-        if( this.budgetList ) {
-            this.observeBudgetList()
-        }
-
-        this.updateSpendingSummary()
-    }
-
-    /**
-     * Budget-List mutation observer
-     */
-    observeBudgetList() {
-
-        const observer = new MutationObserver( async () => {
-            this.updateSpendingSummary()            
-        })
-        
-        observer.observe( this.budgetList as Node, {
-            childList : true,
-            attributes : false,
-            subtree : true,
-        })
-    }
-
-    /**
-     * Fetch and Render monthly spending data
-     */
-    async updateSpendingSummary() {
-        const [spendingResponse, incomeResponse] = await Promise.all([
-            actions.summary.getMonthlySpending({ date: this.month }),
-            actions.summary.getMonthlyIncome({ date: this.month }),
-        ])
-        
-        if( !spendingResponse.data || !incomeResponse.data ) {
-            return
-        }
-
-        el('monthly-spending-total', this, el => {
-            el.textContent = String(`${spendingResponse.data.spent} / ${spendingResponse.data.budgets} spent`)
-        })
-
-        el<HTMLSpanElement>('span.progress-bar', this, el => {
-            const percent = Math.min(
-                Math.round( spendingResponse.data.spent / spendingResponse.data.budgets * 100 ),
-                100
-            )
-            el.style.width = `${percent}%` 
-        })
-
-        el('monthly-income-total', this, el => {
-            el.textContent = String(`${incomeResponse.data.current} / ${incomeResponse.data.total} total income`)
-        })
-
-        el<HTMLSpanElement>('income-total span.progress-bar', this, el => {
-            const percent = Math.min(
-                Math.round( incomeResponse.data.current / incomeResponse.data.total * 100 ),
-                100
-            )
-            el.style.width = `${percent}%` 
-        })
-    }
-}
-
-customElements.define('monthly-spending-summary', MonthlySpendingSummary)
-
-</script>

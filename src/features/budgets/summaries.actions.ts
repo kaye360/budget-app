@@ -107,8 +107,8 @@ export const summary = {
              * Final return value
              */
             return {
-                budgets : totalBudgets,
-                spent : totalSpent
+                total : totalBudgets,
+                current : totalSpent
             }
 
         }

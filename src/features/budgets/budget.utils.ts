@@ -92,3 +92,25 @@ export function calcBudgetPieChartData(budgetsWithSpendingTotals : Budget[]) {
 	
 	return budgetPieChartData
 }
+
+
+/**
+ * @function getBudgetPercentage
+ * Calculates the percentage of the budget that has been spent, given the current spending and total budget.
+ * Returns a number between 0 and 100, or undefined if either current or total is not provided.
+ * 
+ */
+export function getBudgetPercentage(
+	current: number|undefined, 
+	total: number|undefined
+): number {
+
+	if( !current || !total ) {
+		return 0
+	}
+
+	return Math.min(
+		Math.round( current / total * 100 ),
+		100
+	) || 0
+}

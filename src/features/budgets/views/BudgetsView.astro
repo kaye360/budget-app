@@ -2,23 +2,23 @@
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
 import MonthlySpendingSummary from "../../trends/components/MonthlySpendingSummary.astro";
-import { calcBudgetPieChartData, calcBudgetSpendingTotals } from "../budget.utils";
+import { calcBudgetPieChartData, calcBudgetSpendingTotals, getBudgetPercentage } from "../budget.utils";
 import SelectMonthlyBudget from "../components/SelectMonthlyBudget.astro";
 import AppLayout from "../../../layouts/AppLayout.astro";
-import H1 from "../../../components/H1.astro";
 import BudgetList from "../components/BudgetList";
 import PieChart from "../components/PieChart.astro";
 
 const { routeParam } = Astro.props
 const month = routeParam ?? convertDate().to('YYYY-MM')
 
-const [transactions, budgets] = await Promise.all([
+const [transactions, budgets, monthlySpending, monthlyIncome] = await Promise.all([
 	Astro.callAction( actions.transaction.byMonth, { date : month } ),
-	Astro.callAction( actions.budget.index, {} )
+	Astro.callAction( actions.budget.index, {} ),
+	Astro.callAction( actions.summary.getMonthlySpending, { date: month } ),
+	Astro.callAction( actions.summary.getMonthlyIncome, { date: month } )
 ])
 
 const budgetsWithSpendingTotals = calcBudgetSpendingTotals(budgets.data, transactions.data?.list)
-
 const budgetPieChartData = calcBudgetPieChartData(budgetsWithSpendingTotals)
 const budgetsTotal = budgetPieChartData.reduce((sum, s) => sum + s.amount, 0);
 ---
@@ -33,7 +33,12 @@ const budgetsTotal = budgetPieChartData.reduce((sum, s) => sum + s.amount, 0);
 
 	<section class="grid gap-6">
 
-		<MonthlySpendingSummary {month} />
+		<MonthlySpendingSummary
+			currentIncome={monthlyIncome.data?.current ?? 0}
+			totalIncome={monthlyIncome.data?.total ?? 0}
+			currentSpending={monthlySpending.data?.current ?? 0}
+			totalSpending={monthlySpending.data?.total ?? 0}
+		/>
 	
 		<div class="bg-slate-50 dark:bg-background-accent border border-slate-200 dark:border-slate-800 rounded-md py-12 md:py-16 grid md:grid-cols-[auto_auto] items-center gap-4 md:gap-8 justify-center px-2">
 			<PieChart data={budgetPieChartData} />
