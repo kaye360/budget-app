@@ -76,7 +76,7 @@ export default function Budget({
             { isEditing ? (
                 <input 
                     type="text"
-                    className="max-w-[300px]"
+                    className="max-w-75"
                     defaultValue={budget.name}
                     onChange={ e => setBudget({...budget, name : e.target.value})}
                 />
@@ -86,7 +86,13 @@ export default function Budget({
                 </a>
             )}
 
-            <span className="text-2xl ml-auto min-w-fit flex gap-2">
+            <span className={`
+                text-2xl ml-auto min-w-fit flex gap-2
+                ${  !budget.name.includes('Income') && 
+                    budget.totalSpent && 
+                    budget.totalSpent-1 > budget.amount ? 'text-red' : '' }
+                `}
+            >
                 <span className="min-w-fit">
                     {Math.round(budget.totalSpent ?? 0)}
                 </span>
@@ -129,7 +135,7 @@ export default function Budget({
             )}
 
             <span 
-                className="absolute left-0 bottom-0 h-[15px] -z-10 rounded-lg px-4 block animate-progress-bar origin-left progress-bar"
+                className="absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg px-4 block animate-progress-bar origin-left progress-bar"
                 style={ budget.percentSpent
                     ? { width : `${budget.percentSpent}%`}
                     : { width : '0%' }
