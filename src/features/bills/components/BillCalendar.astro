@@ -19,12 +19,16 @@ let lastMonth = ''
 <div class="grid mt-8">
     { schedule.map((entry) => {
 
-        const month = formatMonth(entry.date);
-        const showMonthHeader = month !== lastMonth;
+        const month = formatMonth(entry.date)
+        const showMonthHeader = month !== lastMonth
         lastMonth = month;
         const hasBills = entry.bills.length > 0
         const day = convertDate(entry.date.toString()).to('WW-MMM-DD')
         const isEndOfWeek = day.includes('Sat')
+
+        const today = convertDate().to('YYYY-MM-DD')
+        const currentDay = convertDate(entry.date.toString()).to('YYYY-MM-DD')
+        const isCurrentDayToday = today === currentDay
 
         return (
             <>
@@ -33,7 +37,11 @@ let lastMonth = ''
                 )}
             </>
 
-            <div class:list={["border-l-4 border-button-main pl-2 py-2", isEndOfWeek && 'mb-8']}>
+            <div class:list={[
+                "border-l-4 border-button-main pl-2 py-2", 
+                isEndOfWeek && 'mb-8',
+                isCurrentDayToday && 'border border-button-main'
+            ]}>
 
                 { hasBills ? (
 
@@ -67,11 +75,6 @@ let lastMonth = ''
                         { day } - No bills
                     </div>
                 )}
-                {/* <>
-                    { isEndOfWeek && (
-                        <div class="my-4 border-b border-base-text/40" />
-                    ) }
-                </> */}
 
             </div>
         )

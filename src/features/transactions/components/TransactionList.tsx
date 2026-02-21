@@ -44,7 +44,10 @@ export default function TransactionList({
                             {convertDate(month).to('MMMM-YYYY')}
                         </span>
                         <span className="text-md">
-                            {grouped[month].length} {grouped[month].length === 1 ? 'transaction' : 'transactions'}
+                            { grouped[month].length} {grouped[month].length === 1 
+                                ? 'transaction' 
+                                : 'transactions'
+                            }
                         </span>
                     </div>
                     { grouped[month]?.map( (transaction: TransactionSchema) => (

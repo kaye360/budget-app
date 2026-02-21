@@ -8,27 +8,31 @@ export const normalizeDate = (d: Date) => {
 }
 
 export const getDateRange = (numDays?: number) => {
-  const start = normalizeDate(new Date())
+    const today = normalizeDate(new Date())
 
-  let end: Date
+    // 👇 start 3 days ago
+    const start = new Date(today)
+    start.setDate(start.getDate() - 3)
 
-  if (typeof numDays === 'number') {
-    end = new Date(start)
-    end.setDate(end.getDate() + numDays - 1)
+    let end: Date
+
+    if (typeof numDays === 'number') {
+      end = new Date(start)
+      end.setDate(end.getDate() + numDays - 1)
+    } else {
+      end = new Date(today)
+      end.setMonth(end.getMonth() + 2, 0) // end of next month
+    }
+
     end.setHours(23, 59, 59, 999)
-  } else {
-    end = new Date(start)
-    end.setMonth(end.getMonth() + 2, 0) // end of next month
-    end.setHours(23, 59, 59, 999)
-  }
 
-  const days: Date[] = []
+    const days: Date[] = []
 
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    days.push(new Date(d))
-  }
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      days.push(new Date(d))
+    }
 
-  return days
+    return days
 }
 
 export const parseLocalDate = (date: string) => {
@@ -41,8 +45,19 @@ export const occursOnDate = (bill: Bill, day: Date) => {
   const billDate = normalizeDate(parseLocalDate(bill.date))
 
   switch (bill.repeats) {
-    case 'monthly':
-      return target.getDate() === billDate.getDate()
+    case 'monthly': {
+    const billDay = billDate.getDate()
+
+    const lastDayOfMonth = new Date(
+      target.getFullYear(),
+      target.getMonth() + 1,
+      0
+    ).getDate()
+
+    const effectiveDay = Math.min(billDay, lastDayOfMonth)
+
+    return target.getDate() === effectiveDay
+  }
 
     case 'weekly':
       return target.getDay() === billDate.getDay()

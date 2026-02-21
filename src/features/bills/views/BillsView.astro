@@ -1,12 +1,10 @@
 ---
 import { actions } from "astro:actions";
-import H1 from "../../../components/H1.astro";
 import AppLayout from "../../../layouts/AppLayout.astro";
 import { EditIcon } from "@lucide/astro";
 import BillCalendar from "../components/BillCalendar.astro";
 
 const bills = await Astro.callAction(actions.bill.index, {});
-
 ---
 
 <AppLayout title="Bill Calendar">
