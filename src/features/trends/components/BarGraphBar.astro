@@ -1,6 +1,6 @@
 ---
 interface Props {
-    type : 'spending' | 'income'
+    type : 'spending' | 'income' | 'average'
     heightRatio : number
 }
 
@@ -11,7 +11,8 @@ const { type, heightRatio } = Astro.props
     class:list={[
         "w-3.75 rounded-md animate-bargraph",
         type === 'spending' && "bg-red/40",
-        type === 'income' && "bg-green/60"
+        type === 'income' && "bg-green/60",
+        type === 'average' && "bg-blue/60"
     ]}
     style={`height : ${heightRatio}px;`}
 />

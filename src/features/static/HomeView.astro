@@ -9,7 +9,7 @@ const auth = await getAuthIfExists(Astro)
 
 <StaticLayout>
     { auth ? (
-        <a href="/dashboard" class="underline text-center">
+        <a href="/budgets" class="underline text-center">
             Continue to dashboard as <strong>{auth.userName}</strong>
         </a>
     ) : (

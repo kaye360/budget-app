@@ -27,7 +27,7 @@ export function calcSpendingTotals(transactions: Transaction[]) {
 
         const month = convertDate(transaction.date).to("YYYY-MM")
         const amount = Math.round(Number(transaction.amount))
-        const absAmount = Math.abs(amount)
+        // const absAmount = Math.abs(amount)
 
         // Add month if doesn't exist
         if (!(month in totals)) {
@@ -41,28 +41,18 @@ export function calcSpendingTotals(transactions: Transaction[]) {
 
         // Add income, spending, and net
         if ( transaction.type === 'income' ) {
-            totals[month].income += absAmount
-            totals[month].net += amount
+            totals[month].income += amount
         }
         if ( transaction.type === 'spending' ) {
-            totals[month].spending += absAmount
-            totals[month].net -= absAmount
+            totals[month].spending += amount
         }
+        totals[month].net += amount
 
         // Add Budgets
         const budget = transaction.budget as string
-        let budgetChange = 0
-
-        if (transaction.type === 'income') {
-            budgetChange = absAmount
-        }
-
-        if (transaction.type === 'spending') {
-            budgetChange = -absAmount
-        }
 
         const currentBudgetTotal = totals[month].budgets[budget] ?? 0
-        totals[month].budgets[budget] = currentBudgetTotal + budgetChange
+        totals[month].budgets[budget] = currentBudgetTotal + amount
     })
 
     return totals

@@ -15,6 +15,14 @@ interface Props {
 }
 
 const { monthRange, spendingTotals, upperRange, title } = Astro.props
+
+console.log(spendingTotals)
+const spendingTotalsKeys = Object.keys(spendingTotals)
+const length = spendingTotalsKeys.length
+const total = spendingTotalsKeys.reduce((acc, key) => acc + spendingTotals[key].net, 0)
+const avg = Math.round(total/length)
+console.log(avg)
+
 ---
 
 <GraphWrapper>
@@ -52,5 +60,28 @@ const { monthRange, spendingTotals, upperRange, title } = Astro.props
                 </div>
             )
         })}
+        <div class="relative px-1">
+
+            <span class="text-sm font-semibold min-w-max whitespace-nowrap">
+                Average
+            </span>
+
+            <div class:list={[
+                "absolute left-1/2 -translate-x-1/2 flex flex-col items-center text-sm text-slate",
+                avg > 0 && "bottom-full",
+                avg < 0 && "top-full",
+            ]}>
+
+                { avg > 0 && <BarGraphLabel>+{ avg }</BarGraphLabel> }
+
+                <BarGraphBar 
+                    type={'average'} 
+                    heightRatio={Math.abs(avg / upperRange * 150)} 
+                />
+
+                { avg < 0 && <BarGraphLabel>{ avg }</BarGraphLabel> }
+
+            </div>
+        </div>
     </GraphBarList>
 </GraphWrapper>
