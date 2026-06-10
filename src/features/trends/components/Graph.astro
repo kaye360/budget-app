@@ -1,11 +1,8 @@
 ---
 import { convertDate } from "../../../lib/convertDate";
 import type { calcSpendingTotals } from "../utils/trendGraph.utils";
-import BarGraph from "./BarGraph.astro";
 import BarGraphBar from "./BarGraphBar.astro";
 import BarGraphLabel from "./BarGraphLabel.astro";
-import GraphTitle from "./GraphTitle.astro";
-import GraphWrapper from "./GraphWrapper.astro";
 
 interface Props {
     monthRange : string[]
@@ -20,16 +17,29 @@ const spendingTotalsKeys = Object.keys(spendingTotals)
 const length = spendingTotalsKeys.length
 const total = spendingTotalsKeys.reduce((acc, key) => acc + spendingTotals[key].net, 0)
 const avg = Math.round(total/length)
+
+const maxBarHeight = 150
+const maxBarValue = Math.max(...monthRange.map(month => Math.abs(spendingTotals[month]?.net)))
+const maxPositiveValue = Math.max(...monthRange.map(month => spendingTotals[month]?.net ?? 0))
+const maxNegativeValue = Math.min(...monthRange.map(month => spendingTotals[month]?.net ?? 0))
+console.log(maxPositiveValue, maxNegativeValue)
 ---
 
-<GraphWrapper>
-    <GraphTitle title={title} />
+<div class="grid gap-2 p-4 rounded-xl select-none bg-linear-to-b from-blue/10 to-transparent">
 
-    <BarGraph baseline="center" class="h-100">
+    <h2 class="text-xl font-semibold font-theme">
+        {title}
+    </h2>
+
+    <div class="flex overflow-x-auto scroll-right scrollbar-hide pb-12 pl-4">
         { monthRange.map((month) => {
 
             const net = spendingTotals[month]?.net
             const type = net > 0 ? 'income' : 'spending'
+            const heightRatio = net / maxBarValue 
+            const height = Math.round(maxBarHeight * heightRatio)
+
+            console.log(net, height)
 
             return (
                 <div class="relative px-1">
@@ -80,5 +90,13 @@ const avg = Math.round(total/length)
 
             </div>
         </div>
-    </GraphBarList>
-</GraphWrapper>
+    </div>
+</div>
+
+<script>
+import { els } from "../../../lib/el";
+
+els('.scroll-right', document, div => {
+    div.scrollLeft = div.scrollWidth
+})
+</script>
