@@ -6,8 +6,8 @@ import TransactionList from "../../transactions/components/TransactionList";
 import { MoveLeftIcon } from "@lucide/astro";
 import H1 from "../../../components/H1.astro";
 import { stripEmojis } from "../../app/app.utils";
-import NetGraph from "../../trends/components/NetGraph.astro";
-import { calcMonthRange, calcSpendingTotals, calcUpperRange } from "../../trends/utils/trendGraph.utils";
+import { calcMonthRange, transactionsToGraphData } from "../../trends/utils/trendGraph.utils";
+import Graph from "../../trends/components/Graph.astro";
 
 const { routeParam } = Astro.props
 
@@ -31,9 +31,10 @@ if( budget ) {
 
 const hasTransactions = transactions.length > 0
 
-const spendingTotals = calcSpendingTotals(transactions)
-const upperRange = calcUpperRange(spendingTotals)
-const monthRange = calcMonthRange(spendingTotals)
+const graphData = transactionsToGraphData(transactions)
+const monthRange = calcMonthRange(graphData)
+
+console.log(graphData)
 ---
 
 <AppLayout title={stripEmojis(budgetName)}>
@@ -51,11 +52,10 @@ const monthRange = calcMonthRange(spendingTotals)
     </a>
 
     { hasTransactions && (
-        <NetGraph 
+        <Graph 
             title={budgetName}
             monthRange={monthRange}
-            spendingTotals={spendingTotals}
-            upperRange={upperRange}
+            graphData={graphData}
         />
         <TransactionList
             transactions={transactions} 

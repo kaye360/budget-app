@@ -2,10 +2,10 @@ import { convertDate } from "../../../lib/convertDate"
 import type { Transaction } from "../../transactions/schema/transaction.schema"
 
 /**
- * @function calcSpendingTotals
+ * @function transactionsToGraphData
  * Calculate monthly spending, income, and net totals from a list of transactions.
  */
-export function calcSpendingTotals(transactions: Transaction[]) {
+export function transactionsToGraphData(transactions: Transaction[]) {
 
     const totals: Record<
         string,
@@ -60,7 +60,7 @@ export function calcSpendingTotals(transactions: Transaction[]) {
 
 
 function totalsToArray( 
-    totals : ReturnType<typeof calcSpendingTotals>,
+    totals : ReturnType<typeof transactionsToGraphData>,
 ) {
     let totalsArr =  Object.entries(totals)
         .map(([month, { spending, income, net, budgets }]) => ({ month, spending, income, net, budgets }))
@@ -69,15 +69,19 @@ function totalsToArray(
     return totalsArr
 }
 
-function getGraphStartAndEndMonths( totals: ReturnType<typeof calcSpendingTotals> ) {
+function getGraphStartAndEndMonths( totals: ReturnType<typeof transactionsToGraphData> ) {
     const totalsArray = totalsToArray(totals)
     const start = totalsArray.map((t) => t.month).sort().at(0) as string
     const end = totalsArray.map((t) => t.month).sort().at(-1) as string
     return { start, end }
 }
 
+
+/**
+ * @deprecated Delete this when safe
+ */
 export function calcUpperRange(
-    totals: ReturnType<typeof calcSpendingTotals>,
+    totals: ReturnType<typeof transactionsToGraphData>,
     filter : Exclude<keyof (typeof totals)[string], 'budgets'> = 'net'
 ) {
 
@@ -98,7 +102,7 @@ export function calcUpperRange(
     return Number(leadingDigits + zeros)
 }
 
-export function calcMonthRange(totals: ReturnType<typeof calcSpendingTotals>) {
+export function calcMonthRange(totals: ReturnType<typeof transactionsToGraphData>) {
 
     const { start, end } = getGraphStartAndEndMonths(totals)
 

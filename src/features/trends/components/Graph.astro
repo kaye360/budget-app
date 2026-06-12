@@ -1,28 +1,67 @@
 ---
 import { convertDate } from "../../../lib/convertDate";
-import type { calcSpendingTotals } from "../utils/trendGraph.utils";
+import type { transactionsToGraphData } from "../utils/trendGraph.utils";
 import BarGraphBar from "./BarGraphBar.astro";
 import BarGraphLabel from "./BarGraphLabel.astro";
 
 interface Props {
     monthRange : string[]
-    spendingTotals : ReturnType<typeof calcSpendingTotals>
-    upperRange : number
+    graphData : ReturnType<typeof transactionsToGraphData>
+    // upperRange : number
     title : string
 }
 
-const { monthRange, spendingTotals, upperRange, title } = Astro.props
+const { monthRange, graphData, title } = Astro.props
 
-const spendingTotalsKeys = Object.keys(spendingTotals)
+const spendingTotalsKeys = Object.keys(graphData)
 const length = spendingTotalsKeys.length
-const total = spendingTotalsKeys.reduce((acc, key) => acc + spendingTotals[key].net, 0)
+const total = spendingTotalsKeys.reduce((acc, key) => acc + graphData[key].net, 0)
 const avg = Math.round(total/length)
 
-const maxBarHeight = 150
-const maxBarValue = Math.max(...monthRange.map(month => Math.abs(spendingTotals[month]?.net)))
-const maxPositiveValue = Math.max(...monthRange.map(month => spendingTotals[month]?.net ?? 0))
-const maxNegativeValue = Math.min(...monthRange.map(month => spendingTotals[month]?.net ?? 0))
-console.log(maxPositiveValue, maxNegativeValue)
+// Set Max Bar Height in px
+const maxBarHeight = 200
+
+// Find highest positive value 0 is the minimum possible value
+const maxPositiveValueShift = Math.max(...monthRange.map(month => graphData[month]?.net ?? 0))
+const maxPositiveValue = maxPositiveValueShift > 0 ? maxPositiveValueShift : 0
+
+// Find loweest negative value. 0 is the minimum possible value
+const maxNegativeValueShift = Math.min(...monthRange.map(month => graphData[month]?.net ?? 0))
+const maxNegativeValue = maxNegativeValueShift < 0 ? maxNegativeValueShift : 0
+
+// Upper Range
+const upperRange = Math.max(Math.abs(maxPositiveValue), Math.abs(maxNegativeValue))
+
+// Whichever of the two absolute values are higher becomes the scale of max bar height
+const maxBarValue = Math.max(...monthRange.map(month => Math.abs(graphData[month]?.net)))
+
+// Calculate max positive and max negative bar heights
+const maxPositiveBarHeight = Math.round(maxBarHeight * (Math.abs(maxPositiveValue) / maxBarValue))
+const maxNegativeBarHeight = Math.round(maxBarHeight * (Math.abs(maxNegativeValue) / maxBarValue))
+
+// Set text label (month) height
+const labelHeight = 24
+
+// Determine full graph height. Max positive + max negative + text labels (top bar, bottom bar, and middle label + padding = 3.25)
+const graphHeight = maxPositiveBarHeight + maxNegativeBarHeight + (labelHeight * 3.25)
+
+// Set text label abs poisition as top : max positive height
+const labelTopPosShift = Math.round((maxBarHeight * (maxPositiveValue) / maxBarValue))
+const labelTopPos = labelTopPosShift > 0 ? labelTopPosShift + labelHeight * 1.25 : 0
+
+// Generate a flex box with labels with the text label abs position. The labels will be the 'anchor' and pos relative
+// Position bar above or below label base on if positive or negative
+// Set bar height based on ratio to max bar height
+
+console.log(
+    {maxPositiveValue}, 
+    {maxNegativeValue},
+    {upperRange},
+    {maxPositiveBarHeight},
+    {maxNegativeBarHeight},
+    {graphHeight},
+    {labelTopPos},
+)
 ---
 
 <div class="grid gap-2 p-4 rounded-xl select-none bg-linear-to-b from-blue/10 to-transparent">
@@ -31,64 +70,92 @@ console.log(maxPositiveValue, maxNegativeValue)
         {title}
     </h2>
 
-    <div class="flex overflow-x-auto scroll-right scrollbar-hide pb-12 pl-4">
-        { monthRange.map((month) => {
+    <div 
+        class="relative overflow-x-auto overflow-y-visible scroll-right scrollbar-hide"
+        style={`height: ${graphHeight}px;`}
+    >
 
-            const net = spendingTotals[month]?.net
-            const type = net > 0 ? 'income' : 'spending'
-            const heightRatio = net / maxBarValue 
-            const height = Math.round(maxBarHeight * heightRatio)
+        <div 
+            class="flex gap-2 absolute"
+            style={`top : ${labelTopPos}px`}
+        >
+            { monthRange.map((month) => {
+    
+                const net = graphData[month]?.net
+                const isPositive = net > 0
+                const isNegative = net < 0
+                const type = net > 0 ? 'income' : 'spending'
+                const heightRatio = Math.round(Math.abs(net / upperRange * maxBarHeight))
+    
+    
+                return (
+                    <div class="relative ">
+    
+                        <span 
+                            class:list={["text-xs font-semibold min-w-max whitespace-nowrap block"]}
+                            style={`height: ${labelHeight}px;`}
+                        >
+                            {convertDate(month).to("MMM-YY")}
+                        </span>
 
-            console.log(net, height)
+                        <div 
+                            class="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
+                            style={`${isPositive ? 'bottom' : 'top'} : ${labelHeight}px`}
+                        >
 
-            return (
-                <div class="relative px-1">
+                            <div class:list={[
+                                isPositive && 'order-2',
+                                isNegative && 'order-1'
+                            ]}>
+                                <BarGraphBar 
+                                    type={type} 
+                                    heightRatio={heightRatio} 
+                                />
+                            </div>
+                            <div class:list={[
+                                isPositive && 'order-1',
+                                isNegative && 'order-2'
+                            ]}>
+                                <BarGraphLabel>{ net }</BarGraphLabel>
+                            </div>
+                        </div>
+                        
+                    </div>
+                )
+            })}
+            <div class="relative ">
+    
+                <span 
+                    class:list={["text-xs font-semibold min-w-max whitespace-nowrap block"]}
+                    style={`height: ${labelHeight}px;`}
+                >
+                    Average
+                </span>
 
-                    <span class="text-sm font-semibold min-w-max whitespace-nowrap">
-                        {convertDate(month).to("MMM-YY")}
-                    </span>
+                <div 
+                    class="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
+                    style={`${avg > 0 ? 'bottom' : 'top'} : ${labelHeight}px`}
+                >
 
                     <div class:list={[
-                        "absolute left-1/2 -translate-x-1/2 flex flex-col items-center text-sm text-slate",
-                        net > 0 && "bottom-full",
-                        net < 0 && "top-full",
+                        avg > 0 && 'order-2',
+                        avg < 0 && 'order-1'
                     ]}>
-
-                        { net > 0 && <BarGraphLabel>+{ net }</BarGraphLabel> }
-
                         <BarGraphBar 
-                            type={type} 
-                            heightRatio={Math.abs(net / upperRange * 150)} 
+                            type={'average'} 
+                            heightRatio={Math.abs(avg / upperRange * maxBarHeight)} 
                         />
-
-                        { net < 0 && <BarGraphLabel>{ net }</BarGraphLabel> }
-
+                    </div>
+                    <div class:list={[
+                        avg > 0 && 'order-1',
+                        avg < 0 && 'order-2'
+                    ]}>
+                        <BarGraphLabel>{ avg }</BarGraphLabel>
                     </div>
                 </div>
-            )
-        })}
-        <div class="relative px-1">
-
-            <span class="text-sm font-semibold min-w-max whitespace-nowrap">
-                Average
-            </span>
-
-            <div class:list={[
-                "absolute left-1/2 -translate-x-1/2 flex flex-col items-center text-sm text-slate",
-                avg > 0 && "bottom-full",
-                avg < 0 && "top-full",
-            ]}>
-
-                { avg > 0 && <BarGraphLabel>+{ avg }</BarGraphLabel> }
-
-                <BarGraphBar 
-                    type={'average'} 
-                    heightRatio={Math.abs(avg / upperRange * 150)} 
-                />
-
-                { avg < 0 && <BarGraphLabel>{ avg }</BarGraphLabel> }
-
+                        
             </div>
+
         </div>
     </div>
 </div>

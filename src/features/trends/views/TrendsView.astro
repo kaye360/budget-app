@@ -1,46 +1,55 @@
 ---
 import { actions } from "astro:actions"
-import H1 from "../../../components/H1.astro"
 import AppLayout from "../../../layouts/AppLayout.astro"
 import GraphTitle from "../components/GraphTitle.astro"
-import { calcSpendingTotals, calcUpperRange, calcMonthRange } from "../utils/trendGraph.utils"
-import BudgetGraph from "../components/BudgetGraph.astro"
-import type { Transaction } from "../../transactions/schema/transaction.schema"
+import { transactionsToGraphData, calcUpperRange, calcMonthRange } from "../utils/trendGraph.utils"
 import SpendingGraph from "../components/SpendingGraph.astro"
 import IncomeGraph from "../components/IncomeGraph.astro"
-import NetGraph from "../components/NetGraph.astro"
+import Graph from "../components/Graph.astro"
 
 const [transactions, budgets] = await Promise.all([
     Astro.callAction(actions.transaction.all, {}),
     Astro.callAction(actions.budget.index, {}),
 ])
 
-const spendingTotals = calcSpendingTotals(transactions.data?.list ?? [])
-const spendingUpperRange = calcUpperRange(spendingTotals, 'spending')
-const incomeUpperRange = calcUpperRange(spendingTotals, 'income')
-const netUpperRange = calcUpperRange(spendingTotals, 'net')
-const monthRange = calcMonthRange(spendingTotals)
+const graphData = transactionsToGraphData(transactions.data?.list ?? [])
+const spendingUpperRange = calcUpperRange(graphData, 'spending')
+const incomeUpperRange = calcUpperRange(graphData, 'income')
+const monthRange = calcMonthRange(graphData)
 ---
 
 <AppLayout title="Trends">
 
     <SpendingGraph
         monthRange={monthRange}
-        spendingTotals={spendingTotals}
+        spendingTotals={graphData}
         upperRange={spendingUpperRange}
      />
 
-    <IncomeGraph 
+    <!-- <Graph
+        title={'Spending over time'}
         monthRange={monthRange}
         spendingTotals={spendingTotals}
+        upperRange={spendingUpperRange}
+    /> -->
+
+    <IncomeGraph 
+        monthRange={monthRange}
+        spendingTotals={graphData}
         upperRange={incomeUpperRange}
     />
 
-    <NetGraph 
-        title="Net over time"
+    <!-- <Graph
+        title={'Income over time'}
         monthRange={monthRange}
         spendingTotals={spendingTotals}
-        upperRange={netUpperRange}
+        upperRange={incomeUpperRange}
+    /> -->
+
+    <Graph 
+        title="Net over time"
+        monthRange={monthRange}
+        graphData={graphData}
     />
 
     <div 
@@ -57,17 +66,25 @@ const monthRange = calcMonthRange(spendingTotals)
             </select>
         </div>
 
-        { budgets.data?.map( (budget, i) => (
-            <div 
-                data-budget-id={budget.id} 
-                class={ i !== 0 ? 'hidden' : '' }
-            >
-                <BudgetGraph 
-                    budgetName={budget.name}
-                    transactions={transactions.data?.list.filter( t => t.budget === budget.name ) ?? []}
-                />
-            </div>
-        ))}
+        { budgets.data?.map( (budget, i) => {
+
+            const budgetTransactions = transactions.data?.list.filter( t => t.budget === budget.name ) ?? []
+            const budgetSpendingTotals = transactionsToGraphData(budgetTransactions)
+            const budgetMonthRange = calcMonthRange(budgetSpendingTotals)
+
+            return (
+                <div 
+                    data-budget-id={budget.id} 
+                    class={ i !== 0 ? 'hidden' : '' }
+                >
+                    <Graph 
+                        title={budget.name}
+                        monthRange={budgetMonthRange}
+                        graphData={budgetSpendingTotals}
+                    />
+                </div>
+            )
+        })}
         
     </div>
     
