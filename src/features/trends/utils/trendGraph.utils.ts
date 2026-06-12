@@ -72,35 +72,12 @@ function totalsToArray(
 function getGraphStartAndEndMonths( totals: ReturnType<typeof transactionsToGraphData> ) {
     const totalsArray = totalsToArray(totals)
     const start = totalsArray.map((t) => t.month).sort().at(0) as string
-    const end = totalsArray.map((t) => t.month).sort().at(-1) as string
+    // const end = totalsArray.map((t) => t.month).sort().at(-1) as string
+    const end = convertDate().to("YYYY-MM")
     return { start, end }
 }
 
 
-/**
- * @deprecated Delete this when safe
- */
-export function calcUpperRange(
-    totals: ReturnType<typeof transactionsToGraphData>,
-    filter : Exclude<keyof (typeof totals)[string], 'budgets'> = 'net'
-) {
-
-    const totalsArr = totalsToArray(totals).map((t) => t[filter])
-
-    if( totalsArr.length === 0 ) {
-        return 0
-    }
-
-    const highestSpending = String(Math.max(...totalsArr.map((t) => Math.abs(t))))
-    const leadingDigits = Number(highestSpending.slice(0, 2)) + 1
-
-    const numberOfZeros = highestSpending.length - 2 >= 0
-        ? highestSpending.length - 2
-        : 0
-
-    const zeros = "0".repeat(numberOfZeros)
-    return Number(leadingDigits + zeros)
-}
 
 export function calcMonthRange(totals: ReturnType<typeof transactionsToGraphData>) {
 

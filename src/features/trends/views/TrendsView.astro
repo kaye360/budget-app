@@ -1,10 +1,7 @@
 ---
 import { actions } from "astro:actions"
 import AppLayout from "../../../layouts/AppLayout.astro"
-import GraphTitle from "../components/GraphTitle.astro"
-import { transactionsToGraphData, calcUpperRange, calcMonthRange } from "../utils/trendGraph.utils"
-import SpendingGraph from "../components/SpendingGraph.astro"
-import IncomeGraph from "../components/IncomeGraph.astro"
+import { transactionsToGraphData, calcMonthRange } from "../utils/trendGraph.utils"
 import Graph from "../components/Graph.astro"
 
 const [transactions, budgets] = await Promise.all([
@@ -13,40 +10,27 @@ const [transactions, budgets] = await Promise.all([
 ])
 
 const graphData = transactionsToGraphData(transactions.data?.list ?? [])
-const spendingUpperRange = calcUpperRange(graphData, 'spending')
-const incomeUpperRange = calcUpperRange(graphData, 'income')
 const monthRange = calcMonthRange(graphData)
 ---
 
 <AppLayout title="Trends">
 
-    <SpendingGraph
-        monthRange={monthRange}
-        spendingTotals={graphData}
-        upperRange={spendingUpperRange}
-     />
-
-    <!-- <Graph
+    <Graph
+        type="spending"
         title={'Spending over time'}
         monthRange={monthRange}
-        spendingTotals={spendingTotals}
-        upperRange={spendingUpperRange}
-    /> -->
-
-    <IncomeGraph 
-        monthRange={monthRange}
-        spendingTotals={graphData}
-        upperRange={incomeUpperRange}
+        graphData={graphData}
     />
 
-    <!-- <Graph
+    <Graph
+        type="income"
         title={'Income over time'}
         monthRange={monthRange}
-        spendingTotals={spendingTotals}
-        upperRange={incomeUpperRange}
-    /> -->
+        graphData={graphData}
+    />
 
     <Graph 
+        type="net"
         title="Net over time"
         monthRange={monthRange}
         graphData={graphData}
@@ -57,9 +41,11 @@ const monthRange = calcMonthRange(graphData)
         class="grid gap-4 mt-12"
     >
 
-        <div class="flex justify-between">
-            <GraphTitle title="Budgets Trends over time" />
-            <select class="max-w-fit">
+        <div class="grid grid-cols-1 gap-2 md:flex justify-between">
+            <h2 class="text-lg font-semibold font-theme min-w-fit text-nowrap">
+                Budgets trends over time
+            </h2>
+            <select class="w-full md:w-auto p-1">
                 {budgets.data?.map( budget => (
                     <option value={budget.id}>{budget.name}</option>
                 ))}

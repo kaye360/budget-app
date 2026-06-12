@@ -1,39 +1,44 @@
 ---
 import { convertDate } from "../../../lib/convertDate";
 import type { transactionsToGraphData } from "../utils/trendGraph.utils";
-import BarGraphBar from "./BarGraphBar.astro";
-import BarGraphLabel from "./BarGraphLabel.astro";
+import GraphBar from "./GraphBar.astro";
+import GraphLabel from "./GraphLabel.astro";
 
 interface Props {
     monthRange : string[]
     graphData : ReturnType<typeof transactionsToGraphData>
-    // upperRange : number
     title : string
+    type? : 'spending' | 'income' | 'net'
 }
 
-const { monthRange, graphData, title } = Astro.props
+const { monthRange, graphData, title, type = 'net' } = Astro.props
 
-const spendingTotalsKeys = Object.keys(graphData)
-const length = spendingTotalsKeys.length
-const total = spendingTotalsKeys.reduce((acc, key) => acc + graphData[key].net, 0)
+// Get Average value for all months given except most recent as it skews the graphs
+const graphDataKeys = Object.keys(graphData).sort().slice(0,-1)
+const length = graphDataKeys.length
+const total = graphDataKeys.reduce((acc, key) => acc + graphData[key][type], 0)
 const avg = Math.round(total/length)
 
 // Set Max Bar Height in px
 const maxBarHeight = 200
 
 // Find highest positive value 0 is the minimum possible value
-const maxPositiveValueShift = Math.max(...monthRange.map(month => graphData[month]?.net ?? 0))
+const maxPositiveValueShift = Math.max(...monthRange.map(month => graphData[month]?.[type] ?? 0))
 const maxPositiveValue = maxPositiveValueShift > 0 ? maxPositiveValueShift : 0
 
 // Find loweest negative value. 0 is the minimum possible value
-const maxNegativeValueShift = Math.min(...monthRange.map(month => graphData[month]?.net ?? 0))
+const maxNegativeValueShift = Math.min(...monthRange.map(month => graphData[month]?.[type] ?? 0))
 const maxNegativeValue = maxNegativeValueShift < 0 ? maxNegativeValueShift : 0
 
 // Upper Range
 const upperRange = Math.max(Math.abs(maxPositiveValue), Math.abs(maxNegativeValue))
 
 // Whichever of the two absolute values are higher becomes the scale of max bar height
-const maxBarValue = Math.max(...monthRange.map(month => Math.abs(graphData[month]?.net)))
+const maxBarValue = Math.max(
+    ...monthRange.map(month => 
+        Math.abs(graphData[month]?.[type] ?? 0)
+    )
+)
 
 // Calculate max positive and max negative bar heights
 const maxPositiveBarHeight = Math.round(maxBarHeight * (Math.abs(maxPositiveValue) / maxBarValue))
@@ -49,19 +54,21 @@ const graphHeight = maxPositiveBarHeight + maxNegativeBarHeight + (labelHeight *
 const labelTopPosShift = Math.round((maxBarHeight * (maxPositiveValue) / maxBarValue))
 const labelTopPos = labelTopPosShift > 0 ? labelTopPosShift + labelHeight * 1.25 : 0
 
+// UI:
 // Generate a flex box with labels with the text label abs position. The labels will be the 'anchor' and pos relative
 // Position bar above or below label base on if positive or negative
 // Set bar height based on ratio to max bar height
 
-console.log(
-    {maxPositiveValue}, 
-    {maxNegativeValue},
-    {upperRange},
-    {maxPositiveBarHeight},
-    {maxNegativeBarHeight},
-    {graphHeight},
-    {labelTopPos},
-)
+// console.log(
+//     {maxPositiveValue}, 
+//     {maxNegativeValue},
+//     {upperRange},
+//     {maxBarValue},
+//     {maxPositiveBarHeight},
+//     {maxNegativeBarHeight},
+//     {graphHeight},
+//     {labelTopPos},
+// )
 ---
 
 <div class="grid gap-2 p-4 rounded-xl select-none bg-linear-to-b from-blue/10 to-transparent">
@@ -81,12 +88,11 @@ console.log(
         >
             { monthRange.map((month) => {
     
-                const net = graphData[month]?.net
-                const isPositive = net > 0
-                const isNegative = net < 0
-                const type = net > 0 ? 'income' : 'spending'
-                const heightRatio = Math.round(Math.abs(net / upperRange * maxBarHeight))
-    
+                const barValue = graphData[month]?.[type] ?? 0
+                const isPositive = barValue >= 0
+                const isNegative = barValue < 0
+                const barType = isPositive ? 'income' : 'spending'
+                const heightRatio = Math.round(Math.abs(barValue / upperRange * maxBarHeight))
     
                 return (
                     <div class="relative ">
@@ -107,8 +113,8 @@ console.log(
                                 isPositive && 'order-2',
                                 isNegative && 'order-1'
                             ]}>
-                                <BarGraphBar 
-                                    type={type} 
+                                <GraphBar 
+                                    type={barType} 
                                     heightRatio={heightRatio} 
                                 />
                             </div>
@@ -116,7 +122,10 @@ console.log(
                                 isPositive && 'order-1',
                                 isNegative && 'order-2'
                             ]}>
-                                <BarGraphLabel>{ net }</BarGraphLabel>
+                                <GraphLabel>
+                                    { isPositive && '+' }
+                                    { barValue }
+                                </GraphLabel>
                             </div>
                         </div>
                         
@@ -141,7 +150,7 @@ console.log(
                         avg > 0 && 'order-2',
                         avg < 0 && 'order-1'
                     ]}>
-                        <BarGraphBar 
+                        <GraphBar 
                             type={'average'} 
                             heightRatio={Math.abs(avg / upperRange * maxBarHeight)} 
                         />
@@ -150,7 +159,10 @@ console.log(
                         avg > 0 && 'order-1',
                         avg < 0 && 'order-2'
                     ]}>
-                        <BarGraphLabel>{ avg }</BarGraphLabel>
+                        <GraphLabel>
+                            { avg > 0 && '+' }
+                            { avg }
+                        </GraphLabel>
                     </div>
                 </div>
                         
