@@ -2,7 +2,7 @@ import { ArchiveRestoreIcon, BanknoteArrowDownIcon, BanknoteArrowUpIcon, Trash2I
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { actions } from "astro:actions";
 import { convertDate } from "../../../lib/convertDate";
-import { sleep, toCurrency } from "../../app/app.utils";
+import { sleep, stripEmojis, toCurrency } from "../../app/app.utils";
 import type { Transaction as TransactionSchema } from "../schema/transaction.schema";
 import type { Budget } from "../../budgets/schema/budget.schema";
 import type { Account } from "../../settings/accounts.schema";
@@ -131,9 +131,12 @@ export default function Transaction({
                     onChange={ (e) => setTransaction({...transaction, description : e.target.value}) }
                 />
             ) : (
-                <div className="block font-semibold text-md md:text-md rounded w-full md:w-auto">
+                <a 
+                    href={`/transactions/search?q=${transaction.description}`}
+                    className="block font-semibold text-md md:text-md rounded w-full md:w-auto"
+                >
                     {transaction.description}
-                </div>
+                </a>
             )}
             
             { isEditing ? (
@@ -146,7 +149,20 @@ export default function Transaction({
                         budgetId : Number(e.target.value),
                         budget : e.target.options[e.target.selectedIndex].text
                     })}
-                    defaultValue={transaction.budgetId as number}
+                    onKeyDown={ e => {
+                        const match = budgets.find( b => stripEmojis(b.name)
+                            .toLowerCase()
+                            .startsWith(e.key.toLowerCase()) 
+                        ) 
+                        if( match ) {
+                            setTransaction({
+                                ...transaction, 
+                                budgetId : Number(match.id),
+                                budget : match.name
+                            })
+                        }
+                    }}
+                    value={transaction.budgetId as number}
                 >
                     <option value="0">Uncategorized</option>
                     { budgets.map( budget => (

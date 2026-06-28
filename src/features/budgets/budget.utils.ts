@@ -5,12 +5,12 @@ import type { Budget } from "./schema/budget.schema"
 
 /**
  * 
- * @function calcBudgetSpendingTotals
+ * @function transactionsToBudgetSummaries
  * Calculates the total spending and percentage of spending for each budget.
  * Returns a new Budget[] with  returned budget including totalSpent and percentSpent
  * 
  */
-export function calcBudgetSpendingTotals( 
+export function transactionsToBudgetSummaries( 
     budgets : Budget[] | undefined, 
     transactions : Transaction[] | undefined
 ) : Budget[] {
@@ -57,7 +57,7 @@ type PieChart = {
 	amount : number
 }[]
 
-export function calcBudgetPieChartData(budgetsWithSpendingTotals : Budget[]) {
+export function budgetSummaryToPieChartData(budgetsWithSpendingTotals : Budget[]) {
 
 	// Number of budget slices to show. Does not include "other" category that is added afterwards
 	const numOfSlices = 7
