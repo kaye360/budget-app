@@ -71,7 +71,7 @@ export default function Budget({
         <form
             onSubmit={handlers.handleSave}
             onKeyDown={handlers.handleEsc}
-            className={` relative rounded-sm flex items-center gap-2 justify-between pt-2 pb-4 font-semibold budget-progress-bar ${isEditing ? 'selected' : ''} `}
+            className={` relative rounded-sm flex items-center gap-2 justify-between pt-0 pb-3 text-[1rem] font-semibold  budget-progress-bar ${isEditing ? 'selected' : ''} `}
         >
             { isEditing ? (
                 <input 
@@ -87,7 +87,7 @@ export default function Budget({
             )}
 
             <span className={`
-                text-2xl ml-auto min-w-fit flex gap-2
+                text-lg ml-auto min-w-fit flex gap-2
                 ${  !budget.name.includes('Income') && 
                     budget.totalSpent && 
                     budget.totalSpent-1 > budget.amount ? 'text-red' : '' }
@@ -135,7 +135,7 @@ export default function Budget({
             )}
 
             <span 
-                className="absolute left-0 bottom-0 h-3.75 -z-10 rounded-lg px-4 block animate-progress-bar origin-left progress-bar"
+                className="absolute left-0 bottom-0 h-2.5 -z-10 rounded-lg px-4 block animate-progress-bar origin-left progress-bar"
                 style={ budget.percentSpent
                     ? { width : `${budget.percentSpent}%`}
                     : { width : '0%' }
